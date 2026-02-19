@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Trash2, Search, X, CheckCircle, Tag } from 'lucide-react';
+import { Plus, Minus, Search, X, CheckCircle, Tag } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
 
