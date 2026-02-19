@@ -129,6 +129,38 @@ const CartPage = () => {
 
       <div className="bg-white border-t border-border p-8">
         <div className="max-w-4xl">
+          {/* Table Number Selection */}
+          <div className="mb-6 pb-6 border-b border-border">
+            <label className="block text-xl font-medium mb-3">Table Number</label>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowNumberPad(true)}
+                data-testid="select-table-button"
+                className="flex-1 bg-muted hover:bg-muted/80 border-2 border-border p-6 rounded-sm text-center transition-all touch-target"
+              >
+                {tableNumber ? (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Selected Table</p>
+                    <p className="text-4xl font-serif font-medium">{tableNumber}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-lg text-muted-foreground">Tap to select table number</p>
+                  </div>
+                )}
+              </button>
+              {tableNumber && (
+                <button
+                  onClick={() => setTableNumber('')}
+                  className="p-4 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-sm transition-all"
+                  data-testid="clear-table-button"
+                >
+                  <X size={24} />
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center justify-between mb-6">
             <span className="text-2xl font-serif font-medium">Total</span>
             <span className="text-4xl font-serif font-medium" data-testid="cart-total">
@@ -138,10 +170,15 @@ const CartPage = () => {
           
           <button
             onClick={handleCheckout}
+            disabled={!tableNumber}
             data-testid="proceed-to-checkout-button"
-            className="w-full bg-accent text-accent-foreground py-6 rounded-sm text-xl font-medium hover:bg-accent/90 transition-all active:scale-98 touch-target"
+            className={`w-full py-6 rounded-sm text-xl font-medium transition-all touch-target ${
+              tableNumber
+                ? 'bg-accent text-accent-foreground hover:bg-accent/90 active:scale-98'
+                : 'bg-muted text-muted-foreground cursor-not-allowed'
+            }`}
           >
-            Proceed to Checkout
+            {tableNumber ? 'Proceed to Checkout' : 'Select Table Number to Continue'}
           </button>
         </div>
       </div>
@@ -152,7 +189,7 @@ const CartPage = () => {
             value={tableNumber}
             onChange={setTableNumber}
             onClose={() => {
-              handleTableNumberSubmit(tableNumber);
+              handleTableNumberChange(tableNumber);
             }}
             maxDigits={3}
           />
