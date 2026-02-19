@@ -98,6 +98,13 @@ const CartPage = () => {
             <p className="text-lg">Your order has been sent to the kitchen</p>
             <p className="text-muted-foreground mt-2">Please proceed to Table {tableNumber}</p>
           </div>
+
+          <div className="mb-8" data-testid="countdown-display">
+            <p className="text-xl text-muted-foreground">
+              Redirecting to main screen in{' '}
+              <span className="font-bold text-3xl text-accent">{countdown}</span>
+            </p>
+          </div>
           
           <button
             onClick={() => {
