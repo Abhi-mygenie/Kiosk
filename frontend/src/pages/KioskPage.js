@@ -241,6 +241,34 @@ const KioskPage = () => {
   const [couponError, setCouponError] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerMobile, setCustomerMobile] = useState('');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Initialize kiosk lock on mount
+  useEffect(() => {
+    // Enable kiosk lock
+    kioskLock.enable();
+    
+    // Setup admin unlock (5 taps on top-left corner)
+    kioskLock.setupAdminUnlock(() => {
+      if (window.confirm('Exit kiosk mode?')) {
+        kioskLock.disable();
+        document.exitFullscreen?.();
+      }
+    });
+
+    return () => {
+      kioskLock.disable();
+    };
+  }, []);
+
+  // Toggle sound
+  const toggleSound = () => {
+    const enabled = touchSound.toggle();
+    setSoundEnabled(enabled);
+    if (enabled) {
+      touchSound.playClick();
+    }
+  };
 
   // Valid coupon codes
   const VALID_COUPONS = {
