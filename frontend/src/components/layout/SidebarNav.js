@@ -11,9 +11,13 @@ const SidebarNav = ({ categories, activeCategory }) => {
 
   return (
     <div className="w-80 bg-card h-screen flex flex-col border-r border-border">
-      <div className="p-8 border-b border-border">
-        <h1 className="text-3xl font-serif font-medium text-foreground">Hotel Lumiere</h1>
-        <p className="text-sm text-muted-foreground mt-1 uppercase tracking-widest">Breakfast Buffet</p>
+      <div className="p-6 border-b border-border">
+        <img 
+          src="https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png" 
+          alt="Hyatt Centric Candolim Goa" 
+          className="w-full h-auto max-h-24 object-contain"
+        />
+        <p className="text-sm text-muted-foreground mt-3 uppercase tracking-widest text-center">Breakfast Buffet</p>
       </div>
 
       <nav className="flex-1 p-6 space-y-2">
