@@ -51,6 +51,7 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - [x] **Implemented 15-second countdown timer on success screen**
 - [x] Auto-redirect to home after countdown
 - [x] **Replaced "Hotel Lumiere" text with Hyatt Centric Candolim Goa logo**
+- [x] **Replaced NumberPad with auto-suggest table selector (supports 150+ tables)**
 
 ## Known Issues
 - **P1 - Intermittent Order Placement Failure:** Previously reported but testing shows API is stable (5/5 tests passed)
