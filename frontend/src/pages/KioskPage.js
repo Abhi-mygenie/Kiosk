@@ -484,9 +484,20 @@ const KioskPage = () => {
                 <div className="p-3">
                   <h3 className="font-serif font-medium text-sm mb-1 truncate">{item.name}</h3>
                   <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    {item.portion_size} • {item.calories} cal
-                  </p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs text-muted-foreground">
+                      {item.portion_size} • {item.calories} cal
+                    </span>
+                  </div>
+                  {item.allergens?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {item.allergens.map(allergen => (
+                        <span key={allergen} className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded">
+                          {allergen}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-medium">₹{item.price.toFixed(0)}</span>
                     <button
