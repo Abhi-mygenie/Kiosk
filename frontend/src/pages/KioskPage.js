@@ -254,11 +254,6 @@ const KioskPage = () => {
     Array.from({ length: 100 }, (_, i) => String(i + 1).padStart(2, '0')), []
   );
 
-  const suggestions = useMemo(() => {
-    if (!tableInput) return [];
-    return allTables.filter(table => table.startsWith(tableInput)).slice(0, 6);
-  }, [tableInput, allTables]);
-
   // Calculate totals with GST and discount
   const calculateTotals = useMemo(() => {
     const subtotal = getTotal();
@@ -280,6 +275,11 @@ const KioskPage = () => {
     
     return { subtotal, discount, afterDiscount, cgst, sgst, grandTotal };
   }, [getTotal, appliedCoupon]);
+
+  const handleSelectTable = (table) => {
+    setTableNumber(table);
+    setShowTableSelector(false);
+  };
 
   const handleApplyCoupon = () => {
     const code = couponCode.toUpperCase().trim();
