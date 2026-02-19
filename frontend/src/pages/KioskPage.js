@@ -147,7 +147,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
             <span className="text-2xl font-serif font-medium">₹{calculateTotal().toFixed(2)}</span>
           </div>
           <button
-            onClick={handleAddToCart}
+            onClick={() => { touchSound.playAddToCart(); handleAddToCart(); }}
             className="w-full bg-accent text-accent-foreground py-4 rounded-sm text-lg font-medium hover:bg-accent/90 transition-all"
           >
             Add to Cart
@@ -163,6 +163,8 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
   const [countdown, setCountdown] = useState(15);
 
   useEffect(() => {
+    // Play success sound when overlay appears
+    touchSound.playSuccess();
     const timer = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
