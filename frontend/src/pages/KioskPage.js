@@ -667,6 +667,70 @@ const KioskPage = () => {
         )}
       </AnimatePresence>
 
+      {/* Full-Screen Table Selector */}
+      <AnimatePresence>
+        {showTableSelector && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col"
+          >
+            {/* Header */}
+            <div className="p-6 border-b border-border flex items-center justify-between bg-white">
+              <div>
+                <h2 className="text-3xl font-serif font-medium">Select Your Table</h2>
+                <p className="text-muted-foreground mt-1">Tap on your table number</p>
+              </div>
+              <button
+                onClick={() => setShowTableSelector(false)}
+                className="p-3 hover:bg-muted rounded-sm transition-colors"
+              >
+                <X size={32} />
+              </button>
+            </div>
+
+            {/* Table Grid */}
+            <div className="flex-1 overflow-y-auto p-6 bg-[#F9F8F6]">
+              <div className="grid grid-cols-10 gap-3 max-w-6xl mx-auto">
+                {allTables.map((table) => (
+                  <motion.button
+                    key={table}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => handleSelectTable(table)}
+                    data-testid={`table-${table}`}
+                    className={`aspect-square rounded-lg text-2xl font-bold transition-all shadow-sm ${
+                      tableNumber === table
+                        ? 'bg-accent text-white shadow-lg ring-4 ring-accent/30'
+                        : 'bg-white hover:bg-accent/10 hover:shadow-md border border-border'
+                    }`}
+                  >
+                    {table}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            {tableNumber && (
+              <motion.div
+                initial={{ y: 100 }}
+                animate={{ y: 0 }}
+                className="p-6 border-t border-border bg-white"
+              >
+                <button
+                  onClick={() => setShowTableSelector(false)}
+                  className="w-full max-w-md mx-auto block bg-accent text-accent-foreground py-4 rounded-sm text-xl font-medium hover:bg-accent/90 transition-all"
+                >
+                  Confirm Table {tableNumber}
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Success Overlay */}
       <AnimatePresence>
         {orderSuccess && (
