@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const API = `₹{BACKEND_URL}/api`;
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -34,7 +34,7 @@ const CheckoutPage = () => {
         total: getTotal()
       };
 
-      const response = await axios.post(`${API}/orders`, orderData);
+      const response = await axios.post(`₹{API}/orders`, orderData);
       setOrderId(response.data.id);
       setOrderSuccess(true);
       clearCart();
@@ -110,7 +110,7 @@ const CheckoutPage = () => {
                     <span className="text-lg font-medium">{item.name}</span>
                     <span className="text-muted-foreground ml-2">x {item.quantity}</span>
                   </div>
-                  <span className="text-lg font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="text-lg font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -118,7 +118,7 @@ const CheckoutPage = () => {
             <div className="mt-6 pt-6 border-t-2 border-border flex justify-between items-center">
               <span className="text-2xl font-serif font-medium">Total</span>
               <span className="text-3xl font-serif font-medium" data-testid="checkout-total">
-                ${getTotal().toFixed(2)}
+                ₹{getTotal().toFixed(2)}
               </span>
             </div>
           </div>
