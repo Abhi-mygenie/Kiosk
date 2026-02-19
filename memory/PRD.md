@@ -1,105 +1,113 @@
-# Self-Ordering Kiosk - Hotel Lumiere Breakfast Buffet
+# Self-Ordering Kiosk - Hyatt Centric Candolim Goa
 
 ## Original Problem Statement
-Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. The app should run on 21.5-inch and 32-inch Android kiosks (1920x1080 resolution) with minimal clicks as a high priority.
+Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. Target device: 21.5" Windows kiosk (Core i3, 8GB RAM, 1920x1080 touch screen).
 
-## Core Requirements
-- **Platform:** React web app for Kiosk (fullscreen browser mode)
-- **Target Device:** 21.5-inch Kiosk, 1920x1080 resolution
-- **User Flow:** Minimal clicks - browse, customize, add to cart, select table, place order
-- **Menu Categories:** DOSA, EGG, PARATHA, WAFFLES
-- **Item Details:** Calorie count, portion size (gm/ml), allergen information
-- **Customization:** Variations (e.g., PLAIN, BUTTER, CHEESE), add-ons, special instructions
-- **Currency:** Indian Rupees (₹)
-- **Brand Colors:**
-  - Hero: #62B5E5
-  - Light Accent: #78CAFF
-  - Medium Accent: #177DAA
-  - Dark Accent: #06293F
-
-## What's Been Implemented
-
-### Backend (FastAPI + MongoDB)
-- `/api/menu/categories` - Get menu categories
-- `/api/menu/items` - Get menu items by category
-- `/api/orders` - Create new order (saves to MongoDB)
-- `/api/config/branding` - Get UI branding config
-- Hardcoded menu data with variations, allergens, calories, portion sizes
-
-### Frontend (React + Tailwind CSS)
-- **HomePage:** Menu browsing with category sidebar
-- **MenuItemCard:** Shows item with price, calories, portion, allergens
-- **CustomizationModal:** Select variations, quantity, special instructions
-- **CartPage:** View cart, select table number, place order
-- **Success Screen:** Order confirmation with 15-second countdown timer
-- **NumberPad:** Touch-friendly table number input
-- **CartContext:** Global state management for shopping cart
-
-### UI/UX
-- Custom blue theme matching brand colors
-- Elegant, minimal, luxury design
-- Touch-optimized for kiosk use
-- Responsive animations with Framer Motion
-
-## Completed Tasks (Feb 2025)
-- [x] Set up full-stack architecture (React + FastAPI + MongoDB)
-- [x] Implemented menu browsing with categories
-- [x] Created customization modal with variations and add-ons
-- [x] Built cart page with table selection
-- [x] Removed extra review screen (minimal clicks)
-- [x] Added order confirmation screen
-- [x] **Implemented 15-second countdown timer on success screen**
-- [x] Auto-redirect to home after countdown
-- [x] **Replaced "Hotel Lumiere" text with Hyatt Centric Candolim Goa logo**
-- [x] **Redesigned to 3-column single-screen layout (Categories | Menu | Cart)**
-- [x] **Added coupon code functionality (WELCOME10, FLAT50, HYATT20)**
-- [x] **Added GST breakdown: CGST 2.5% + SGST 2.5% = 5% total**
-- [x] **Added customer data capture: Name and Mobile number fields**
-- [x] **Full-screen table selector overlay with 100 tables (01-100) in grid layout**
-- [x] **Removed delete icon from cart - auto-remove when quantity reaches 0**
-- [x] **Added portion size display on menu cards (e.g., "200 gm • 168 cal")**
-- [x] **Added elegant touch sounds for 5-star hotel feel**
-- [x] **Added kiosk lock mode (prevents exit, fullscreen, admin unlock)**
-
-## Known Issues
-- **P1 - Intermittent Order Placement Failure:** Previously reported but testing shows API is stable (5/5 tests passed)
-
-## Backlog / Future Tasks
-- **P1:** POS system integration (awaiting API details from user)
-- **P2:** Move hardcoded menu to MongoDB for dynamic updates
-- **P3:** Receipt printing for kiosk thermal printer
-- **SKIPPED:** Razorpay payment integration (user requested to skip)
+## Current Status: ✅ MVP COMPLETE - Ready for POS Integration
 
 ## Tech Stack
-- **Frontend:** React, React Router, Tailwind CSS, Framer Motion, Axios
-- **Backend:** FastAPI, Pydantic, Motor (async MongoDB)
-- **Database:** MongoDB
+- **Frontend:** React Web App (runs in Chrome kiosk mode)
+- **Backend:** FastAPI + MongoDB
+- **Deployment:** Windows kiosk with Chrome fullscreen
 
-## File Structure
-```
-/app/
-├── backend/
-│   ├── server.py          # API endpoints, menu data
-│   ├── requirements.txt
-│   └── .env
-└── frontend/
-    ├── src/
-    │   ├── pages/
-    │   │   ├── HomePage.js
-    │   │   └── CartPage.js (includes success screen)
-    │   ├── components/
-    │   │   ├── menu/MenuItemCard.js
-    │   │   ├── layout/SidebarNav.js
-    │   │   └── ui/NumberPad.js
-    │   └── contexts/CartContext.js
-    ├── tailwind.config.js
-    └── package.json
+## What's Been Built
+
+### UI/UX Features
+- ✅ 3-column single-screen layout (Categories | Menu | Cart)
+- ✅ Hyatt Centric Candolim Goa logo branding
+- ✅ Full-screen table selector (100 tables: 01-100)
+- ✅ Item customization modal (variations, quantity)
+- ✅ Portion size & calories on menu cards
+- ✅ Customer data capture (Name, Mobile - optional)
+- ✅ Coupon code system (WELCOME10, FLAT50, HYATT20)
+- ✅ GST breakdown (CGST 2.5% + SGST 2.5%)
+- ✅ Order success screen with 15-second countdown
+- ✅ Auto-redirect to home for next customer
+
+### Kiosk Features
+- ✅ Elegant touch sounds (5-star hotel quality)
+- ✅ Sound toggle (on/off) in sidebar
+- ✅ Kiosk lock mode (blocks shortcuts, fullscreen, no right-click)
+- ✅ Admin unlock (5 taps on top-left corner)
+- ✅ Auto-hide cursor after 3 seconds
+
+### Cart Features
+- ✅ No delete icon - minus button auto-removes at quantity 0
+- ✅ Live GST calculation
+- ✅ Coupon discount display
+
+## Pending: POS API Integration
+
+### Details Needed from User:
+1. **POS API Base URL:** `https://your-pos.com/api/v1`
+2. **Authentication:** API Key / OAuth / Basic Auth
+3. **Menu Endpoint:** `GET /menu`
+4. **Order Endpoint:** `POST /orders`
+5. **Sample API response format
+
+### Planned API Structure:
+
+**Menu API (GET from POS):**
+```json
+{
+  "categories": [{ "id": "dosa", "name": "DOSA", "display_order": 1 }],
+  "items": [{
+    "id": "item_001",
+    "category_id": "dosa",
+    "name": "Plain Dosa",
+    "price": 9.00,
+    "portion_size": "200 gm",
+    "calories": 168,
+    "allergens": ["Gluten"],
+    "variations": [{ "id": "var_001", "name": "BUTTER", "price": 1.00 }]
+  }]
+}
 ```
 
-## API Endpoints
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/menu/categories | Get all menu categories |
-| GET | /api/menu/items?category=dosa | Get items by category |
-| POST | /api/orders | Create new order |
-| GET | /api/config/branding | Get UI branding config |
+**Order API (POST to POS):**
+```json
+{
+  "order_id": "ORD-20250219-001234",
+  "kiosk_id": "KIOSK-01",
+  "table_number": "42",
+  "customer": { "name": "Rahul", "mobile": "9876543210" },
+  "items": [{
+    "item_id": "item_001",
+    "item_name": "Plain Dosa",
+    "quantity": 2,
+    "unit_price": 9.00,
+    "variations": [{ "name": "CHEESE", "price": 2.00 }],
+    "item_total": 22.00
+  }],
+  "pricing": {
+    "subtotal": 33.00,
+    "discount": 3.30,
+    "coupon_code": "WELCOME10",
+    "cgst": 0.74,
+    "sgst": 0.74,
+    "grand_total": 31.18
+  },
+  "order_time": "2025-02-19T18:30:45Z"
+}
+```
+
+## Future Tasks
+- [ ] POS API integration (menu fetch + order post)
+- [ ] Thermal receipt printing
+- [ ] Move hardcoded menu to MongoDB (if no POS)
+- [ ] Offline mode / PWA (later)
+
+## Key Files
+- `/app/frontend/src/pages/KioskPage.js` - Main UI
+- `/app/frontend/src/utils/touchSound.js` - Sound system
+- `/app/frontend/src/utils/kioskLock.js` - Kiosk lock
+- `/app/backend/server.py` - API endpoints
+
+## Preview URL
+https://self-order-buffet.preview.emergentagent.com
+
+## Hardware Confirmed
+- 21.5" Touch Screen Kiosk
+- Core i3, 8GB RAM, 128GB mSATA
+- Windows OS
+- Web app in Chrome kiosk mode (NOT React Native)
