@@ -488,25 +488,25 @@ const KioskPage = () => {
                         <p className="text-xs text-accent">{item.variations.join(', ')}</p>
                       )}
                     </div>
-                    <button
-                      onClick={() => removeFromCart(item.cartId)}
-                      className="p-1 text-destructive hover:bg-destructive/10 rounded"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <button
-                        onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
-                        className="w-7 h-7 bg-white rounded flex items-center justify-center"
+                        onClick={() => {
+                          if (item.quantity <= 1) {
+                            removeFromCart(item.cartId);
+                          } else {
+                            updateQuantity(item.cartId, item.quantity - 1);
+                          }
+                        }}
+                        className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-destructive/10"
                       >
                         <Minus size={14} />
                       </button>
                       <span className="w-6 text-center font-medium">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
-                        className="w-7 h-7 bg-white rounded flex items-center justify-center"
+                        className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-accent/10"
                       >
                         <Plus size={14} />
                       </button>
