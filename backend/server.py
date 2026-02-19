@@ -62,6 +62,11 @@ class CartItem(BaseModel):
 class OrderCreate(BaseModel):
     table_number: str
     items: List[CartItem]
+    subtotal: Optional[float] = None
+    discount: Optional[float] = 0
+    coupon_code: Optional[str] = None
+    cgst: Optional[float] = 0
+    sgst: Optional[float] = 0
     total: float
     guest_name: Optional[str] = None
 
@@ -70,6 +75,11 @@ class Order(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     table_number: str
     items: List[CartItem]
+    subtotal: Optional[float] = None
+    discount: float = 0
+    coupon_code: Optional[str] = None
+    cgst: float = 0
+    sgst: float = 0
     total: float
     guest_name: Optional[str] = None
     status: str = "pending"
