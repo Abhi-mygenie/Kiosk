@@ -433,7 +433,7 @@ const KioskPage = () => {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => { touchSound.playTap(); setActiveCategory(category.id); }}
               data-testid={`category-${category.id}`}
               className={`w-full p-4 rounded-sm text-left transition-all ${
                 activeCategory === category.id
@@ -445,6 +445,17 @@ const KioskPage = () => {
             </button>
           ))}
         </nav>
+
+        {/* Sound Toggle Button */}
+        <div className="p-4 border-t border-border">
+          <button
+            onClick={toggleSound}
+            className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80 transition-all"
+          >
+            {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+            <span className="text-sm">{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
+          </button>
+        </div>
       </div>
 
       {/* MIDDLE COLUMN - Menu Items */}
@@ -464,7 +475,7 @@ const KioskPage = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-sm overflow-hidden border border-border hover:shadow-lg transition-all cursor-pointer"
-                onClick={() => setSelectedItem(item)}
+                onClick={() => { touchSound.playTap(); setSelectedItem(item); }}
                 data-testid={`menu-item-${item.id}`}
               >
                 <div className="h-32 overflow-hidden">
