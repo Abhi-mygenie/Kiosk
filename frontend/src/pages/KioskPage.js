@@ -565,62 +565,51 @@ const KioskPage = () => {
           {/* Table Selection */}
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Table Number</label>
-            <div className="relative">
-              <div className="flex items-center">
-                <div className="relative flex-1">
-                  <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={tableInput}
-                    onChange={(e) => handleTableInputChange(e.target.value)}
-                    onFocus={() => tableInput && setShowSuggestions(true)}
-                    placeholder="Type table number..."
-                    data-testid="table-number-input"
-                    className="w-full bg-muted border border-border p-3 pl-10 rounded-sm text-lg focus:outline-none focus:border-accent"
-                  />
+            <button
+              onClick={() => setShowTableSelector(true)}
+              data-testid="select-table-button"
+              className={`w-full p-3 rounded-sm text-left border-2 transition-all ${
+                tableNumber 
+                  ? 'bg-accent/10 border-accent' 
+                  : 'bg-muted border-border hover:border-accent/50'
+              }`}
+            >
+              {tableNumber ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-serif font-medium">Table {tableNumber}</span>
+                  <span className="text-sm text-accent">Tap to change</span>
                 </div>
-                {tableInput && (
-                  <button
-                    onClick={() => { setTableNumber(''); setTableInput(''); setShowSuggestions(false); }}
-                    className="ml-2 p-3 bg-destructive/10 text-destructive rounded-sm"
-                  >
-                    <X size={18} />
-                  </button>
-                )}
-              </div>
-              
-              <AnimatePresence>
-                {showSuggestions && suggestions.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="absolute z-10 w-full mt-1 bg-white border border-border rounded-sm shadow-lg"
-                  >
-                    <div className="grid grid-cols-3 gap-1 p-2">
-                      {suggestions.map((table) => (
-                        <button
-                          key={table}
-                          onClick={() => handleSelectTable(table)}
-                          data-testid={`table-suggestion-${table}`}
-                          className={`p-3 text-lg font-medium rounded-sm transition-all ${
-                            tableNumber === table 
-                              ? 'bg-accent text-accent-foreground' 
-                              : 'bg-muted hover:bg-accent/20'
-                          }`}
-                        >
-                          {table}
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              ) : (
+                <span className="text-muted-foreground">Tap to select table</span>
+              )}
+            </button>
+          </div>
+
+          {/* Customer Info */}
+          <div className="mb-4 space-y-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">Name (Optional)</label>
+              <input
+                type="text"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Enter your name"
+                data-testid="customer-name-input"
+                className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-accent"
+              />
             </div>
-            {tableNumber && (
-              <p className="text-sm text-accent mt-2">Table {tableNumber} selected</p>
-            )}
+            <div>
+              <label className="block text-sm font-medium mb-1">Mobile (Optional)</label>
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={customerMobile}
+                onChange={(e) => handleMobileChange(e.target.value)}
+                placeholder="10-digit mobile number"
+                data-testid="customer-mobile-input"
+                className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-accent"
+              />
+            </div>
           </div>
 
           {/* Bill Summary with GST */}
