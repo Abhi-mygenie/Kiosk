@@ -228,14 +228,15 @@ const KioskPage = () => {
   const [activeCategory, setActiveCategory] = useState('dosa');
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');
-  const [tableInput, setTableInput] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showTableSelector, setShowTableSelector] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
   const [loading, setLoading] = useState(true);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerMobile, setCustomerMobile] = useState('');
 
   // Valid coupon codes
   const VALID_COUPONS = {
@@ -248,9 +249,9 @@ const KioskPage = () => {
   const CGST_RATE = 2.5;
   const SGST_RATE = 2.5;
 
-  // Generate table numbers 1-150
+  // Generate table numbers 01-100 with leading zeros
   const allTables = useMemo(() => 
-    Array.from({ length: 150 }, (_, i) => String(i + 1)), []
+    Array.from({ length: 100 }, (_, i) => String(i + 1).padStart(2, '0')), []
   );
 
   const suggestions = useMemo(() => {
