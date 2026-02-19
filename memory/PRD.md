@@ -18,6 +18,7 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - ✅ Full-screen table selector (100 tables: 01-100)
 - ✅ Item customization modal (variations, quantity)
 - ✅ Portion size & calories on menu cards
+- ✅ **Allergen tags on menu cards** (red badges: Gluten, Dairy, Spicy)
 - ✅ Customer data capture (Name, Mobile - optional)
 - ✅ Coupon code system (WELCOME10, FLAT50, HYATT20)
 - ✅ GST breakdown (CGST 2.5% + SGST 2.5%)
