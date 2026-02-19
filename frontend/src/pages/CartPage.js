@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Plus, Minus } from 'lucide-react';
+import { Trash2, Plus, Minus, X } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import NumberPad from '@/components/ui/NumberPad';
 
