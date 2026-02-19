@@ -48,6 +48,9 @@ class MenuItem(BaseModel):
     category: str
     available: bool = True
     variations: List[Variation] = []
+    calories: int = 0
+    portion_size: str = "Regular"
+    allergens: List[str] = []
 
 class CartItem(BaseModel):
     item_id: str
