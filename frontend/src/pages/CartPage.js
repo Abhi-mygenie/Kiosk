@@ -249,16 +249,16 @@ const CartPage = () => {
           </div>
           
           <button
-            onClick={handleCheckout}
-            disabled={!tableNumber}
-            data-testid="proceed-to-checkout-button"
+            onClick={handlePlaceOrder}
+            disabled={!tableNumber || isPlacingOrder}
+            data-testid="place-order-button"
             className={`w-full py-6 rounded-sm text-xl font-medium transition-all touch-target ${
-              tableNumber
+              tableNumber && !isPlacingOrder
                 ? 'bg-accent text-accent-foreground hover:bg-accent/90 active:scale-98'
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
-            {tableNumber ? 'Proceed to Checkout' : 'Select Table Number to Continue'}
+            {isPlacingOrder ? 'Placing Order...' : tableNumber ? 'Place Order' : 'Select Table Number to Continue'}
           </button>
         </div>
       </div>
