@@ -233,6 +233,20 @@ const KioskPage = () => {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+
+  // Valid coupon codes
+  const VALID_COUPONS = {
+    'WELCOME10': { discount: 10, type: 'percent', description: '10% off' },
+    'FLAT50': { discount: 50, type: 'flat', description: '₹50 off' },
+    'HYATT20': { discount: 20, type: 'percent', description: '20% off' },
+  };
+
+  // GST rates
+  const CGST_RATE = 2.5;
+  const SGST_RATE = 2.5;
 
   // Generate table numbers 1-150
   const allTables = useMemo(() => 
@@ -243,6 +257,46 @@ const KioskPage = () => {
     if (!tableInput) return [];
     return allTables.filter(table => table.startsWith(tableInput)).slice(0, 6);
   }, [tableInput, allTables]);
+
+  // Calculate totals with GST and discount
+  const calculateTotals = useMemo(() => {
+    const subtotal = getTotal();
+    
+    // Apply coupon discount
+    let discount = 0;
+    if (appliedCoupon) {
+      if (appliedCoupon.type === 'percent') {
+        discount = (subtotal * appliedCoupon.discount) / 100;
+      } else {
+        discount = Math.min(appliedCoupon.discount, subtotal);
+      }
+    }
+    
+    const afterDiscount = subtotal - discount;
+    const cgst = (afterDiscount * CGST_RATE) / 100;
+    const sgst = (afterDiscount * SGST_RATE) / 100;
+    const grandTotal = afterDiscount + cgst + sgst;
+    
+    return { subtotal, discount, afterDiscount, cgst, sgst, grandTotal };
+  }, [getTotal, appliedCoupon]);
+
+  const handleApplyCoupon = () => {
+    const code = couponCode.toUpperCase().trim();
+    if (VALID_COUPONS[code]) {
+      setAppliedCoupon({ ...VALID_COUPONS[code], code });
+      setCouponError('');
+      toast.success(`Coupon applied: ${VALID_COUPONS[code].description}`);
+    } else {
+      setCouponError('Invalid coupon code');
+      setAppliedCoupon(null);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setCouponError('');
+  };
 
   useEffect(() => {
     const fetchData = async () => {
