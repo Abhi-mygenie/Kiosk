@@ -68,7 +68,8 @@ class OrderCreate(BaseModel):
     cgst: Optional[float] = 0
     sgst: Optional[float] = 0
     total: float
-    guest_name: Optional[str] = None
+    customer_name: Optional[str] = None
+    customer_mobile: Optional[str] = None
 
 class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -81,7 +82,8 @@ class Order(BaseModel):
     cgst: float = 0
     sgst: float = 0
     total: float
-    guest_name: Optional[str] = None
+    customer_name: Optional[str] = None
+    customer_mobile: Optional[str] = None
     status: str = "pending"
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
