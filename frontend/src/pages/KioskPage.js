@@ -440,12 +440,12 @@ const KioskPage = () => {
                 </div>
                 <div className="p-3">
                   <h3 className="font-serif font-medium text-sm mb-1 truncate">{item.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-2 line-clamp-1">{item.description}</p>
+                  <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
+                  <p className="text-xs text-muted-foreground mb-2">
+                    {item.portion_size} • {item.calories} cal
+                  </p>
                   <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-lg font-medium">₹{item.price.toFixed(0)}</span>
-                      <span className="text-xs text-muted-foreground ml-2">{item.calories} cal</span>
-                    </div>
+                    <span className="text-lg font-medium">₹{item.price.toFixed(0)}</span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
