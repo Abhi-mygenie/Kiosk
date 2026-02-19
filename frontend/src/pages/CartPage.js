@@ -265,32 +265,79 @@ const CartPage = () => {
           {/* Table Number Selection */}
           <div className="mb-6 pb-6 border-b border-border">
             <label className="block text-xl font-medium mb-3">Table Number</label>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowNumberPad(true)}
-                data-testid="select-table-button"
-                className="flex-1 bg-muted hover:bg-muted/80 border-2 border-border p-6 rounded-sm text-center transition-all touch-target"
-              >
-                {tableNumber ? (
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Selected Table</p>
-                    <p className="text-4xl font-serif font-medium">{tableNumber}</p>
+            <div className="relative">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1 relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <Search size={24} />
                   </div>
-                ) : (
-                  <div>
-                    <p className="text-lg text-muted-foreground">Tap to select table number</p>
-                  </div>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={tableInput}
+                    onChange={(e) => handleTableInputChange(e.target.value)}
+                    onFocus={() => tableInput && setShowSuggestions(true)}
+                    placeholder="Type table number..."
+                    data-testid="table-number-input"
+                    className="w-full bg-muted border-2 border-border p-6 pl-14 rounded-sm text-2xl font-serif focus:outline-none focus:border-accent transition-all"
+                  />
+                  {tableNumber && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+                      <span className="text-sm text-accent font-medium bg-accent/10 px-3 py-1 rounded-full">
+                        Table {tableNumber} selected
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {(tableNumber || tableInput) && (
+                  <button
+                    onClick={handleClearTable}
+                    className="p-4 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-sm transition-all"
+                    data-testid="clear-table-button"
+                  >
+                    <X size={24} />
+                  </button>
                 )}
-              </button>
-              {tableNumber && (
-                <button
-                  onClick={() => setTableNumber('')}
-                  className="p-4 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-sm transition-all"
-                  data-testid="clear-table-button"
-                >
-                  <X size={24} />
-                </button>
-              )}
+              </div>
+              
+              {/* Suggestions dropdown */}
+              <AnimatePresence>
+                {showSuggestions && suggestions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute z-50 w-full mt-2 bg-white border-2 border-border rounded-sm shadow-lg overflow-hidden"
+                  >
+                    <div className="grid grid-cols-4 gap-1 p-2">
+                      {suggestions.map((table) => (
+                        <button
+                          key={table}
+                          onClick={() => handleSelectTable(table)}
+                          data-testid={`table-suggestion-${table}`}
+                          className={`p-4 text-xl font-serif font-medium rounded-sm transition-all touch-target ${
+                            tableNumber === table 
+                              ? 'bg-accent text-accent-foreground' 
+                              : 'bg-muted hover:bg-accent/20'
+                          }`}
+                        >
+                          {table}
+                        </button>
+                      ))}
+                    </div>
+                    {tableInput && !allTables.includes(tableInput) && parseInt(tableInput) <= 150 && (
+                      <button
+                        onClick={() => handleSelectTable(tableInput)}
+                        className="w-full p-4 text-lg font-medium bg-accent/10 hover:bg-accent/20 border-t border-border transition-all"
+                      >
+                        Select Table {tableInput}
+                      </button>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
