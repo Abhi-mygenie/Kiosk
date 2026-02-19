@@ -104,7 +104,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
                 {item.variations.map(v => (
                   <button
                     key={v.id}
-                    onClick={() => toggleVariation(v)}
+                    onClick={() => { touchSound.playTap(); toggleVariation(v); }}
                     className={`p-3 rounded-sm text-left text-sm transition-all ${
                       selectedVariations.find(sv => sv.id === v.id)
                         ? 'bg-accent text-accent-foreground'
@@ -124,14 +124,14 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
             <span className="font-medium">Quantity</span>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                onClick={() => { touchSound.playClick(); setQuantity(Math.max(1, quantity - 1)); }}
                 className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-muted/80"
               >
                 <Minus size={18} />
               </button>
               <span className="text-2xl font-medium w-8 text-center">{quantity}</span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={() => { touchSound.playClick(); setQuantity(quantity + 1); }}
                 className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-muted/80"
               >
                 <Plus size={18} />
