@@ -324,16 +324,10 @@ const KioskPage = () => {
     toast.success(`${item.name} added to cart`);
   };
 
-  const handleTableInputChange = (value) => {
-    const numericValue = value.replace(/\D/g, '');
-    setTableInput(numericValue);
-    setShowSuggestions(numericValue.length > 0);
-  };
-
-  const handleSelectTable = (table) => {
-    setTableNumber(table);
-    setTableInput(table);
-    setShowSuggestions(false);
+  const handleMobileChange = (value) => {
+    // Only allow numbers and limit to 10 digits
+    const numericValue = value.replace(/\D/g, '').slice(0, 10);
+    setCustomerMobile(numericValue);
   };
 
   const handlePlaceOrder = async () => {
@@ -345,6 +339,8 @@ const KioskPage = () => {
       
       const orderData = {
         table_number: tableNumber,
+        customer_name: customerName || null,
+        customer_mobile: customerMobile || null,
         items: cart.map(item => ({
           item_id: item.id,
           name: item.name,
@@ -361,12 +357,13 @@ const KioskPage = () => {
       };
 
       const response = await axios.post(`${API}/orders`, orderData);
-      setOrderSuccess({ id: response.data.id, tableNumber, grandTotal });
+      setOrderSuccess({ id: response.data.id, tableNumber, grandTotal, customerName });
       clearCart();
       setTableNumber('');
-      setTableInput('');
       setAppliedCoupon(null);
       setCouponCode('');
+      setCustomerName('');
+      setCustomerMobile('');
     } catch (error) {
       console.error('Failed to place order:', error);
       toast.error('Failed to place order. Please try again.');
