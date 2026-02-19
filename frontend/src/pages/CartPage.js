@@ -362,19 +362,6 @@ const CartPage = () => {
           </button>
         </div>
       </div>
-
-      <AnimatePresence>
-        {showNumberPad && (
-          <NumberPad
-            value={tableNumber}
-            onChange={setTableNumber}
-            onClose={() => {
-              handleTableNumberChange(tableNumber);
-            }}
-            maxDigits={3}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 };
