@@ -742,7 +742,7 @@ const KioskPage = () => {
                     key={table}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => handleSelectTable(table)}
+                    onClick={() => { touchSound.playSelect(); handleSelectTable(table); }}
                     data-testid={`table-${table}`}
                     className={`aspect-square rounded-lg text-2xl font-bold transition-all shadow-sm ${
                       tableNumber === table
@@ -764,7 +764,7 @@ const KioskPage = () => {
                 className="p-6 border-t border-border bg-white"
               >
                 <button
-                  onClick={() => setShowTableSelector(false)}
+                  onClick={() => { touchSound.playClick(); setShowTableSelector(false); }}
                   className="w-full max-w-md mx-auto block bg-accent text-accent-foreground py-4 rounded-sm text-xl font-medium hover:bg-accent/90 transition-all"
                 >
                   Confirm Table {tableNumber}
