@@ -49,13 +49,21 @@ const CartPage = () => {
       setOrderId(response.data.id);
       setOrderSuccess(true);
       clearCart();
+      setCountdown(15);
       
-      // Redirect to home after 5 seconds
-      setTimeout(() => {
-        setOrderSuccess(false);
-        setTableNumber('');
-        navigate('/');
-      }, 5000);
+      // Start countdown timer
+      countdownRef.current = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownRef.current);
+            setOrderSuccess(false);
+            setTableNumber('');
+            navigate('/');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } catch (error) {
       console.error('Failed to place order:', error);
       toast.error('Failed to place order. Please try again.');
