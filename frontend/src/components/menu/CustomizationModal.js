@@ -5,6 +5,7 @@ import { X, Plus, Minus } from 'lucide-react';
 const CustomizationModal = ({ item, onClose, onAddToCart }) => {
   const [selectedVariations, setSelectedVariations] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [specialInstructions, setSpecialInstructions] = useState('');
 
   const toggleVariation = (variationId) => {
     setSelectedVariations(prev => {
@@ -36,6 +37,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
       ...item,
       variations: variationNames,
       quantity,
+      specialInstructions,
       totalPrice: calculateTotal()
     });
     onClose();
@@ -76,12 +78,12 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
           <div className="mb-6">
             <h3 className="text-2xl font-serif font-medium mb-2">{item.name}</h3>
             <p className="text-muted-foreground mb-2">{item.description}</p>
-            <p className="text-xl font-medium">Base Price: ${item.price.toFixed(2)}</p>
+            <p className="text-xl font-medium">Base Price: ₹{item.price.toFixed(2)}</p>
           </div>
 
           {/* Variations */}
           {item.variations && item.variations.length > 0 && (
-            <div>
+            <div className="mb-6">
               <h3 className="text-xl font-medium mb-4">
                 CHOICE <span className="text-accent text-sm">(Optional)</span>
               </h3>
@@ -119,7 +121,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
                     </span>
                     {variation.price > 0 && (
                       <span className="text-lg font-medium text-accent">
-                        +${variation.price.toFixed(2)}
+                        +₹{variation.price.toFixed(2)}
                       </span>
                     )}
                   </button>
@@ -127,6 +129,24 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
               </div>
             </div>
           )}
+
+          {/* Special Instructions */}
+          <div>
+            <h3 className="text-xl font-medium mb-4">
+              SPECIAL INSTRUCTIONS <span className="text-muted-foreground text-sm">(Optional)</span>
+            </h3>
+            <textarea
+              value={specialInstructions}
+              onChange={(e) => setSpecialInstructions(e.target.value)}
+              data-testid="special-instructions-input"
+              placeholder="Add any special requests or dietary requirements..."
+              className="w-full p-4 border-2 border-border rounded-sm focus:border-accent focus:outline-none transition-all min-h-[100px] text-lg resize-none"
+              maxLength={200}
+            />
+            <p className="text-sm text-muted-foreground mt-2">
+              {specialInstructions.length}/200 characters
+            </p>
+          </div>
         </div>
 
         {/* Footer */}
@@ -155,7 +175,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
           <div className="flex items-center justify-between mb-4">
             <span className="text-2xl font-serif font-medium">Total</span>
             <span className="text-3xl font-serif font-medium" data-testid="total-price-modal">
-              ${calculateTotal().toFixed(2)}
+              ₹{calculateTotal().toFixed(2)}
             </span>
           </div>
 

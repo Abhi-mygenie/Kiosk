@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
-import CustomizationModal from './CustomizationModal';
 
 const MenuItemCard = ({ item }) => {
   const { addToCart } = useCart();
-  const [showCustomization, setShowCustomization] = useState(false);
+  const [showCustomization, setShowCustomization] = React.useState(false);
 
   const handleAddClick = () => {
     setShowCustomization(true);
@@ -42,7 +41,7 @@ const MenuItemCard = ({ item }) => {
           <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
           
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-medium">${item.price.toFixed(2)}</span>
+            <span className="text-2xl font-medium">₹{item.price.toFixed(2)}</span>
             <button
               onClick={handleAddClick}
               data-testid={`add-to-cart-${item.id}`}
@@ -54,15 +53,18 @@ const MenuItemCard = ({ item }) => {
         </div>
       </motion.div>
 
-      <AnimatePresence>
-        {showCustomization && (
-          <CustomizationModal
-            item={item}
-            onClose={() => setShowCustomization(false)}
-            onAddToCart={handleAddToCart}
-          />
-        )}
-      </AnimatePresence>
+      {showCustomization && (
+        <React.Suspense fallback={null}>
+          {React.createElement(
+            require('./CustomizationModal').default,
+            {
+              item,
+              onClose: () => setShowCustomization(false),
+              onAddToCart: handleAddToCart
+            }
+          )}
+        </React.Suspense>
+      )}
     </>
   );
 };
