@@ -536,6 +536,7 @@ const KioskPage = () => {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => {
+                          touchSound.playClick();
                           if (item.quantity <= 1) {
                             removeFromCart(item.cartId);
                           } else {
@@ -548,7 +549,7 @@ const KioskPage = () => {
                       </button>
                       <span className="w-6 text-center font-medium">{item.quantity}</span>
                       <button
-                        onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
+                        onClick={() => { touchSound.playClick(); updateQuantity(item.cartId, item.quantity + 1); }}
                         className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-accent/10"
                       >
                         <Plus size={14} />
