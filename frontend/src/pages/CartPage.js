@@ -108,6 +108,7 @@ const CartPage = () => {
           
           <button
             onClick={() => {
+              if (countdownRef.current) clearInterval(countdownRef.current);
               setOrderSuccess(false);
               setTableNumber('');
               navigate('/');
