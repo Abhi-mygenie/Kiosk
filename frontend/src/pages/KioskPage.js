@@ -340,6 +340,8 @@ const KioskPage = () => {
     
     setIsPlacingOrder(true);
     try {
+      const { subtotal, discount, cgst, sgst, grandTotal } = calculateTotals;
+      
       const orderData = {
         table_number: tableNumber,
         items: cart.map(item => ({
@@ -349,14 +351,21 @@ const KioskPage = () => {
           quantity: item.quantity,
           variations: item.variations || []
         })),
-        total: getTotal()
+        subtotal: subtotal,
+        discount: discount,
+        coupon_code: appliedCoupon?.code || null,
+        cgst: cgst,
+        sgst: sgst,
+        total: grandTotal
       };
 
       const response = await axios.post(`${API}/orders`, orderData);
-      setOrderSuccess({ id: response.data.id, tableNumber });
+      setOrderSuccess({ id: response.data.id, tableNumber, grandTotal });
       clearCart();
       setTableNumber('');
       setTableInput('');
+      setAppliedCoupon(null);
+      setCouponCode('');
     } catch (error) {
       console.error('Failed to place order:', error);
       toast.error('Failed to place order. Please try again.');
