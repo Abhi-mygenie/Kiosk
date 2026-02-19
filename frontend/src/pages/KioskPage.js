@@ -523,6 +523,47 @@ const KioskPage = () => {
 
         {/* Order Footer */}
         <div className="p-4 border-t border-border bg-white">
+          {/* Coupon Code */}
+          {cart.length > 0 && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Coupon Code</label>
+              {appliedCoupon ? (
+                <div className="flex items-center justify-between bg-green-50 p-3 rounded-sm border border-green-200">
+                  <div>
+                    <span className="text-green-700 font-medium">{appliedCoupon.code}</span>
+                    <span className="text-green-600 text-sm ml-2">({appliedCoupon.description})</span>
+                  </div>
+                  <button
+                    onClick={handleRemoveCoupon}
+                    className="text-green-700 hover:text-green-900"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
+                    placeholder="Enter code"
+                    data-testid="coupon-input"
+                    className="flex-1 bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-accent uppercase"
+                  />
+                  <button
+                    onClick={handleApplyCoupon}
+                    disabled={!couponCode}
+                    data-testid="apply-coupon-button"
+                    className="px-4 py-2 bg-accent text-accent-foreground rounded-sm text-sm font-medium hover:bg-accent/90 disabled:bg-muted disabled:text-muted-foreground"
+                  >
+                    Apply
+                  </button>
+                </div>
+              )}
+              {couponError && <p className="text-xs text-destructive mt-1">{couponError}</p>}
+            </div>
+          )}
+
           {/* Table Selection */}
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Table Number</label>
@@ -584,11 +625,33 @@ const KioskPage = () => {
             )}
           </div>
 
-          {/* Total */}
-          <div className="flex items-center justify-between py-3 border-t border-border mb-4">
-            <span className="text-lg font-medium">Total</span>
-            <span className="text-2xl font-serif font-medium" data-testid="cart-total">₹{getTotal().toFixed(0)}</span>
-          </div>
+          {/* Bill Summary with GST */}
+          {cart.length > 0 && (
+            <div className="border-t border-border pt-3 mb-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span>₹{calculateTotals.subtotal.toFixed(2)}</span>
+              </div>
+              {appliedCoupon && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount ({appliedCoupon.description})</span>
+                  <span>-₹{calculateTotals.discount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">CGST (2.5%)</span>
+                <span>₹{calculateTotals.cgst.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">SGST (2.5%)</span>
+                <span>₹{calculateTotals.sgst.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between pt-2 border-t border-border text-base font-medium">
+                <span>Grand Total</span>
+                <span data-testid="cart-total">₹{calculateTotals.grandTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
 
           {/* Place Order Button */}
           <button
@@ -601,7 +664,7 @@ const KioskPage = () => {
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
-            {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : !tableNumber ? 'Select table to continue' : 'Place Order'}
+            {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : !tableNumber ? 'Select table to continue' : `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}`}
           </button>
         </div>
       </div>
