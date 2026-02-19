@@ -40,6 +40,13 @@ const MenuItemCard = ({ item }) => {
           <h3 className="text-xl font-serif font-medium mb-1">{item.name}</h3>
           <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
           
+          {/* Portion size */}
+          {item.portion_size && (
+            <p className="text-xs text-muted-foreground mb-2">
+              Portion: {item.portion_size}
+            </p>
+          )}
+          
           {/* Allergen badges */}
           {item.allergens && item.allergens.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-2">
