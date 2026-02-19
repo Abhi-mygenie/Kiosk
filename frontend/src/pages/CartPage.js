@@ -7,22 +7,57 @@ import NumberPad from '@/components/ui/NumberPad';
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const { cart, removeFromCart, updateQuantity, getTotal, getItemCount } = useCart();
+  const { cart, removeFromCart, updateQuantity, getTotal, getItemCount, clearCart } = useCart();
   const [showNumberPad, setShowNumberPad] = useState(false);
   const [tableNumber, setTableNumber] = useState('');
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [orderId, setOrderId] = useState('');
 
-  const handleCheckout = () => {
-    if (cart.length === 0) return;
-    if (!tableNumber) {
-      setShowNumberPad(true);
-      return;
-    }
-    navigate('/checkout', { state: { tableNumber } });
-  };
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+  const API = `${BACKEND_URL}/api`;
 
   const handleTableNumberChange = (value) => {
     setTableNumber(value);
     setShowNumberPad(false);
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!tableNumber || cart.length === 0) return;
+    
+    setIsPlacingOrder(true);
+    
+    try {
+      const orderData = {
+        table_number: tableNumber,
+        items: cart.map(item => ({
+          item_id: item.id,
+          name: item.name,
+          price: item.totalPrice || item.price,
+          quantity: item.quantity,
+          variations: item.variations || [],
+          special_instructions: item.specialInstructions || ''
+        })),
+        total: getTotal()
+      };
+
+      const response = await axios.post(`${API}/orders`, orderData);
+      setOrderId(response.data.id);
+      setOrderSuccess(true);
+      clearCart();
+      
+      // Redirect to home after 5 seconds
+      setTimeout(() => {
+        setOrderSuccess(false);
+        setTableNumber('');
+        navigate('/');
+      }, 5000);
+    } catch (error) {
+      console.error('Failed to place order:', error);
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setIsPlacingOrder(false);
+    }
   };
 
   if (cart.length === 0) {
