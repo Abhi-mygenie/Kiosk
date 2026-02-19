@@ -705,7 +705,7 @@ const KioskPage = () => {
         {selectedItem && (
           <CustomizationModal
             item={selectedItem}
-            onClose={() => setSelectedItem(null)}
+            onClose={() => { touchSound.playClick(); setSelectedItem(null); }}
             onAddToCart={handleAddToCart}
           />
         )}
@@ -727,7 +727,7 @@ const KioskPage = () => {
                 <p className="text-muted-foreground mt-1">Tap on your table number</p>
               </div>
               <button
-                onClick={() => setShowTableSelector(false)}
+                onClick={() => { touchSound.playClick(); setShowTableSelector(false); }}
                 className="p-3 hover:bg-muted rounded-sm transition-colors"
               >
                 <X size={32} />
