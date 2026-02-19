@@ -1,21 +1,13 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, Coffee, Croissant, Apple, Wine, ShoppingCart } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { motion } from 'framer-motion';
 
-const SidebarNav = () => {
-  const location = useLocation();
+const SidebarNav = ({ categories, activeCategory }) => {
+  const navigate = useNavigate();
   const { getItemCount } = useCart();
   const itemCount = getItemCount();
-
-  const navItems = [
-    { icon: Home, label: 'Home', path: '/' },
-    { icon: Coffee, label: 'Hot Breakfast', path: '/menu/hot-breakfast' },
-    { icon: Croissant, label: 'Bakery', path: '/menu/bakery' },
-    { icon: Apple, label: 'Healthy', path: '/menu/healthy' },
-    { icon: Wine, label: 'Beverages', path: '/menu/beverages' },
-  ];
 
   return (
     <div className="w-80 bg-card h-screen flex flex-col border-r border-border">
@@ -25,16 +17,15 @@ const SidebarNav = () => {
       </div>
 
       <nav className="flex-1 p-6 space-y-2">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+        {categories.map((category) => {
+          const isActive = activeCategory === category.id;
           
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              data-testid={`nav-link-${item.label.toLowerCase().replace(' ', '-')}`}
-              className="relative"
+            <button
+              key={category.id}
+              onClick={() => navigate(`/?category=${category.id}`)}
+              data-testid={`nav-category-${category.id}`}
+              className="w-full relative"
             >
               <div
                 className={`flex items-center space-x-4 p-4 rounded-sm transition-all touch-target ${
@@ -50,16 +41,15 @@ const SidebarNav = () => {
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}
-                <Icon size={24} />
-                <span className="text-lg font-medium">{item.label}</span>
+                <span className="text-lg font-medium uppercase tracking-wide">{category.name}</span>
               </div>
-            </Link>
+            </button>
           );
         })}
       </nav>
 
-      <Link
-        to="/cart"
+      <button
+        onClick={() => navigate('/cart')}
         data-testid="nav-link-cart"
         className="m-6 mt-auto"
       >
@@ -79,7 +69,7 @@ const SidebarNav = () => {
             </motion.div>
           )}
         </div>
-      </Link>
+      </button>
     </div>
   );
 };

@@ -75,60 +75,60 @@ class BrandingConfig(BaseModel):
 # Mock data for menu categories
 CATEGORIES = [
     {
-        "id": "hot-breakfast",
-        "name": "Hot Breakfast",
-        "image": "https://images.unsplash.com/photo-1768406041776-c5460d9fd638?crop=entropy&cs=srgb&fm=jpg&q=85"
+        "id": "dosa",
+        "name": "DOSA",
+        "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400"
     },
     {
-        "id": "bakery",
-        "name": "Bakery & Pastry",
-        "image": "https://images.pexels.com/photos/14686507/pexels-photo-14686507.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+        "id": "egg",
+        "name": "EGG",
+        "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400"
     },
     {
-        "id": "healthy",
-        "name": "Fruits & Healthy",
-        "image": "https://images.pexels.com/photos/7937384/pexels-photo-7937384.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+        "id": "paratha",
+        "name": "PARATHA",
+        "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400"
     },
     {
-        "id": "beverages",
-        "name": "Beverages",
-        "image": "https://images.unsplash.com/photo-1718795903419-2bc5bba08d2f?crop=entropy&cs=srgb&fm=jpg&q=85"
+        "id": "waffles",
+        "name": "WAFFLES",
+        "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400"
     }
 ]
 
 # Mock data for menu items
 MENU_ITEMS = [
-    # Hot Breakfast
-    {"id": "1", "name": "Scrambled Eggs", "description": "Fluffy scrambled eggs with herbs", "price": 12.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "hot-breakfast"},
-    {"id": "2", "name": "Pancakes", "description": "Golden pancakes with maple syrup", "price": 14.99, "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400", "category": "hot-breakfast"},
-    {"id": "3", "name": "French Toast", "description": "Classic French toast with berries", "price": 13.99, "image": "https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=400", "category": "hot-breakfast"},
-    {"id": "4", "name": "Eggs Benedict", "description": "Poached eggs on English muffin", "price": 16.99, "image": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400", "category": "hot-breakfast"},
-    {"id": "5", "name": "Omelette", "description": "Three-egg omelette with your choice", "price": 15.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "hot-breakfast"},
-    {"id": "6", "name": "Waffles", "description": "Belgian waffles with fresh cream", "price": 14.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "hot-breakfast"},
+    # DOSA
+    {"id": "1", "name": "Plain Dosa", "description": "Classic South Indian crispy dosa", "price": 8.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa"},
+    {"id": "2", "name": "Masala Dosa", "description": "Crispy dosa filled with spiced potato", "price": 10.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa"},
+    {"id": "3", "name": "Mysore Masala Dosa", "description": "Spicy red chutney dosa with potato", "price": 11.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa"},
+    {"id": "4", "name": "Ghee Roast Dosa", "description": "Crispy dosa roasted in pure ghee", "price": 12.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa"},
+    {"id": "5", "name": "Cheese Dosa", "description": "Dosa topped with melted cheese", "price": 13.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa"},
+    {"id": "6", "name": "Rava Dosa", "description": "Crispy semolina dosa", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa"},
     
-    # Bakery
-    {"id": "7", "name": "Croissant", "description": "Buttery French croissant", "price": 5.99, "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400", "category": "bakery"},
-    {"id": "8", "name": "Danish Pastry", "description": "Assorted Danish pastries", "price": 6.99, "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400", "category": "bakery"},
-    {"id": "9", "name": "Muffin", "description": "Freshly baked muffins", "price": 4.99, "image": "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=400", "category": "bakery"},
-    {"id": "10", "name": "Bagel", "description": "Toasted bagel with cream cheese", "price": 5.99, "image": "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=400", "category": "bakery"},
-    {"id": "11", "name": "Scone", "description": "English scone with jam", "price": 5.49, "image": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400", "category": "bakery"},
-    {"id": "12", "name": "Cinnamon Roll", "description": "Sweet cinnamon roll with icing", "price": 6.99, "image": "https://images.unsplash.com/photo-1601879653910-1b7b20f7b836?w=400", "category": "bakery"},
+    # EGG
+    {"id": "7", "name": "Scrambled Eggs", "description": "Fluffy scrambled eggs with herbs", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg"},
+    {"id": "8", "name": "Omelette", "description": "Three-egg omelette with vegetables", "price": 8.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg"},
+    {"id": "9", "name": "Eggs Benedict", "description": "Poached eggs on English muffin", "price": 12.99, "image": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400", "category": "egg"},
+    {"id": "10", "name": "Boiled Eggs", "description": "Perfectly boiled eggs (2 pcs)", "price": 5.99, "image": "https://images.unsplash.com/photo-1587486937736-e6c447887f99?w=400", "category": "egg"},
+    {"id": "11", "name": "Egg Bhurji", "description": "Indian style spiced scrambled eggs", "price": 9.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg"},
+    {"id": "12", "name": "Bull's Eye", "description": "Fried eggs sunny side up (2 pcs)", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg"},
     
-    # Healthy
-    {"id": "13", "name": "Fresh Fruit Bowl", "description": "Seasonal fresh fruit selection", "price": 9.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "healthy"},
-    {"id": "14", "name": "Yogurt Parfait", "description": "Greek yogurt with granola", "price": 8.99, "image": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400", "category": "healthy"},
-    {"id": "15", "name": "Smoothie Bowl", "description": "Acai smoothie bowl with toppings", "price": 11.99, "image": "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400", "category": "healthy"},
-    {"id": "16", "name": "Oatmeal", "description": "Steel-cut oats with fruits", "price": 7.99, "image": "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=400", "category": "healthy"},
-    {"id": "17", "name": "Avocado Toast", "description": "Smashed avocado on sourdough", "price": 12.99, "image": "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400", "category": "healthy"},
-    {"id": "18", "name": "Chia Pudding", "description": "Overnight chia with berries", "price": 8.99, "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400", "category": "healthy"},
+    # PARATHA
+    {"id": "13", "name": "Plain Paratha", "description": "Whole wheat layered flatbread", "price": 5.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha"},
+    {"id": "14", "name": "Aloo Paratha", "description": "Stuffed potato paratha", "price": 7.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha"},
+    {"id": "15", "name": "Paneer Paratha", "description": "Stuffed cottage cheese paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha"},
+    {"id": "16", "name": "Gobi Paratha", "description": "Stuffed cauliflower paratha", "price": 8.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha"},
+    {"id": "17", "name": "Mix Veg Paratha", "description": "Mixed vegetable stuffed paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha"},
+    {"id": "18", "name": "Laccha Paratha", "description": "Multi-layered crispy paratha", "price": 6.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha"},
     
-    # Beverages
-    {"id": "19", "name": "Fresh Orange Juice", "description": "Freshly squeezed orange juice", "price": 5.99, "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400", "category": "beverages"},
-    {"id": "20", "name": "Cappuccino", "description": "Italian cappuccino", "price": 4.99, "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400", "category": "beverages"},
-    {"id": "21", "name": "Latte", "description": "Smooth café latte", "price": 4.99, "image": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400", "category": "beverages"},
-    {"id": "22", "name": "Espresso", "description": "Double shot espresso", "price": 3.99, "image": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400", "category": "beverages"},
-    {"id": "23", "name": "Tea Selection", "description": "Premium tea varieties", "price": 3.99, "image": "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=400", "category": "beverages"},
-    {"id": "24", "name": "Hot Chocolate", "description": "Rich hot chocolate", "price": 4.99, "image": "https://images.unsplash.com/photo-1517578239113-b03992dcdd25?w=400", "category": "beverages"}
+    # WAFFLES
+    {"id": "19", "name": "Classic Waffle", "description": "Belgian waffle with maple syrup", "price": 10.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles"},
+    {"id": "20", "name": "Chocolate Waffle", "description": "Waffle with chocolate sauce", "price": 12.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles"},
+    {"id": "21", "name": "Berry Waffle", "description": "Waffle with fresh berries", "price": 13.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles"},
+    {"id": "22", "name": "Nutella Waffle", "description": "Waffle with Nutella spread", "price": 14.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles"},
+    {"id": "23", "name": "Savory Waffle", "description": "Waffle with cheese and herbs", "price": 11.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles"},
+    {"id": "24", "name": "Ice Cream Waffle", "description": "Waffle with vanilla ice cream", "price": 15.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles"}
 ]
 
 
