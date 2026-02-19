@@ -56,6 +56,10 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - [x] **Added GST breakdown: CGST 2.5% + SGST 2.5% = 5% total**
 - [x] **Added customer data capture: Name and Mobile number fields**
 - [x] **Full-screen table selector overlay with 100 tables (01-100) in grid layout**
+- [x] **Removed delete icon from cart - auto-remove when quantity reaches 0**
+- [x] **Added portion size display on menu cards (e.g., "200 gm • 168 cal")**
+- [x] **Added elegant touch sounds for 5-star hotel feel**
+- [x] **Added kiosk lock mode (prevents exit, fullscreen, admin unlock)**
 
 ## Known Issues
 - **P1 - Intermittent Order Placement Failure:** Previously reported but testing shows API is stable (5/5 tests passed)
