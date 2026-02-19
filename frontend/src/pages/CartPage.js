@@ -21,6 +21,13 @@ const CartPage = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const API = `${BACKEND_URL}/api`;
 
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, []);
+
   const handleTableNumberChange = (value) => {
     setTableNumber(value);
     setShowNumberPad(false);
