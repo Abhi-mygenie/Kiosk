@@ -27,6 +27,11 @@ api_router = APIRouter(prefix="/api")
 
 
 # Define Models
+class Variation(BaseModel):
+    id: str
+    name: str
+    price: float = 0.0
+
 class Category(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str
@@ -42,12 +47,14 @@ class MenuItem(BaseModel):
     image: str
     category: str
     available: bool = True
+    variations: List[Variation] = []
 
 class CartItem(BaseModel):
     item_id: str
     name: str
     price: float
     quantity: int
+    variations: List[str] = []
 
 class OrderCreate(BaseModel):
     table_number: str
@@ -71,6 +78,62 @@ class BrandingConfig(BaseModel):
     logo_url: Optional[str] = None
     restaurant_name: str = "Hotel Lumiere"
 
+
+# Common variations/add-ons
+DOSA_VARIATIONS = [
+    {"id": "plain", "name": "PLAIN", "price": 0.0},
+    {"id": "butter", "name": "BUTTER", "price": 1.0},
+    {"id": "cheese", "name": "CHEESE", "price": 2.0},
+    {"id": "masala", "name": "MASALA", "price": 2.0},
+    {"id": "masala_cheese", "name": "MASALA CHEESE", "price": 3.0},
+    {"id": "mysore", "name": "MYSORE", "price": 1.5},
+    {"id": "ghee", "name": "GHEE", "price": 1.5},
+    {"id": "crispy", "name": "CRISPY", "price": 0.0},
+    {"id": "podi", "name": "PODI", "price": 1.0},
+    {"id": "onion", "name": "ONION", "price": 1.0},
+    {"id": "chilli", "name": "CHILLI", "price": 0.5},
+    {"id": "no_chilli", "name": "NO CHILLI", "price": 0.0},
+    {"id": "paper", "name": "PAPER", "price": 0.5},
+    {"id": "ragi", "name": "RAGI", "price": 1.0},
+    {"id": "jain", "name": "JAIN", "price": 0.0},
+    {"id": "less_oil", "name": "LESS OIL", "price": 0.0},
+    {"id": "no_oil", "name": "NO OIL", "price": 0.0},
+]
+
+EGG_VARIATIONS = [
+    {"id": "plain", "name": "PLAIN", "price": 0.0},
+    {"id": "cheese", "name": "CHEESE", "price": 2.0},
+    {"id": "butter", "name": "BUTTER", "price": 1.0},
+    {"id": "onion", "name": "ONION", "price": 0.5},
+    {"id": "tomato", "name": "TOMATO", "price": 0.5},
+    {"id": "capsicum", "name": "CAPSICUM", "price": 1.0},
+    {"id": "mushroom", "name": "MUSHROOM", "price": 2.0},
+    {"id": "masala", "name": "MASALA", "price": 1.0},
+    {"id": "less_spicy", "name": "LESS SPICY", "price": 0.0},
+    {"id": "extra_spicy", "name": "EXTRA SPICY", "price": 0.0},
+]
+
+PARATHA_VARIATIONS = [
+    {"id": "plain", "name": "PLAIN", "price": 0.0},
+    {"id": "butter", "name": "BUTTER", "price": 1.0},
+    {"id": "ghee", "name": "GHEE", "price": 1.5},
+    {"id": "cheese", "name": "CHEESE", "price": 2.0},
+    {"id": "extra_stuffing", "name": "EXTRA STUFFING", "price": 2.0},
+    {"id": "jain", "name": "JAIN", "price": 0.0},
+    {"id": "less_oil", "name": "LESS OIL", "price": 0.0},
+    {"id": "no_oil", "name": "NO OIL", "price": 0.0},
+]
+
+WAFFLES_VARIATIONS = [
+    {"id": "plain", "name": "PLAIN", "price": 0.0},
+    {"id": "extra_chocolate", "name": "EXTRA CHOCOLATE", "price": 2.0},
+    {"id": "extra_cream", "name": "EXTRA CREAM", "price": 1.5},
+    {"id": "ice_cream", "name": "ICE CREAM", "price": 3.0},
+    {"id": "nuts", "name": "NUTS", "price": 1.5},
+    {"id": "honey", "name": "HONEY", "price": 1.0},
+    {"id": "maple_syrup", "name": "MAPLE SYRUP", "price": 1.0},
+    {"id": "berries", "name": "BERRIES", "price": 2.0},
+]
 
 # Mock data for menu categories
 CATEGORIES = [
@@ -99,36 +162,36 @@ CATEGORIES = [
 # Mock data for menu items
 MENU_ITEMS = [
     # DOSA
-    {"id": "1", "name": "Plain Dosa", "description": "Classic South Indian crispy dosa", "price": 8.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa"},
-    {"id": "2", "name": "Masala Dosa", "description": "Crispy dosa filled with spiced potato", "price": 10.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa"},
-    {"id": "3", "name": "Mysore Masala Dosa", "description": "Spicy red chutney dosa with potato", "price": 11.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa"},
-    {"id": "4", "name": "Ghee Roast Dosa", "description": "Crispy dosa roasted in pure ghee", "price": 12.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa"},
-    {"id": "5", "name": "Cheese Dosa", "description": "Dosa topped with melted cheese", "price": 13.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa"},
-    {"id": "6", "name": "Rava Dosa", "description": "Crispy semolina dosa", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa"},
+    {"id": "1", "name": "Plain Dosa", "description": "Classic South Indian crispy dosa", "price": 8.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa", "variations": DOSA_VARIATIONS},
+    {"id": "2", "name": "Masala Dosa", "description": "Crispy dosa filled with spiced potato", "price": 10.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa", "variations": DOSA_VARIATIONS},
+    {"id": "3", "name": "Mysore Masala Dosa", "description": "Spicy red chutney dosa with potato", "price": 11.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa", "variations": DOSA_VARIATIONS},
+    {"id": "4", "name": "Ghee Roast Dosa", "description": "Crispy dosa roasted in pure ghee", "price": 12.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa", "variations": DOSA_VARIATIONS},
+    {"id": "5", "name": "Cheese Dosa", "description": "Dosa topped with melted cheese", "price": 13.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa", "variations": DOSA_VARIATIONS},
+    {"id": "6", "name": "Rava Dosa", "description": "Crispy semolina dosa", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa", "variations": DOSA_VARIATIONS},
     
     # EGG
-    {"id": "7", "name": "Scrambled Eggs", "description": "Fluffy scrambled eggs with herbs", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg"},
-    {"id": "8", "name": "Omelette", "description": "Three-egg omelette with vegetables", "price": 8.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg"},
-    {"id": "9", "name": "Eggs Benedict", "description": "Poached eggs on English muffin", "price": 12.99, "image": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400", "category": "egg"},
-    {"id": "10", "name": "Boiled Eggs", "description": "Perfectly boiled eggs (2 pcs)", "price": 5.99, "image": "https://images.unsplash.com/photo-1587486937736-e6c447887f99?w=400", "category": "egg"},
-    {"id": "11", "name": "Egg Bhurji", "description": "Indian style spiced scrambled eggs", "price": 9.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg"},
-    {"id": "12", "name": "Bull's Eye", "description": "Fried eggs sunny side up (2 pcs)", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg"},
+    {"id": "7", "name": "Scrambled Eggs", "description": "Fluffy scrambled eggs with herbs", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg", "variations": EGG_VARIATIONS},
+    {"id": "8", "name": "Omelette", "description": "Three-egg omelette with vegetables", "price": 8.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg", "variations": EGG_VARIATIONS},
+    {"id": "9", "name": "Eggs Benedict", "description": "Poached eggs on English muffin", "price": 12.99, "image": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400", "category": "egg", "variations": EGG_VARIATIONS},
+    {"id": "10", "name": "Boiled Eggs", "description": "Perfectly boiled eggs (2 pcs)", "price": 5.99, "image": "https://images.unsplash.com/photo-1587486937736-e6c447887f99?w=400", "category": "egg", "variations": EGG_VARIATIONS},
+    {"id": "11", "name": "Egg Bhurji", "description": "Indian style spiced scrambled eggs", "price": 9.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg", "variations": EGG_VARIATIONS},
+    {"id": "12", "name": "Bull's Eye", "description": "Fried eggs sunny side up (2 pcs)", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg", "variations": EGG_VARIATIONS},
     
     # PARATHA
-    {"id": "13", "name": "Plain Paratha", "description": "Whole wheat layered flatbread", "price": 5.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha"},
-    {"id": "14", "name": "Aloo Paratha", "description": "Stuffed potato paratha", "price": 7.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha"},
-    {"id": "15", "name": "Paneer Paratha", "description": "Stuffed cottage cheese paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha"},
-    {"id": "16", "name": "Gobi Paratha", "description": "Stuffed cauliflower paratha", "price": 8.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha"},
-    {"id": "17", "name": "Mix Veg Paratha", "description": "Mixed vegetable stuffed paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha"},
-    {"id": "18", "name": "Laccha Paratha", "description": "Multi-layered crispy paratha", "price": 6.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha"},
+    {"id": "13", "name": "Plain Paratha", "description": "Whole wheat layered flatbread", "price": 5.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS},
+    {"id": "14", "name": "Aloo Paratha", "description": "Stuffed potato paratha", "price": 7.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS},
+    {"id": "15", "name": "Paneer Paratha", "description": "Stuffed cottage cheese paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS},
+    {"id": "16", "name": "Gobi Paratha", "description": "Stuffed cauliflower paratha", "price": 8.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS},
+    {"id": "17", "name": "Mix Veg Paratha", "description": "Mixed vegetable stuffed paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS},
+    {"id": "18", "name": "Laccha Paratha", "description": "Multi-layered crispy paratha", "price": 6.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS},
     
     # WAFFLES
-    {"id": "19", "name": "Classic Waffle", "description": "Belgian waffle with maple syrup", "price": 10.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles"},
-    {"id": "20", "name": "Chocolate Waffle", "description": "Waffle with chocolate sauce", "price": 12.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles"},
-    {"id": "21", "name": "Berry Waffle", "description": "Waffle with fresh berries", "price": 13.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles"},
-    {"id": "22", "name": "Nutella Waffle", "description": "Waffle with Nutella spread", "price": 14.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles"},
-    {"id": "23", "name": "Savory Waffle", "description": "Waffle with cheese and herbs", "price": 11.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles"},
-    {"id": "24", "name": "Ice Cream Waffle", "description": "Waffle with vanilla ice cream", "price": 15.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles"}
+    {"id": "19", "name": "Classic Waffle", "description": "Belgian waffle with maple syrup", "price": 10.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS},
+    {"id": "20", "name": "Chocolate Waffle", "description": "Waffle with chocolate sauce", "price": 12.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS},
+    {"id": "21", "name": "Berry Waffle", "description": "Waffle with fresh berries", "price": 13.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS},
+    {"id": "22", "name": "Nutella Waffle", "description": "Waffle with Nutella spread", "price": 14.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS},
+    {"id": "23", "name": "Savory Waffle", "description": "Waffle with cheese and herbs", "price": 11.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS},
+    {"id": "24", "name": "Ice Cream Waffle", "description": "Waffle with vanilla ice cream", "price": 15.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS}
 ]
 
 

@@ -7,33 +7,45 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (item) => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(cartItem => cartItem.id === item.id);
+      // Create a unique key based on item id and variations
+      const itemKey = `${item.id}_${item.variations?.sort().join('_') || 'plain'}`;
+      const existingItemIndex = prevCart.findIndex(
+        cartItem => `${cartItem.id}_${cartItem.variations?.sort().join('_') || 'plain'}` === itemKey
+      );
       
-      if (existingItem) {
-        return prevCart.map(cartItem =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
+      if (existingItemIndex !== -1) {
+        // Item with same variations exists, update quantity
+        const newCart = [...prevCart];
+        newCart[existingItemIndex] = {
+          ...newCart[existingItemIndex],
+          quantity: newCart[existingItemIndex].quantity + (item.quantity || 1)
+        };
+        return newCart;
       }
       
-      return [...prevCart, { ...item, quantity: 1 }];
+      // New item with unique variations
+      return [...prevCart, { 
+        ...item, 
+        cartId: itemKey,
+        quantity: item.quantity || 1,
+        variations: item.variations || []
+      }];
     });
   };
 
-  const removeFromCart = (itemId) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== itemId));
+  const removeFromCart = (cartId) => {
+    setCart(prevCart => prevCart.filter(item => item.cartId !== cartId));
   };
 
-  const updateQuantity = (itemId, quantity) => {
+  const updateQuantity = (cartId, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(itemId);
+      removeFromCart(cartId);
       return;
     }
     
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === itemId ? { ...item, quantity } : item
+        item.cartId === cartId ? { ...item, quantity } : item
       )
     );
   };
@@ -43,7 +55,10 @@ export const CartProvider = ({ children }) => {
   };
 
   const getTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => {
+      const itemPrice = item.totalPrice || item.price;
+      return total + (itemPrice * item.quantity);
+    }, 0);
   };
 
   const getItemCount = () => {
