@@ -9,16 +9,50 @@ import { toast } from 'sonner';
 const CartPage = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity, getTotal, getItemCount, clearCart } = useCart();
-  const [showNumberPad, setShowNumberPad] = useState(false);
   const [tableNumber, setTableNumber] = useState('');
+  const [tableInput, setTableInput] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [countdown, setCountdown] = useState(15);
-  const countdownRef = React.useRef(null);
+  const countdownRef = useRef(null);
+  const inputRef = useRef(null);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const API = `${BACKEND_URL}/api`;
+
+  // Generate table numbers 1-150
+  const allTables = useMemo(() => 
+    Array.from({ length: 150 }, (_, i) => String(i + 1)), []
+  );
+
+  // Filter suggestions based on input
+  const suggestions = useMemo(() => {
+    if (!tableInput) return [];
+    return allTables.filter(table => 
+      table.startsWith(tableInput)
+    ).slice(0, 8); // Show max 8 suggestions
+  }, [tableInput, allTables]);
+
+  const handleTableInputChange = (value) => {
+    // Only allow numbers
+    const numericValue = value.replace(/\D/g, '');
+    setTableInput(numericValue);
+    setShowSuggestions(numericValue.length > 0);
+  };
+
+  const handleSelectTable = (table) => {
+    setTableNumber(table);
+    setTableInput(table);
+    setShowSuggestions(false);
+  };
+
+  const handleClearTable = () => {
+    setTableNumber('');
+    setTableInput('');
+    setShowSuggestions(false);
+  };
 
   // Cleanup interval on unmount
   useEffect(() => {
@@ -26,11 +60,6 @@ const CartPage = () => {
       if (countdownRef.current) clearInterval(countdownRef.current);
     };
   }, []);
-
-  const handleTableNumberChange = (value) => {
-    setTableNumber(value);
-    setShowNumberPad(false);
-  };
 
   const handlePlaceOrder = async () => {
     if (!tableNumber || cart.length === 0) return;
