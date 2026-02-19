@@ -62,6 +62,49 @@ const CartPage = () => {
     }
   };
 
+  if (orderSuccess) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-[#F9F8F6]">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="text-center bg-white p-16 rounded-sm shadow-[0_8px_30px_-2px_rgba(0,0,0,0.1)]"
+          data-testid="order-success-message"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+          >
+            <CheckCircle size={120} className="text-[#2D6A4F] mx-auto mb-6" />
+          </motion.div>
+          
+          <h1 className="text-5xl font-serif font-medium mb-4">Order Confirmed!</h1>
+          <p className="text-xl text-muted-foreground mb-2">Table Number: {tableNumber}</p>
+          <p className="text-lg text-muted-foreground mb-8">Order ID: {orderId.slice(0, 8).toUpperCase()}</p>
+          
+          <div className="bg-muted p-6 rounded-sm mb-8">
+            <p className="text-lg">Your order has been sent to the kitchen</p>
+            <p className="text-muted-foreground mt-2">Please proceed to Table {tableNumber}</p>
+          </div>
+          
+          <button
+            onClick={() => {
+              setOrderSuccess(false);
+              setTableNumber('');
+              navigate('/');
+            }}
+            data-testid="back-to-home-button"
+            className="bg-accent text-accent-foreground px-12 py-4 rounded-sm text-xl font-medium hover:bg-accent/90 transition-all active:scale-98 touch-target"
+          >
+            Start New Order
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (cart.length === 0) {
     return (
       <div className="h-screen flex flex-col items-center justify-center">
