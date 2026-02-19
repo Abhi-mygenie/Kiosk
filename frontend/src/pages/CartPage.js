@@ -78,6 +78,11 @@ const CartPage = () => {
                     + {item.variations.join(', ')}
                   </p>
                 )}
+                {item.specialInstructions && (
+                  <p className="text-sm text-muted-foreground italic mb-1">
+                    Note: {item.specialInstructions}
+                  </p>
+                )}
                 <p className="text-muted-foreground">
                   ₹{(item.totalPrice || item.price).toFixed(2)} each
                 </p>
