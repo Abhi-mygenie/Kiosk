@@ -58,12 +58,12 @@ const CartPage = () => {
         <div className="max-w-4xl space-y-4">
           {cart.map((item) => (
             <motion.div
-              key={item.id}
+              key={item.cartId}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               className="bg-card p-6 rounded-sm border border-border flex items-center space-x-6"
-              data-testid={`cart-item-${item.id}`}
+              data-testid={`cart-item-${item.cartId}`}
             >
               <img
                 src={item.image}
@@ -73,25 +73,32 @@ const CartPage = () => {
               
               <div className="flex-1">
                 <h3 className="text-xl font-serif font-medium">{item.name}</h3>
-                <p className="text-muted-foreground">${item.price.toFixed(2)} each</p>
+                {item.variations && item.variations.length > 0 && (
+                  <p className="text-sm text-accent mb-1">
+                    + {item.variations.join(', ')}
+                  </p>
+                )}
+                <p className="text-muted-foreground">
+                  ${(item.totalPrice || item.price).toFixed(2)} each
+                </p>
               </div>
 
               <div className="flex items-center space-x-4">
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                  data-testid={`decrease-quantity-${item.id}`}
+                  onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
+                  data-testid={`decrease-quantity-${item.cartId}`}
                   className="touch-target w-12 h-12 bg-muted hover:bg-muted/80 rounded-sm flex items-center justify-center transition-all active:scale-95"
                 >
                   <Minus size={20} />
                 </button>
                 
-                <span className="text-2xl font-medium w-12 text-center" data-testid={`quantity-${item.id}`}>
+                <span className="text-2xl font-medium w-12 text-center" data-testid={`quantity-${item.cartId}`}>
                   {item.quantity}
                 </span>
                 
                 <button
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  data-testid={`increase-quantity-${item.id}`}
+                  onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
+                  data-testid={`increase-quantity-${item.cartId}`}
                   className="touch-target w-12 h-12 bg-muted hover:bg-muted/80 rounded-sm flex items-center justify-center transition-all active:scale-95"
                 >
                   <Plus size={20} />
@@ -99,12 +106,12 @@ const CartPage = () => {
               </div>
 
               <div className="text-2xl font-medium w-32 text-right">
-                ${(item.price * item.quantity).toFixed(2)}
+                ${((item.totalPrice || item.price) * item.quantity).toFixed(2)}
               </div>
 
               <button
-                onClick={() => removeFromCart(item.id)}
-                data-testid={`remove-item-${item.id}`}
+                onClick={() => removeFromCart(item.cartId)}
+                data-testid={`remove-item-${item.cartId}`}
                 className="touch-target w-12 h-12 bg-destructive/10 hover:bg-destructive/20 text-destructive rounded-sm flex items-center justify-center transition-all active:scale-95"
               >
                 <Trash2 size={20} />
