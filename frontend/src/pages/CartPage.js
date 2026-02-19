@@ -9,20 +9,21 @@ const CartPage = () => {
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity, getTotal, getItemCount } = useCart();
   const [showNumberPad, setShowNumberPad] = useState(false);
+  const [tableNumber, setTableNumber] = useState('');
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
-    setShowNumberPad(true);
+    if (!tableNumber) {
+      setShowNumberPad(true);
+      return;
+    }
+    navigate('/checkout', { state: { tableNumber } });
   };
 
-  const handleTableNumberSubmit = (tableNumber) => {
-    if (tableNumber) {
-      navigate('/checkout', { state: { tableNumber } });
-    }
+  const handleTableNumberChange = (value) => {
+    setTableNumber(value);
     setShowNumberPad(false);
   };
-
-  const [tableNumber, setTableNumber] = useState('');
 
   if (cart.length === 0) {
     return (
