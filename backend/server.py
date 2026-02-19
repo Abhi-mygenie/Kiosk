@@ -73,8 +73,8 @@ class Order(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class BrandingConfig(BaseModel):
-    primary_color: str = "#1A1A1A"
-    accent_color: str = "#C5A059"
+    primary_color: str = "#177DAA"
+    accent_color: str = "#62B5E5"
     logo_url: Optional[str] = None
     restaurant_name: str = "Hotel Lumiere"
 
