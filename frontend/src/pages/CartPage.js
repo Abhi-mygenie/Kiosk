@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Plus, Minus, X, CheckCircle } from 'lucide-react';
+import { Trash2, Plus, Minus, X, CheckCircle, Search } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
-import NumberPad from '@/components/ui/NumberPad';
 import axios from 'axios';
 import { toast } from 'sonner';
 
