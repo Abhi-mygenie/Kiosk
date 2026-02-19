@@ -38,10 +38,29 @@ const MenuItemCard = ({ item }) => {
         
         <div className="p-4">
           <h3 className="text-xl font-serif font-medium mb-1">{item.name}</h3>
-          <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
+          <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
+          
+          {/* Allergen badges */}
+          {item.allergens && item.allergens.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {item.allergens.map((allergen) => (
+                <span
+                  key={allergen}
+                  className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full font-medium"
+                >
+                  {allergen}
+                </span>
+              ))}
+            </div>
+          )}
           
           <div className="flex items-center justify-between">
-            <span className="text-2xl font-medium">₹{item.price.toFixed(2)}</span>
+            <div>
+              <span className="text-2xl font-medium">₹{item.price.toFixed(2)}</span>
+              {item.calories && (
+                <p className="text-xs text-muted-foreground mt-1">{item.calories} cal</p>
+              )}
+            </div>
             <button
               onClick={handleAddClick}
               data-testid={`add-to-cart-${item.id}`}
