@@ -16,6 +16,7 @@ const CartPage = () => {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [countdown, setCountdown] = useState(15);
+  const countdownRef = React.useRef(null);
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const API = `${BACKEND_URL}/api`;
