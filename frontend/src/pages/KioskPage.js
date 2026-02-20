@@ -69,18 +69,6 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Allergens */}
-          {item.allergens?.length > 0 && (
-            <div className="mb-6 p-3 bg-red-50 rounded-sm">
-              <p className="text-xs text-red-700 font-medium mb-2">Allergen Information</p>
-              <div className="flex flex-wrap gap-2">
-                {item.allergens.map(a => (
-                  <span key={a} className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">{a}</span>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Variations */}
           {item.variations?.length > 0 && (
             <div className="mb-6">
