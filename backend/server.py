@@ -662,6 +662,9 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
             "cust_name": order_input.customer_name or "",
             "restaurant_name": POS_RESTAURANT_NAME,
             "service_tax": 0,
+            "service_gst_tax_amount": 0,
+            "round_up": 0,
+            "tip_tax_amount": 0,
             "transaction_id": "",
             "room_id": ""
         }
