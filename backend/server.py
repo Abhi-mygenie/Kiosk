@@ -93,6 +93,7 @@ class Order(BaseModel):
     model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     table_number: str
+    table_id: Optional[str] = None
     items: List[CartItem]
     subtotal: Optional[float] = None
     discount: float = 0
@@ -103,6 +104,7 @@ class Order(BaseModel):
     customer_name: Optional[str] = None
     customer_mobile: Optional[str] = None
     status: str = "pending"
+    pos_order_id: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class BrandingConfig(BaseModel):
