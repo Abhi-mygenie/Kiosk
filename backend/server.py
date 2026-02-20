@@ -569,10 +569,10 @@ async def get_tables():
     pos_tables = await fetch_pos_tables()
     
     if pos_tables:
-        # Transform to simplified format - only include Tables (rtype = "Table"), not Rooms
+        # Transform to simplified format - only include Tables (rtype = "TB"), not Rooms (RM)
         tables = []
         for table in pos_tables:
-            if table.get("status") == 1 and table.get("rtype") == "Table":  # Only active Tables
+            if table.get("status") == 1 and table.get("rtype") == "TB":  # Only active Tables
                 tables.append({
                     "id": str(table.get("id")),
                     "table_no": table.get("table_no", ""),
