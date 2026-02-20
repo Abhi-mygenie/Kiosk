@@ -3,24 +3,39 @@
 ## Original Problem Statement
 Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. Target device: 21.5" Windows kiosk (Core i3, 8GB RAM, 1920x1080 touch screen).
 
-## Current Status: MVP COMPLETE + Login System Ready for POS Integration
+## Current Status: MVP COMPLETE + Login System + Brand Styling Applied
 
 ## Tech Stack
 - **Frontend:** React Web App (runs in Chrome kiosk mode)
 - **Backend:** FastAPI + MongoDB
 - **Deployment:** Windows kiosk with Chrome fullscreen
 
+## Brand Guidelines Applied (Feb 20, 2025)
+
+### Color Palette
+- **Blue Hero:** #62B5E5 - Primary buttons, active states, highlights
+- **Blue Light:** #78CAFF - Hover states, light accents
+- **Blue Medium:** #177DAA - Button hover, secondary actions
+- **Blue Dark:** #06293F - Headings, prices, dark text
+
+### Typography
+- **Headings:** Big Shoulders Display (font-heading)
+- **Body:** Montserrat (font-sans)
+
+### Branding
+- Hyatt Centric Candolim Goa logo
+- "Powered by MyGenie" logo in footer
+
 ## What's Been Built
 
-### Authentication (NEW - Feb 20, 2025)
-- Clean, centered login page with Hyatt branding
-- Username and password fields with icons
+### Authentication
+- Clean login page with Hyatt branding + MyGenie footer logo
+- Username/password fields with icons
 - Password visibility toggle
-- "Sign In" button with loading state
-- "Powered by My Geneie" footer branding
-- Session persistence (stays logged in until manual logout)
+- Sign In button with blue hero color
+- Session persistence until manual logout
 - Logout button in left sidebar with confirmation dialog
-- Mock authentication (ready for POS API integration)
+- Mock authentication ready for POS API integration
 
 ### UI/UX Features
 - 3-column single-screen layout (Categories | Menu | Cart)
@@ -44,12 +59,6 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - Admin unlock (5 taps on top-left corner)
 - Auto-hide cursor after 3 seconds
 
-### Cart Features
-- No delete icon - minus button auto-removes at quantity 0
-- Live GST calculation
-- Coupon discount display
-- Visual indicator when item is added (border + badge on menu card)
-
 ## Pending: POS API Integration
 
 ### What Will Be Connected:
@@ -59,73 +68,17 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 4. **Orders API** - Send placed orders to POS
 
 ### Details Needed from User:
-1. **POS API Base URL:** `https://your-pos.com/api/v1`
-2. **Authentication:** API Key / OAuth / Basic Auth
-3. **Login Endpoint:** `POST /auth/login`
-4. **Menu Endpoint:** `GET /menu`
-5. **Order Endpoint:** `POST /orders`
+1. POS API Base URL
+2. Authentication method (API Key / OAuth / Basic Auth)
+3. Login Endpoint
+4. Menu Endpoint
+5. Order Endpoint
 6. Sample API response formats
-
-### Planned API Structure:
-
-**Login API:**
-```json
-POST /auth/login
-Request: { "username": "admin", "password": "****" }
-Response: { "token": "jwt...", "user": { "id": "...", "name": "..." } }
-```
-
-**Menu API (GET from POS):**
-```json
-{
-  "categories": [{ "id": "dosa", "name": "DOSA", "display_order": 1 }],
-  "items": [{
-    "id": "item_001",
-    "category_id": "dosa",
-    "name": "Plain Dosa",
-    "price": 9.00,
-    "portion_size": "200 gm",
-    "calories": 168,
-    "allergens": ["Gluten"],
-    "variations": [{ "id": "var_001", "name": "BUTTER", "price": 1.00 }]
-  }]
-}
-```
-
-**Order API (POST to POS):**
-```json
-{
-  "order_id": "ORD-20250219-001234",
-  "kiosk_id": "KIOSK-01",
-  "table_number": "42",
-  "customer": { "name": "Rahul", "mobile": "9876543210" },
-  "items": [{
-    "item_id": "item_001",
-    "item_name": "Plain Dosa",
-    "quantity": 2,
-    "unit_price": 9.00,
-    "variations": [{ "name": "CHEESE", "price": 2.00 }],
-    "item_total": 22.00
-  }],
-  "pricing": {
-    "subtotal": 33.00,
-    "discount": 3.30,
-    "coupon_code": "WELCOME10",
-    "cgst": 0.74,
-    "sgst": 0.74,
-    "grand_total": 31.18
-  },
-  "order_time": "2025-02-19T18:30:45Z"
-}
-```
 
 ## Backlog Tasks
 
 ### P0 - High Priority
 - [ ] POS API integration - BLOCKED waiting for API credentials
-  - Login endpoint
-  - Menu sync
-  - Order posting
 
 ### P1 - Medium Priority
 - [ ] Thermal receipt printing for Windows kiosk
@@ -139,8 +92,8 @@ Response: { "token": "jwt...", "user": { "id": "...", "name": "..." } }
 - `/app/frontend/src/pages/KioskPage.js` - Main kiosk UI
 - `/app/frontend/src/contexts/AuthContext.js` - Authentication state
 - `/app/frontend/src/contexts/CartContext.js` - Cart state
-- `/app/frontend/src/utils/touchSound.js` - Sound system
-- `/app/frontend/src/utils/kioskLock.js` - Kiosk lock
+- `/app/frontend/src/index.css` - Brand color CSS variables
+- `/app/frontend/tailwind.config.js` - Brand color definitions
 - `/app/backend/server.py` - API endpoints
 
 ## Preview URL
