@@ -670,8 +670,8 @@ const KioskPage = () => {
             >
               {tableNumber ? (
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-serif font-medium">Table {tableNumber}</span>
-                  <span className="text-sm text-accent">Tap to change</span>
+                  <span className="text-2xl font-heading font-bold text-blue-dark">Table {tableNumber}</span>
+                  <span className="text-sm text-blue-hero">Tap to change</span>
                 </div>
               ) : (
                 <span className="text-muted-foreground">Tap to select table</span>
