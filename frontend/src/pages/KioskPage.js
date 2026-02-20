@@ -13,24 +13,85 @@ const API = `${BACKEND_URL}/api`;
 
 // Customization Modal Component
 const CustomizationModal = ({ item, onClose, onAddToCart }) => {
-  const [selectedVariations, setSelectedVariations] = useState([]);
+  // Track selections per group for proper single/multiple handling
+  const [groupSelections, setGroupSelections] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState('');
 
-  const toggleVariation = (variation) => {
-    setSelectedVariations(prev => 
-      prev.find(v => v.id === variation.id)
-        ? prev.filter(v => v.id !== variation.id)
-        : [...prev, variation]
-    );
+  // Handle variation selection based on group type
+  const handleVariationSelect = (group, option) => {
+    touchSound.playTap();
+    
+    setGroupSelections(prev => {
+      const currentGroupSelections = prev[group.group_name] || [];
+      const isSelected = currentGroupSelections.find(v => v.id === option.id);
+      
+      if (group.type === 'single') {
+        // Single selection: replace any existing selection
+        if (isSelected) {
+          // Deselect if already selected (only if not required)
+          return group.required 
+            ? prev 
+            : { ...prev, [group.group_name]: [] };
+        }
+        return { ...prev, [group.group_name]: [option] };
+      } else {
+        // Multiple selection: toggle
+        if (isSelected) {
+          return { ...prev, [group.group_name]: currentGroupSelections.filter(v => v.id !== option.id) };
+        }
+        return { ...prev, [group.group_name]: [...currentGroupSelections, option] };
+      }
+    });
   };
 
+  // Check if option is selected
+  const isOptionSelected = (groupName, optionId) => {
+    const selections = groupSelections[groupName] || [];
+    return selections.some(v => v.id === optionId);
+  };
+
+  // Get all selected variations flattened
+  const getAllSelectedVariations = () => {
+    return Object.values(groupSelections).flat();
+  };
+
+  // Calculate total price
   const calculateTotal = () => {
-    const variationTotal = selectedVariations.reduce((sum, v) => sum + v.price, 0);
+    const variationTotal = getAllSelectedVariations().reduce((sum, v) => sum + v.price, 0);
     return (item.price + variationTotal) * quantity;
   };
 
+  // Check if all required groups have selections
+  const hasRequiredSelections = () => {
+    if (!item.variation_groups) return true;
+    
+    return item.variation_groups.every(group => {
+      if (!group.required) return true;
+      const selections = groupSelections[group.group_name] || [];
+      return selections.length > 0;
+    });
+  };
+
+  // Get missing required groups for error message
+  const getMissingRequiredGroups = () => {
+    if (!item.variation_groups) return [];
+    
+    return item.variation_groups
+      .filter(group => group.required && !(groupSelections[group.group_name]?.length > 0))
+      .map(group => group.group_name);
+  };
+
   const handleAddToCart = () => {
+    const selectedVariations = getAllSelectedVariations();
+    
+    // Check required selections
+    if (!hasRequiredSelections()) {
+      const missing = getMissingRequiredGroups();
+      alert(`Please select: ${missing.join(', ')}`);
+      return;
+    }
+    
     onAddToCart({
       ...item,
       variations: selectedVariations.map(v => v.name),
@@ -72,20 +133,27 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
           {/* Variation Groups */}
           {item.variation_groups?.length > 0 && item.variation_groups.map((group, groupIndex) => (
             <div key={groupIndex} className="mb-6">
-              <p className="text-sm font-semibold mb-3 uppercase">{group.group_name} <span className="text-muted-foreground font-normal">(Optional)</span></p>
+              <p className="text-sm font-semibold mb-3 uppercase">
+                {group.group_name}{' '}
+                <span className={`font-normal ${group.required ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  ({group.required ? 'Required' : 'Optional'})
+                </span>
+                {group.type === 'single' && <span className="text-xs text-muted-foreground ml-2">• Select one</span>}
+                {group.type === 'multiple' && <span className="text-xs text-muted-foreground ml-2">• Select multiple</span>}
+              </p>
               <div className="grid grid-cols-2 gap-2">
-                {group.options.map(v => (
+                {group.options.map(option => (
                   <button
-                    key={v.id}
-                    onClick={() => { touchSound.playTap(); toggleVariation(v); }}
+                    key={option.id}
+                    onClick={() => handleVariationSelect(group, option)}
                     className={`p-3 rounded-sm text-left text-sm transition-all ${
-                      selectedVariations.find(sv => sv.id === v.id)
+                      isOptionSelected(group.group_name, option.id)
                         ? 'bg-blue-hero text-white'
                         : 'bg-muted hover:bg-blue-light/20'
                     }`}
                   >
-                    <span className="font-medium">{v.name}</span>
-                    {v.price > 0 && <span className="text-xs ml-1">+₹{v.price}</span>}
+                    <span className="font-medium">{option.name}</span>
+                    {option.price > 0 && <span className="text-xs ml-1">+₹{option.price}</span>}
                   </button>
                 ))}
               </div>
@@ -100,9 +168,9 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
                 {item.variations.map(v => (
                   <button
                     key={v.id}
-                    onClick={() => { touchSound.playTap(); toggleVariation(v); }}
+                    onClick={() => handleVariationSelect({ group_name: 'Choice', type: 'multiple', required: false }, v)}
                     className={`p-3 rounded-sm text-left text-sm transition-all ${
-                      selectedVariations.find(sv => sv.id === v.id)
+                      isOptionSelected('Choice', v.id)
                         ? 'bg-blue-hero text-white'
                         : 'bg-muted hover:bg-blue-light/20'
                     }`}
@@ -158,9 +226,14 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
           </div>
           <button
             onClick={() => { touchSound.playAddToCart(); handleAddToCart(); }}
-            className="w-full bg-blue-hero text-white py-4 rounded-sm text-lg font-semibold hover:bg-blue-medium transition-all"
+            disabled={!hasRequiredSelections()}
+            className={`w-full py-4 rounded-sm text-lg font-semibold transition-all ${
+              hasRequiredSelections()
+                ? 'bg-blue-hero text-white hover:bg-blue-medium'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
-            Add to Cart
+            {hasRequiredSelections() ? 'Add to Cart' : `Select Required Options`}
           </button>
         </div>
       </motion.div>
