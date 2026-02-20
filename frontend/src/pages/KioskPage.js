@@ -59,9 +59,9 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
       >
         <div className="p-6 border-b border-border flex justify-between items-start">
           <div>
-            <p className="text-sm text-blue-hero uppercase tracking-wide mb-1 font-medium">{item.category}</p>
+            <p className="text-sm text-blue-hero uppercase tracking-wide mb-1 font-medium">{item.category_name || item.category}</p>
             <h2 className="text-2xl font-heading font-semibold uppercase tracking-wide text-blue-dark">{item.name}</h2>
-            <p className="text-muted-foreground text-sm mt-1">{item.description}</p>
+            {item.description && <p className="text-muted-foreground text-sm mt-1">{item.description}</p>}
           </div>
           <button onClick={onClose} className="p-2 hover:bg-muted rounded-sm">
             <X size={24} />
