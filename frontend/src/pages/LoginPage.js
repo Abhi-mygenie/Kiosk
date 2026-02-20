@@ -139,9 +139,9 @@ const LoginPage = () => {
         className="mt-12 text-center"
       >
         <img 
-          src="https://customer-assets.emergentagent.com/job_f69ca03e-7b5d-4a09-a9a8-bcdd3f3dcbc1/artifacts/gzag4jve_Screenshot%202026-02-20%20at%204.43.42%E2%80%AFPM.png" 
+          src="https://customer-assets.emergentagent.com/job_f69ca03e-7b5d-4a09-a9a8-bcdd3f3dcbc1/artifacts/c544c78k_mygenie_logo.svg" 
           alt="Powered by MyGenie" 
-          className="h-12 mx-auto"
+          className="h-10 mx-auto"
         />
       </motion.div>
     </div>
