@@ -259,6 +259,7 @@ const KioskPage = () => {
   const [customerMobile, setCustomerMobile] = useState('');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [editingInstructions, setEditingInstructions] = useState(null); // For editing instructions popup
 
   // Initialize kiosk lock on mount
   useEffect(() => {
