@@ -100,7 +100,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
           {/* Variations */}
           {item.variations?.length > 0 && (
             <div className="mb-6">
-              <p className="text-sm font-medium mb-3">CHOICE <span className="text-muted-foreground font-normal">(Optional)</span></p>
+              <p className="text-sm font-semibold mb-3 uppercase">Choice <span className="text-muted-foreground font-normal">(Optional)</span></p>
               <div className="grid grid-cols-2 gap-2">
                 {item.variations.map(v => (
                   <button
@@ -108,8 +108,8 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
                     onClick={() => { touchSound.playTap(); toggleVariation(v); }}
                     className={`p-3 rounded-sm text-left text-sm transition-all ${
                       selectedVariations.find(sv => sv.id === v.id)
-                        ? 'bg-accent text-accent-foreground'
-                        : 'bg-muted hover:bg-muted/80'
+                        ? 'bg-blue-hero text-white'
+                        : 'bg-muted hover:bg-blue-light/20'
                     }`}
                   >
                     <span className="font-medium">{v.name}</span>
@@ -122,18 +122,18 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
 
           {/* Quantity */}
           <div className="flex items-center justify-between mb-6">
-            <span className="font-medium">Quantity</span>
+            <span className="font-semibold">Quantity</span>
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => { touchSound.playClick(); setQuantity(Math.max(1, quantity - 1)); }}
-                className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-muted/80"
+                className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-blue-light/20"
               >
                 <Minus size={18} />
               </button>
-              <span className="text-2xl font-medium w-8 text-center">{quantity}</span>
+              <span className="text-2xl font-semibold w-8 text-center text-blue-dark">{quantity}</span>
               <button
                 onClick={() => { touchSound.playClick(); setQuantity(quantity + 1); }}
-                className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-muted/80"
+                className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-blue-light/20"
               >
                 <Plus size={18} />
               </button>
