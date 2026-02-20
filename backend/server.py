@@ -250,6 +250,48 @@ async def get_branding():
     return BrandingConfig()
 
 
+# Login Models
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class LoginResponse(BaseModel):
+    token: str
+    role_name: Optional[str] = None
+    role: List[str] = []
+    firebase_token: Optional[str] = None
+    first_login: Optional[str] = None
+
+@api_router.post("/auth/login", response_model=LoginResponse)
+async def login(request: LoginRequest):
+    """Proxy login request to POS API"""
+    try:
+        async with httpx.AsyncClient() as client_http:
+            response = await client_http.post(
+                f"{POS_API_BASE_URL}/auth/vendoremployee/login",
+                json={"email": request.email, "password": request.password},
+                headers={"Content-Type": "application/json"},
+                timeout=30.0
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return LoginResponse(
+                    token=data.get("token", ""),
+                    role_name=data.get("role_name"),
+                    role=data.get("role", []),
+                    firebase_token=data.get("firebase_token"),
+                    first_login=data.get("first_login")
+                )
+            elif response.status_code == 401:
+                raise HTTPException(status_code=401, detail="Invalid email or password")
+            else:
+                raise HTTPException(status_code=response.status_code, detail="Login failed")
+    except httpx.RequestError as e:
+        logger.error(f"POS API request error: {e}")
+        raise HTTPException(status_code=503, detail="Unable to connect to authentication service")
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
