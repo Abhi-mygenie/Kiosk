@@ -31,13 +31,13 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-8 overflow-auto">
       {/* Main Content */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full max-w-md my-auto"
       >
         {/* Logo */}
         <div className="text-center mb-12">
