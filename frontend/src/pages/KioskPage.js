@@ -69,22 +69,6 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Item Info */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-muted p-3 rounded-sm text-center">
-              <p className="text-xs text-muted-foreground uppercase">Price</p>
-              <p className="text-lg font-medium">₹{item.price.toFixed(2)}</p>
-            </div>
-            <div className="bg-muted p-3 rounded-sm text-center">
-              <p className="text-xs text-muted-foreground uppercase">Calories</p>
-              <p className="text-lg font-medium">{item.calories} cal</p>
-            </div>
-            <div className="bg-muted p-3 rounded-sm text-center">
-              <p className="text-xs text-muted-foreground uppercase">Portion</p>
-              <p className="text-lg font-medium">{item.portion_size}</p>
-            </div>
-          </div>
-
           {/* Allergens */}
           {item.allergens?.length > 0 && (
             <div className="mb-6 p-3 bg-red-50 rounded-sm">
