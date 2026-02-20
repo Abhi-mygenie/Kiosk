@@ -3,7 +3,7 @@
 ## Original Problem Statement
 Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. Target device: 21.5" Windows kiosk (Core i3, 8GB RAM, 1920x1080 touch screen).
 
-## Current Status: MVP COMPLETE - Ready for POS Integration
+## Current Status: MVP COMPLETE + Login System Ready for POS Integration
 
 ## Tech Stack
 - **Frontend:** React Web App (runs in Chrome kiosk mode)
@@ -11,6 +11,16 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - **Deployment:** Windows kiosk with Chrome fullscreen
 
 ## What's Been Built
+
+### Authentication (NEW - Feb 20, 2025)
+- Clean, centered login page with Hyatt branding
+- Username and password fields with icons
+- Password visibility toggle
+- "Sign In" button with loading state
+- "Powered by My Geneie" footer branding
+- Session persistence (stays logged in until manual logout)
+- Logout button in left sidebar with confirmation dialog
+- Mock authentication (ready for POS API integration)
 
 ### UI/UX Features
 - 3-column single-screen layout (Categories | Menu | Cart)
@@ -40,21 +50,30 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - Coupon discount display
 - Visual indicator when item is added (border + badge on menu card)
 
-## Session Updates (Feb 20, 2025)
-- Verified UI bugs (visual feedback + empty cart) are already fixed
-- Cleaned up obsolete page files (MenuPage.js, CartPage.js, CheckoutPage.js, HomePage.js, WelcomePage.js)
-- Codebase now streamlined with only KioskPage.js
-
 ## Pending: POS API Integration
+
+### What Will Be Connected:
+1. **Login API** - Authenticate kiosk users
+2. **Menu API** - Fetch categories and items
+3. **Settings API** - Fetch kiosk configuration
+4. **Orders API** - Send placed orders to POS
 
 ### Details Needed from User:
 1. **POS API Base URL:** `https://your-pos.com/api/v1`
 2. **Authentication:** API Key / OAuth / Basic Auth
-3. **Menu Endpoint:** `GET /menu`
-4. **Order Endpoint:** `POST /orders`
-5. **Sample API response format
+3. **Login Endpoint:** `POST /auth/login`
+4. **Menu Endpoint:** `GET /menu`
+5. **Order Endpoint:** `POST /orders`
+6. Sample API response formats
 
 ### Planned API Structure:
+
+**Login API:**
+```json
+POST /auth/login
+Request: { "username": "admin", "password": "****" }
+Response: { "token": "jwt...", "user": { "id": "...", "name": "..." } }
+```
 
 **Menu API (GET from POS):**
 ```json
@@ -103,7 +122,10 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 ## Backlog Tasks
 
 ### P0 - High Priority
-- [ ] POS API integration (menu fetch + order post) - BLOCKED waiting for API credentials
+- [ ] POS API integration - BLOCKED waiting for API credentials
+  - Login endpoint
+  - Menu sync
+  - Order posting
 
 ### P1 - Medium Priority
 - [ ] Thermal receipt printing for Windows kiosk
@@ -113,10 +135,12 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - [ ] Offline mode / PWA (later)
 
 ## Key Files
-- `/app/frontend/src/pages/KioskPage.js` - Main UI (single-page app)
+- `/app/frontend/src/pages/LoginPage.js` - Login screen
+- `/app/frontend/src/pages/KioskPage.js` - Main kiosk UI
+- `/app/frontend/src/contexts/AuthContext.js` - Authentication state
+- `/app/frontend/src/contexts/CartContext.js` - Cart state
 - `/app/frontend/src/utils/touchSound.js` - Sound system
 - `/app/frontend/src/utils/kioskLock.js` - Kiosk lock
-- `/app/frontend/src/contexts/CartContext.js` - Cart state management
 - `/app/backend/server.py` - API endpoints
 
 ## Preview URL
@@ -129,4 +153,5 @@ https://luxury-order-hub.preview.emergentagent.com
 - Web app in Chrome kiosk mode (NOT React Native)
 
 ## Test Credentials
-- Coupon Code: `WELCOME10` (10% off), `FLAT50` (Rs.50 off), `HYATT20` (20% off)
+- **Login:** Any username/password (mock auth - will connect to POS later)
+- **Coupon Codes:** `WELCOME10` (10% off), `FLAT50` (Rs.50 off), `HYATT20` (20% off)
