@@ -3,14 +3,14 @@
 ## Original Problem Statement
 Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. Target device: 21.5" Windows kiosk (Core i3, 8GB RAM, 1920x1080 touch screen).
 
-## Current Status: MVP COMPLETE + Login System + Brand Styling Applied
+## Current Status: MVP COMPLETE + POS Login Integration DONE
 
 ## Tech Stack
 - **Frontend:** React Web App (runs in Chrome kiosk mode)
 - **Backend:** FastAPI + MongoDB
 - **Deployment:** Windows kiosk with Chrome fullscreen
 
-## Brand Guidelines Applied (Feb 20, 2025)
+## Brand Guidelines Applied
 
 ### Color Palette
 - **Blue Hero:** #62B5E5 - Primary buttons, active states, highlights
@@ -28,20 +28,28 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 
 ## What's Been Built
 
-### Authentication
+### Authentication (COMPLETE - Feb 20, 2026)
 - Clean login page with Hyatt branding + MyGenie footer logo
 - Username/password fields with icons
 - Password visibility toggle
 - Sign In button with blue hero color
-- Session persistence until manual logout
+- **POS API Integration DONE** - Authenticates against MyGenie POS API
+- Backend proxy endpoint `/api/auth/login` to handle CORS
+- Session persistence via localStorage
 - Logout button in left sidebar with confirmation dialog
-- Mock authentication ready for POS API integration
+
+### POS Integration Status
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Login API | ✅ COMPLETE | Authenticates via backend proxy |
+| Menu API | ❌ PENDING | Currently hardcoded - awaiting API endpoint |
+| Orders API | ❌ PENDING | Orders saved to MongoDB only - awaiting API endpoint |
 
 ### UI/UX Features
 - 3-column single-screen layout (Categories | Menu | Cart)
 - Hyatt Centric Candolim Goa logo branding
 - Full-screen table selector (100 tables: 01-100)
-- Item customization modal (variations, quantity)
+- Item customization modal (variations, quantity, cooking instructions)
 - Portion size & calories on menu cards
 - Allergen tags on menu cards (red badges: Gluten, Dairy, Spicy)
 - Customer data capture (Name, Mobile - optional)
@@ -50,7 +58,7 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - Order success screen with 15-second countdown
 - Auto-redirect to home for next customer
 - Visual feedback on menu items in cart (blue border + quantity badge)
-- Proper empty cart state display
+- Cooking instructions feature (add/edit/view in modal and cart)
 
 ### Kiosk Features
 - Elegant touch sounds (5-star hotel quality)
@@ -59,52 +67,57 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - Admin unlock (5 taps on top-left corner)
 - Auto-hide cursor after 3 seconds
 
-## Pending: POS API Integration
+## Pending: POS Phase 2 Integration (BLOCKED)
 
-### What Will Be Connected:
-1. **Login API** - Authenticate kiosk users
-2. **Menu API** - Fetch categories and items
-3. **Settings API** - Fetch kiosk configuration
-4. **Orders API** - Send placed orders to POS
+### Waiting on User to Provide:
+1. **Menu API Endpoint** - To fetch categories and items from POS
+2. **Orders API Endpoint** - To send placed orders to POS
+3. Sample API response formats for these endpoints
 
-### Details Needed from User:
-1. POS API Base URL
-2. Authentication method (API Key / OAuth / Basic Auth)
-3. Login Endpoint
-4. Menu Endpoint
-5. Order Endpoint
-6. Sample API response formats
+### Current Workaround:
+- Menu data is hardcoded in `backend/server.py`
+- Orders are saved to MongoDB only
 
 ## Backlog Tasks
 
 ### P0 - High Priority
-- [ ] POS API integration - BLOCKED waiting for API credentials
+- [x] POS Login Integration - COMPLETE
+- [ ] POS Menu API Integration - BLOCKED (waiting for API endpoint)
+- [ ] POS Order API Integration - BLOCKED (waiting for API endpoint)
 
 ### P1 - Medium Priority
-- [ ] Thermal receipt printing for Windows kiosk
+- [ ] Receipt printing feature (`window.print()`)
 
 ### P2 - Low Priority
-- [ ] Move hardcoded menu to MongoDB (if no POS)
-- [ ] Offline mode / PWA (later)
+- [ ] PWA conversion for offline capabilities
 
 ## Key Files
 - `/app/frontend/src/pages/LoginPage.js` - Login screen
 - `/app/frontend/src/pages/KioskPage.js` - Main kiosk UI
-- `/app/frontend/src/contexts/AuthContext.js` - Authentication state
+- `/app/frontend/src/contexts/AuthContext.js` - Authentication state (uses POS API)
 - `/app/frontend/src/contexts/CartContext.js` - Cart state
 - `/app/frontend/src/index.css` - Brand color CSS variables
 - `/app/frontend/tailwind.config.js` - Brand color definitions
-- `/app/backend/server.py` - API endpoints
+- `/app/backend/server.py` - API endpoints + POS login proxy
+
+## API Endpoints
+- `POST /api/auth/login` - Proxy to POS login API
+- `GET /api/menu/categories` - Get menu categories (hardcoded)
+- `GET /api/menu/items` - Get menu items (hardcoded)
+- `POST /api/orders` - Create new order (MongoDB only)
+- `GET /api/config/branding` - Get branding config
 
 ## Preview URL
 https://hyatt-buffet-order.preview.emergentagent.com
 
-## Hardware Confirmed
-- 21.5" Touch Screen Kiosk
-- Core i3, 8GB RAM, 128GB mSATA
-- Windows OS
-- Web app in Chrome kiosk mode (NOT React Native)
-
 ## Test Credentials
-- **Login:** Any username/password (mock auth - will connect to POS later)
+- **POS Login:** `byakuya@soulking.com` / `Qplazm@10`
 - **Coupon Codes:** `WELCOME10` (10% off), `FLAT50` (Rs.50 off), `HYATT20` (20% off)
+
+## Database
+- **MongoDB Database:** `test_database`
+- **Collections:** `orders` (24 orders as of Feb 20, 2026)
+
+## External APIs
+- **POS API Base:** `https://preprod.mygenie.online/api/v1`
+- **Login Endpoint:** `/auth/vendoremployee/login`
