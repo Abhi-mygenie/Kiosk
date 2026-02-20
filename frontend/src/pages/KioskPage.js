@@ -928,35 +928,65 @@ const KioskPage = () => {
               </button>
             </div>
 
-            {/* Table Grid */}
+            {/* Table Grid - Grouped by Section/Title */}
             <div className="flex-1 overflow-y-auto p-6 bg-[#F9F8F6]">
               {tablesLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-muted-foreground">Loading tables...</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3 max-w-6xl mx-auto">
-                  {tables.map((table) => (
-                    <motion.button
-                      key={table.id}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => { 
-                        touchSound.playSelect(); 
-                        setTableNumber(table.table_no);
-                        setSelectedTableId(table.id);
-                      }}
-                      data-testid={`table-${table.table_no}`}
-                      className={`aspect-square rounded-lg text-lg font-bold transition-all shadow-sm flex flex-col items-center justify-center ${
-                        tableNumber === table.table_no
-                          ? 'bg-blue-hero text-white shadow-lg ring-4 ring-blue-hero/30'
-                          : 'bg-white hover:bg-blue-light/20 hover:shadow-md border border-border'
-                      }`}
-                    >
-                      {/* Display title if available, otherwise show table_no */}
-                      <span>{table.title || table.table_no}</span>
-                    </motion.button>
-                  ))}
+                <div className="max-w-6xl mx-auto">
+                  {/* Group tables by title (section) */}
+                  {(() => {
+                    // Group tables by title
+                    const sections = {};
+                    tables.forEach(table => {
+                      const section = table.title || '';
+                      if (!sections[section]) {
+                        sections[section] = [];
+                      }
+                      sections[section].push(table);
+                    });
+                    
+                    // Sort section names (empty section last)
+                    const sectionNames = Object.keys(sections).sort((a, b) => {
+                      if (a === '') return 1;
+                      if (b === '') return -1;
+                      return a.localeCompare(b);
+                    });
+                    
+                    return sectionNames.map(section => (
+                      <div key={section || 'no-section'} className="mb-6">
+                        {section && (
+                          <h3 className="text-lg font-semibold mb-3 text-blue-dark uppercase">
+                            {section}
+                          </h3>
+                        )}
+                        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3">
+                          {sections[section].map((table) => (
+                            <motion.button
+                              key={table.id}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => { 
+                                touchSound.playSelect(); 
+                                setTableNumber(table.table_no);
+                                setSelectedTableId(table.id);
+                              }}
+                              data-testid={`table-${table.table_no}`}
+                              className={`aspect-square rounded-lg text-lg font-bold transition-all shadow-sm flex flex-col items-center justify-center ${
+                                tableNumber === table.table_no
+                                  ? 'bg-blue-hero text-white shadow-lg ring-4 ring-blue-hero/30'
+                                  : 'bg-white hover:bg-blue-light/20 hover:shadow-md border border-border'
+                              }`}
+                            >
+                              <span>{table.table_no}</span>
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+                    ));
+                  })()}
                 </div>
               )}
             </div>
