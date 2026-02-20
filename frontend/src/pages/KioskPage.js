@@ -217,7 +217,7 @@ const KioskPage = () => {
   const { logout } = useAuth();
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
-  const [activeCategory, setActiveCategory] = useState('dosa');
+  const [activeCategory, setActiveCategory] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');
   const [showTableSelector, setShowTableSelector] = useState(false);
