@@ -74,9 +74,11 @@ class CartItem(BaseModel):
     price: float
     quantity: int
     variations: List[str] = []
+    special_instructions: Optional[str] = None
 
 class OrderCreate(BaseModel):
     table_number: str
+    table_id: Optional[str] = None
     items: List[CartItem]
     subtotal: Optional[float] = None
     discount: Optional[float] = 0
