@@ -469,50 +469,71 @@ const KioskPage = () => {
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
-            {filteredItems.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-sm overflow-hidden border border-border hover:shadow-lg transition-all cursor-pointer"
-                onClick={() => { touchSound.playTap(); setSelectedItem(item); }}
-                data-testid={`menu-item-${item.id}`}
-              >
-                <div className="h-32 overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="p-3">
-                  <h3 className="font-serif font-medium text-sm mb-1 truncate">{item.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs text-muted-foreground">
-                      {item.portion_size} • {item.calories} cal
-                    </span>
-                  </div>
-                  {item.allergens?.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {item.allergens.map(allergen => (
-                        <span key={allergen} className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded">
-                          {allergen}
-                        </span>
-                      ))}
+            {filteredItems.map((item) => {
+              // Check if item is in cart and get quantity
+              const cartItem = cart.find(ci => ci.id === item.id);
+              const inCart = !!cartItem;
+              const cartQty = cartItem ? cart.filter(ci => ci.id === item.id).reduce((sum, ci) => sum + ci.quantity, 0) : 0;
+              
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`rounded-sm overflow-hidden border-2 transition-all cursor-pointer relative ${
+                    inCart 
+                      ? 'border-accent bg-accent/5 shadow-md' 
+                      : 'border-border bg-white hover:shadow-lg'
+                  }`}
+                  onClick={() => { touchSound.playTap(); setSelectedItem(item); }}
+                  data-testid={`menu-item-${item.id}`}
+                >
+                  {/* Cart quantity badge */}
+                  {inCart && (
+                    <div className="absolute top-2 right-2 z-10 w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
+                      {cartQty}
                     </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-medium">₹{item.price.toFixed(0)}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedItem(item);
-                      }}
-                      className="w-9 h-9 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:bg-accent/90"
-                    >
-                      <Plus size={18} />
-                    </button>
+                  <div className={`h-32 overflow-hidden ${inCart ? 'opacity-80' : ''}`}>
+                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="p-3">
+                    <h3 className="font-serif font-medium text-sm mb-1 truncate">{item.name}</h3>
+                    <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs text-muted-foreground">
+                        {item.portion_size} • {item.calories} cal
+                      </span>
+                    </div>
+                    {item.allergens?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {item.allergens.map(allergen => (
+                          <span key={allergen} className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded">
+                            {allergen}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-medium">₹{item.price.toFixed(0)}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedItem(item);
+                        }}
+                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                          inCart 
+                            ? 'bg-accent/20 text-accent hover:bg-accent hover:text-white' 
+                            : 'bg-accent text-accent-foreground hover:bg-accent/90'
+                        }`}
+                      >
+                        <Plus size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>
