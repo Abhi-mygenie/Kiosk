@@ -935,43 +935,29 @@ const KioskPage = () => {
                   <p className="text-muted-foreground">Loading tables...</p>
                 </div>
               ) : (
-                <>
-                  {/* Group tables by type */}
-                  {['TB', 'RM'].map(type => {
-                    const filteredTables = tables.filter(t => t.type === type);
-                    if (filteredTables.length === 0) return null;
-                    return (
-                      <div key={type} className="mb-6">
-                        <h3 className="text-lg font-semibold mb-3 text-blue-dark uppercase">
-                          {type === 'TB' ? 'Tables' : 'Rooms'}
-                        </h3>
-                        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3">
-                          {filteredTables.map((table) => (
-                            <motion.button
-                              key={table.id}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => { 
-                                touchSound.playSelect(); 
-                                setTableNumber(table.table_no);
-                                setSelectedTableId(table.id);
-                              }}
-                              data-testid={`table-${table.table_no}`}
-                              className={`aspect-square rounded-lg text-lg font-bold transition-all shadow-sm flex flex-col items-center justify-center ${
-                                tableNumber === table.table_no
-                                  ? 'bg-blue-hero text-white shadow-lg ring-4 ring-blue-hero/30'
-                                  : 'bg-white hover:bg-blue-light/20 hover:shadow-md border border-border'
-                              }`}
-                            >
-                              <span>{table.table_no}</span>
-                              {table.title && <span className="text-[10px] opacity-70">{table.title}</span>}
-                            </motion.button>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </>
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3 max-w-6xl mx-auto">
+                  {tables.map((table) => (
+                    <motion.button
+                      key={table.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => { 
+                        touchSound.playSelect(); 
+                        setTableNumber(table.table_no);
+                        setSelectedTableId(table.id);
+                      }}
+                      data-testid={`table-${table.table_no}`}
+                      className={`aspect-square rounded-lg text-lg font-bold transition-all shadow-sm flex flex-col items-center justify-center ${
+                        tableNumber === table.table_no
+                          ? 'bg-blue-hero text-white shadow-lg ring-4 ring-blue-hero/30'
+                          : 'bg-white hover:bg-blue-light/20 hover:shadow-md border border-border'
+                      }`}
+                    >
+                      {/* Display title if available, otherwise show table_no */}
+                      <span>{table.title || table.table_no}</span>
+                    </motion.button>
+                  ))}
+                </div>
               )}
             </div>
 
