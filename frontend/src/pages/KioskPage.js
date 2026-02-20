@@ -318,6 +318,7 @@ const KioskPage = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');
+  const [selectedTableId, setSelectedTableId] = useState('');
   const [showTableSelector, setShowTableSelector] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
@@ -330,6 +331,8 @@ const KioskPage = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [editingInstructions, setEditingInstructions] = useState(null); // For editing instructions popup
+  const [tables, setTables] = useState([]);
+  const [tablesLoading, setTablesLoading] = useState(false);
 
   // Initialize kiosk lock on mount
   useEffect(() => {
