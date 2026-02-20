@@ -418,9 +418,9 @@ const KioskPage = () => {
     return { subtotal, discount, afterDiscount, cgst, sgst, grandTotal };
   }, [getTotal, appliedCoupon]);
 
-  const handleSelectTable = (table) => {
+  const handleSelectTable = (table, tableId) => {
     setTableNumber(table);
-    setShowTableSelector(false);
+    setSelectedTableId(tableId || '');
   };
 
   const handleApplyCoupon = () => {
