@@ -15,6 +15,13 @@ import httpx
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Configure logging early
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
 # POS API Configuration
 POS_API_BASE_URL = "https://preprod.mygenie.online/api/v1"
 POS_API_V2_URL = "https://preprod.mygenie.online/api/v2"
