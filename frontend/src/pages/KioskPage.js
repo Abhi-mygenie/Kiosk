@@ -120,6 +120,20 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
             </div>
           )}
 
+          {/* Special Instructions */}
+          <div className="mb-6">
+            <p className="text-sm font-semibold mb-3 uppercase">Cooking Instructions <span className="text-muted-foreground font-normal">(Optional)</span></p>
+            <textarea
+              value={specialInstructions}
+              onChange={(e) => setSpecialInstructions(e.target.value)}
+              placeholder="E.g., Less spicy, No onions, Extra crispy..."
+              data-testid="special-instructions"
+              className="w-full bg-muted border border-border p-3 rounded-sm text-sm focus:outline-none focus:border-blue-hero resize-none h-20"
+              maxLength={200}
+            />
+            <p className="text-xs text-muted-foreground mt-1 text-right">{specialInstructions.length}/200</p>
+          </div>
+
           {/* Quantity */}
           <div className="flex items-center justify-between mb-6">
             <span className="font-semibold">Quantity</span>
