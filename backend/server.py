@@ -601,18 +601,21 @@ POS_WAITER_ID = "1703"  # Default waiter ID
 
 async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
     """Send order to POS API"""
+    import json
+    
     token = await get_pos_token()
     if not token:
         logger.warning("No POS token available for order submission")
         return {"success": False, "error": "No POS token"}
     
     try:
-        # Build cart items for POS
+        # Build cart items for POS - match exact structure from curl example
         pos_cart = []
         for item in order_input.items:
             # Calculate item amounts
-            food_amount = item.price * item.quantity
-            gst_amount = food_amount * 0.05  # 5% GST (2.5% CGST + 2.5% SGST)
+            food_amount = float(item.price * item.quantity)
+            gst_amount = round(food_amount * 0.05, 2)  # 5% GST
+            discount_amount = 0.0
             
             pos_cart.append({
                 "food_id": int(item.item_id),
@@ -627,13 +630,19 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
                 "food_amount": food_amount,
                 "variation_amount": 0.0,
                 "addon_amount": 0.0,
-                "gst_amount": round(gst_amount, 2),
+                "gst_amount": gst_amount,
                 "vat_amount": 0.0,
-                "discount_amount": 0.0,
+                "discount_amount": discount_amount,
                 "service_charge": 0.0
             })
         
-        # Build POS order payload
+        # Calculate order totals
+        subtotal = float(order_input.subtotal or order_input.total)
+        total_gst = round(float(order_input.cgst or 0) + float(order_input.sgst or 0), 2)
+        total_amount = round(float(order_input.total), 2)
+        discount = round(float(order_input.discount or 0), 2)
+        
+        # Build POS order payload - EXACT structure from curl
         pos_data = {
             "restaurant_id": POS_RESTAURANT_ID,
             "user_id": "",
@@ -641,35 +650,33 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
             "waiter_id": POS_WAITER_ID,
             "payment_method": "TAB",
             "paid_room": "",
-            "payment_status": "sucess",
+            "payment_status": "sucess",  # Note: POS API has typo "sucess" not "success"
             "cust_email": "",
             "payment_type": "prepaid",
             "order_note": "",
             "delivery_charge": "0.0",
-            "tax_amount": round(order_input.cgst + order_input.sgst, 2),
-            "order_sub_total_amount": round(order_input.subtotal or order_input.total, 2),
-            "order_amount": round(order_input.total, 2),
+            "tax_amount": total_gst,
+            "order_sub_total_amount": subtotal,
+            "order_amount": total_amount,
             "vat_tax": 0.0,
-            "gst_tax": round(order_input.cgst + order_input.sgst, 2),
+            "gst_tax": total_gst,
             "address_id": "",
             "print_kot": "Yes",
             "self_discount": 0.0,
             "order_type": "pos",
-            "table_id": order_input.table_id or "0",
+            "table_id": str(order_input.table_id or "0"),
             "tip_amount": "0",
-            "order_discount": round(order_input.discount or 0, 2),
+            "order_discount": discount,
             "cust_mobile": order_input.customer_mobile or "",
             "cust_name": order_input.customer_name or "",
             "restaurant_name": POS_RESTAURANT_NAME,
             "service_tax": 0,
-            "service_gst_tax_amount": 0,
-            "round_up": 0,
-            "tip_tax_amount": 0,
             "transaction_id": "",
             "room_id": ""
         }
         
-        import json
+        # Log the payload for debugging
+        logger.info(f"POS Order Payload: {json.dumps(pos_data, indent=2)}")
         
         async with httpx.AsyncClient() as client_http:
             # POS API expects multipart/form-data with 'data' field as JSON string
@@ -683,17 +690,34 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
             )
             
             logger.info(f"POS Order Response Status: {response.status_code}")
+            logger.info(f"POS Order Response Headers: {dict(response.headers)}")
+            
+            # Try to parse JSON response
+            try:
+                result = response.json()
+                logger.info(f"POS Order Response JSON: {result}")
+            except:
+                result = {"raw_response": response.text[:500]}
+                logger.info(f"POS Order Response Text: {response.text[:500]}")
             
             if response.status_code == 200:
-                result = response.json()
-                logger.info(f"POS Order Success: {result}")
+                # Check if it's actually a success response
+                if isinstance(result, dict) and (result.get("success") or result.get("order_id") or "order" in str(result).lower()):
+                    return {"success": True, "data": result}
+                # POS API sometimes returns 200 but with error in body
+                if isinstance(result, dict) and result.get("errors"):
+                    logger.error(f"POS Order Failed with errors: {result}")
+                    return {"success": False, "error": str(result.get("errors")), "data": result}
+                # Assume success if we got 200
                 return {"success": True, "data": result}
             else:
-                logger.error(f"POS Order Failed: {response.text}")
-                return {"success": False, "error": response.text, "status_code": response.status_code}
+                logger.error(f"POS Order Failed: Status {response.status_code}")
+                return {"success": False, "error": str(result), "status_code": response.status_code}
                 
     except Exception as e:
         logger.error(f"POS Order Error: {e}")
+        import traceback
+        logger.error(f"POS Order Traceback: {traceback.format_exc()}")
         return {"success": False, "error": str(e)}
 
 
