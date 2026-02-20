@@ -222,7 +222,11 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
         <div className="p-6 border-t border-border bg-white">
           <div className="flex items-center justify-between mb-4">
             <span className="text-lg font-medium">Total</span>
-            <span className="text-2xl font-heading font-semibold text-blue-dark">₹{calculateTotal().toFixed(2)}</span>
+            {item.is_complementary ? (
+              <span className="text-2xl font-heading font-semibold text-green-600">FREE</span>
+            ) : (
+              <span className="text-2xl font-heading font-semibold text-blue-dark">₹{calculateTotal().toFixed(2)}</span>
+            )}
           </div>
           <button
             onClick={() => { touchSound.playAddToCart(); handleAddToCart(); }}
