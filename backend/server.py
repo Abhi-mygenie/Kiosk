@@ -316,11 +316,13 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
     
     # Transform variations from POS format
     # POS format: {"name": "choice of", "type": "single", "values": [{"label": "s1", "optionPrice": "0"}]}
-    variations = []
+    variation_groups = []
     for variation_group in food.get("variation", []):
         if isinstance(variation_group, dict):
-            group_name = variation_group.get("name", "")
+            group_name = variation_group.get("name", "Choice")
+            group_type = variation_group.get("type", "single")  # single or multiple
             values = variation_group.get("values", [])
+            group_options = []
             for val in values:
                 if isinstance(val, dict):
                     label = val.get("label", "")
@@ -329,13 +331,20 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
                         price = float(price_str) if price_str else 0
                     except (ValueError, TypeError):
                         price = 0
-                    variations.append({
+                    group_options.append({
                         "id": f"{group_name}_{label}".replace(" ", "_").lower(),
                         "name": label.upper(),
                         "price": price
                     })
+            if group_options:
+                variation_groups.append({
+                    "group_name": group_name.upper(),
+                    "type": group_type,
+                    "options": group_options
+                })
     
-    # Transform addons as variations too
+    # Transform addons as a separate group
+    addon_options = []
     for addon in food.get("addons", []):
         if isinstance(addon, dict):
             addon_name = addon.get("name", "")
@@ -344,11 +353,23 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
                 addon_price = float(addon_price_str) if addon_price_str else 0
             except (ValueError, TypeError):
                 addon_price = 0
-            variations.append({
+            addon_options.append({
                 "id": f"addon_{addon.get('id', '')}",
                 "name": addon_name.upper(),
                 "price": addon_price
             })
+    
+    if addon_options:
+        variation_groups.append({
+            "group_name": "ADD-ONS",
+            "type": "multiple",
+            "options": addon_options
+        })
+    
+    # Flatten for backward compatibility (old variations array)
+    variations = []
+    for group in variation_groups:
+        variations.extend(group["options"])
     
     # Safely parse calories
     kcal_value = food.get("kcal", 0)
