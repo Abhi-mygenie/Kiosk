@@ -3,7 +3,7 @@
 ## Original Problem Statement
 Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. Target device: 21.5" Windows kiosk (Core i3, 8GB RAM, 1920x1080 touch screen).
 
-## Current Status: ✅ MVP COMPLETE - Ready for POS Integration
+## Current Status: MVP COMPLETE - Ready for POS Integration
 
 ## Tech Stack
 - **Frontend:** React Web App (runs in Chrome kiosk mode)
@@ -13,29 +13,37 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 ## What's Been Built
 
 ### UI/UX Features
-- ✅ 3-column single-screen layout (Categories | Menu | Cart)
-- ✅ Hyatt Centric Candolim Goa logo branding
-- ✅ Full-screen table selector (100 tables: 01-100)
-- ✅ Item customization modal (variations, quantity)
-- ✅ Portion size & calories on menu cards
-- ✅ **Allergen tags on menu cards** (red badges: Gluten, Dairy, Spicy)
-- ✅ Customer data capture (Name, Mobile - optional)
-- ✅ Coupon code system (WELCOME10, FLAT50, HYATT20)
-- ✅ GST breakdown (CGST 2.5% + SGST 2.5%)
-- ✅ Order success screen with 15-second countdown
-- ✅ Auto-redirect to home for next customer
+- 3-column single-screen layout (Categories | Menu | Cart)
+- Hyatt Centric Candolim Goa logo branding
+- Full-screen table selector (100 tables: 01-100)
+- Item customization modal (variations, quantity)
+- Portion size & calories on menu cards
+- Allergen tags on menu cards (red badges: Gluten, Dairy, Spicy)
+- Customer data capture (Name, Mobile - optional)
+- Coupon code system (WELCOME10, FLAT50, HYATT20)
+- GST breakdown (CGST 2.5% + SGST 2.5%)
+- Order success screen with 15-second countdown
+- Auto-redirect to home for next customer
+- Visual feedback on menu items in cart (blue border + quantity badge)
+- Proper empty cart state display
 
 ### Kiosk Features
-- ✅ Elegant touch sounds (5-star hotel quality)
-- ✅ Sound toggle (on/off) in sidebar
-- ✅ Kiosk lock mode (blocks shortcuts, fullscreen, no right-click)
-- ✅ Admin unlock (5 taps on top-left corner)
-- ✅ Auto-hide cursor after 3 seconds
+- Elegant touch sounds (5-star hotel quality)
+- Sound toggle (on/off) in sidebar
+- Kiosk lock mode (blocks shortcuts, fullscreen, no right-click)
+- Admin unlock (5 taps on top-left corner)
+- Auto-hide cursor after 3 seconds
 
 ### Cart Features
-- ✅ No delete icon - minus button auto-removes at quantity 0
-- ✅ Live GST calculation
-- ✅ Coupon discount display
+- No delete icon - minus button auto-removes at quantity 0
+- Live GST calculation
+- Coupon discount display
+- Visual indicator when item is added (border + badge on menu card)
+
+## Session Updates (Feb 20, 2025)
+- Verified UI bugs (visual feedback + empty cart) are already fixed
+- Cleaned up obsolete page files (MenuPage.js, CartPage.js, CheckoutPage.js, HomePage.js, WelcomePage.js)
+- Codebase now streamlined with only KioskPage.js
 
 ## Pending: POS API Integration
 
@@ -92,16 +100,23 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 }
 ```
 
-## Future Tasks
-- [ ] POS API integration (menu fetch + order post)
-- [ ] Thermal receipt printing
+## Backlog Tasks
+
+### P0 - High Priority
+- [ ] POS API integration (menu fetch + order post) - BLOCKED waiting for API credentials
+
+### P1 - Medium Priority
+- [ ] Thermal receipt printing for Windows kiosk
+
+### P2 - Low Priority
 - [ ] Move hardcoded menu to MongoDB (if no POS)
 - [ ] Offline mode / PWA (later)
 
 ## Key Files
-- `/app/frontend/src/pages/KioskPage.js` - Main UI
+- `/app/frontend/src/pages/KioskPage.js` - Main UI (single-page app)
 - `/app/frontend/src/utils/touchSound.js` - Sound system
 - `/app/frontend/src/utils/kioskLock.js` - Kiosk lock
+- `/app/frontend/src/contexts/CartContext.js` - Cart state management
 - `/app/backend/server.py` - API endpoints
 
 ## Preview URL
@@ -112,3 +127,6 @@ https://luxury-order-hub.preview.emergentagent.com
 - Core i3, 8GB RAM, 128GB mSATA
 - Windows OS
 - Web app in Chrome kiosk mode (NOT React Native)
+
+## Test Credentials
+- Coupon Code: `WELCOME10` (10% off), `FLAT50` (Rs.50 off), `HYATT20` (20% off)
