@@ -615,6 +615,29 @@ const KioskPage = () => {
 
         {/* Order Footer */}
         <div className="p-4 border-t border-border bg-white">
+          {/* Table Selection - Moved to top */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">Table Number</label>
+            <button
+              onClick={() => setShowTableSelector(true)}
+              data-testid="select-table-button"
+              className={`w-full p-3 rounded-sm text-left border-2 transition-all ${
+                tableNumber 
+                  ? 'bg-blue-light/10 border-blue-hero' 
+                  : 'bg-muted border-border hover:border-blue-light'
+              }`}
+            >
+              {tableNumber ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-heading font-bold text-blue-dark">Table {tableNumber}</span>
+                  <span className="text-sm text-blue-hero">Tap to change</span>
+                </div>
+              ) : (
+                <span className="text-muted-foreground">Tap to select table</span>
+              )}
+            </button>
+          </div>
+
           {/* Coupon Code */}
           {cart.length > 0 && (
             <div className="mb-4">
@@ -655,29 +678,6 @@ const KioskPage = () => {
               {couponError && <p className="text-xs text-destructive mt-1">{couponError}</p>}
             </div>
           )}
-
-          {/* Table Selection */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Table Number</label>
-            <button
-              onClick={() => setShowTableSelector(true)}
-              data-testid="select-table-button"
-              className={`w-full p-3 rounded-sm text-left border-2 transition-all ${
-                tableNumber 
-                  ? 'bg-blue-light/10 border-blue-hero' 
-                  : 'bg-muted border-border hover:border-blue-light'
-              }`}
-            >
-              {tableNumber ? (
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-heading font-bold text-blue-dark">Table {tableNumber}</span>
-                  <span className="text-sm text-blue-hero">Tap to change</span>
-                </div>
-              ) : (
-                <span className="text-muted-foreground">Tap to select table</span>
-              )}
-            </button>
-          </div>
 
           {/* Customer Info */}
           <div className="mb-4 space-y-3">
@@ -734,18 +734,26 @@ const KioskPage = () => {
             </div>
           )}
 
-          {/* Place Order Button */}
+          {/* Place Order Button - Opens table selector if no table selected */}
           <button
-            onClick={handlePlaceOrder}
-            disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
+            onClick={() => {
+              if (!tableNumber && cart.length > 0) {
+                // Open table selector directly if no table selected
+                touchSound.playClick();
+                setShowTableSelector(true);
+              } else {
+                handlePlaceOrder();
+              }
+            }}
+            disabled={cart.length === 0 || isPlacingOrder}
             data-testid="place-order-button"
             className={`w-full py-4 rounded-sm text-lg font-semibold transition-all ${
-              tableNumber && cart.length > 0 && !isPlacingOrder
+              cart.length > 0 && !isPlacingOrder
                 ? 'bg-blue-hero text-white hover:bg-blue-medium'
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
-            {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : !tableNumber ? 'Select table to continue' : `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}`}
+            {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : !tableNumber ? 'Select Table' : `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}`}
           </button>
         </div>
       </div>
