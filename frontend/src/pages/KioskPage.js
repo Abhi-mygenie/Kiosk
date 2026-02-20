@@ -640,13 +640,13 @@ const KioskPage = () => {
                     onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
                     placeholder="Enter code"
                     data-testid="coupon-input"
-                    className="flex-1 bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-accent uppercase"
+                    className="flex-1 bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-blue-hero uppercase"
                   />
                   <button
                     onClick={handleApplyCoupon}
                     disabled={!couponCode}
                     data-testid="apply-coupon-button"
-                    className="px-4 py-2 bg-accent text-accent-foreground rounded-sm text-sm font-medium hover:bg-accent/90 disabled:bg-muted disabled:text-muted-foreground"
+                    className="px-4 py-2 bg-blue-hero text-white rounded-sm text-sm font-semibold hover:bg-blue-medium disabled:bg-muted disabled:text-muted-foreground"
                   >
                     Apply
                   </button>
@@ -664,8 +664,8 @@ const KioskPage = () => {
               data-testid="select-table-button"
               className={`w-full p-3 rounded-sm text-left border-2 transition-all ${
                 tableNumber 
-                  ? 'bg-accent/10 border-accent' 
-                  : 'bg-muted border-border hover:border-accent/50'
+                  ? 'bg-blue-light/10 border-blue-hero' 
+                  : 'bg-muted border-border hover:border-blue-light'
               }`}
             >
               {tableNumber ? (
