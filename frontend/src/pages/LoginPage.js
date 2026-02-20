@@ -46,12 +46,12 @@ const LoginPage = () => {
             alt="Hyatt Centric Candolim Goa" 
             className="h-20 mx-auto mb-4"
           />
-          <p className="text-sm text-muted-foreground uppercase tracking-widest">Self-Ordering Kiosk</p>
+          <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">Self-Ordering Kiosk</p>
         </div>
 
         {/* Login Card */}
         <div className="bg-white rounded-sm shadow-lg p-8">
-          <h1 className="text-2xl font-serif font-medium text-center mb-8">Welcome Back</h1>
+          <h1 className="text-3xl font-heading font-semibold text-center mb-8 text-blue-dark uppercase tracking-wide">Welcome Back</h1>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
@@ -69,7 +69,7 @@ const LoginPage = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
                   data-testid="login-username"
-                  className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+                  className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
                   autoComplete="username"
                   autoFocus
                 />
