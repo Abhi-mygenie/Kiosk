@@ -262,13 +262,18 @@ async def get_pos_token():
     return None
 
 
-async def fetch_pos_menu():
+async def fetch_pos_menu(force_refresh_token=False):
     """Fetch menu from POS API"""
     now = datetime.now(timezone.utc)
     
     # Check cache (cache for 5 minutes)
-    if menu_cache["data"] and menu_cache["expires"] and menu_cache["expires"] > now:
+    if not force_refresh_token and menu_cache["data"] and menu_cache["expires"] and menu_cache["expires"] > now:
         return menu_cache["data"]
+    
+    # Clear token cache if force refresh
+    if force_refresh_token:
+        pos_token_cache["token"] = None
+        pos_token_cache["expires"] = None
     
     token = await get_pos_token()
     if not token:
@@ -288,6 +293,21 @@ async def fetch_pos_menu():
             if response.status_code == 200:
                 data = response.json()
                 foods = data.get("foods", [])
+                
+                # Cache for 5 minutes
+                from datetime import timedelta
+                menu_cache["data"] = foods
+                menu_cache["expires"] = now + timedelta(minutes=5)
+                
+                logger.info(f"Fetched {len(foods)} items from POS menu")
+                return foods
+            elif response.status_code == 401 and not force_refresh_token:
+                # Token expired, retry with fresh token
+                logger.warning("POS token expired, refreshing...")
+                return await fetch_pos_menu(force_refresh_token=True)
+    except Exception as e:
+        logger.error(f"Failed to fetch POS menu: {e}")
+    return None
                 
                 # Cache for 5 minutes
                 from datetime import timedelta
