@@ -330,6 +330,10 @@ const KioskPage = () => {
         ]);
         setCategories(catRes.data);
         setMenuItems(itemsRes.data);
+        // Set first category as active
+        if (catRes.data.length > 0 && !activeCategory) {
+          setActiveCategory(catRes.data[0].id);
+        }
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
