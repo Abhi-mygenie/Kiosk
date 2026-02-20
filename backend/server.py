@@ -315,23 +315,38 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
     category = food.get("category", {})
     
     # Transform variations from POS format
+    # POS format: {"name": "choice of", "type": "single", "values": [{"label": "s1", "optionPrice": "0"}]}
     variations = []
-    for v in food.get("variation", []):
-        if isinstance(v, dict):
-            variations.append({
-                "id": str(v.get("type", "")),
-                "name": v.get("type", ""),
-                "price": float(v.get("price", 0))
-            })
+    for variation_group in food.get("variation", []):
+        if isinstance(variation_group, dict):
+            group_name = variation_group.get("name", "")
+            values = variation_group.get("values", [])
+            for val in values:
+                if isinstance(val, dict):
+                    label = val.get("label", "")
+                    price_str = val.get("optionPrice", "0")
+                    try:
+                        price = float(price_str) if price_str else 0
+                    except (ValueError, TypeError):
+                        price = 0
+                    variations.append({
+                        "id": f"{group_name}_{label}".replace(" ", "_").lower(),
+                        "name": label.upper(),
+                        "price": price
+                    })
     
     # Transform addons as variations too
     for addon in food.get("addons", []):
         if isinstance(addon, dict):
             addon_name = addon.get("name", "")
-            addon_price = float(addon.get("price", 0))
+            addon_price_str = addon.get("price", "0")
+            try:
+                addon_price = float(addon_price_str) if addon_price_str else 0
+            except (ValueError, TypeError):
+                addon_price = 0
             variations.append({
                 "id": f"addon_{addon.get('id', '')}",
-                "name": addon_name,
+                "name": addon_name.upper(),
                 "price": addon_price
             })
     
