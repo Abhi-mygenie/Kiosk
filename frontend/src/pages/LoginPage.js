@@ -138,9 +138,11 @@ const LoginPage = () => {
         transition={{ delay: 0.5, duration: 0.5 }}
         className="mt-12 text-center"
       >
-        <p className="text-sm text-muted-foreground">
-          Powered by <span className="font-medium text-foreground">My Geneie</span>
-        </p>
+        <img 
+          src="https://customer-assets.emergentagent.com/job_f69ca03e-7b5d-4a09-a9a8-bcdd3f3dcbc1/artifacts/gzag4jve_Screenshot%202026-02-20%20at%204.43.42%E2%80%AFPM.png" 
+          alt="Powered by MyGenie" 
+          className="h-12 mx-auto"
+        />
       </motion.div>
     </div>
   );
