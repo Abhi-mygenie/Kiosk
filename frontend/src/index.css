@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 body {
     margin: 0;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
@@ -19,25 +19,31 @@ code {
 @layer base {
     :root {
         --background: 0 0% 98%;
-        --foreground: 210 40% 10%;
+        --foreground: 200 83% 14%;
         --card: 0 0% 100%;
-        --card-foreground: 210 40% 10%;
+        --card-foreground: 200 83% 14%;
         --popover: 0 0% 100%;
-        --popover-foreground: 210 40% 10%;
-        --primary: 199 76% 45%;
+        --popover-foreground: 200 83% 14%;
+        --primary: 197 74% 64%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 200 100% 73%;
-        --secondary-foreground: 210 40% 10%;
-        --muted: 200 20% 95%;
-        --muted-foreground: 200 10% 40%;
-        --accent: 199 76% 45%;
+        --secondary: 197 100% 73%;
+        --secondary-foreground: 200 83% 14%;
+        --muted: 197 30% 95%;
+        --muted-foreground: 197 20% 40%;
+        --accent: 197 74% 64%;
         --accent-foreground: 0 0% 100%;
         --destructive: 0 60% 50%;
         --destructive-foreground: 0 0% 98%;
-        --border: 200 20% 88%;
-        --input: 200 20% 88%;
-        --ring: 199 76% 45%;
+        --border: 197 20% 88%;
+        --input: 197 20% 88%;
+        --ring: 197 74% 64%;
         --radius: 2px;
+        
+        /* Brand Colors */
+        --blue-hero: #62B5E5;
+        --blue-light: #78CAFF;
+        --blue-medium: #177DAA;
+        --blue-dark: #06293F;
     }
 }
 

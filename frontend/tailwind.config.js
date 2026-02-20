@@ -5,8 +5,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Manrope', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
+        sans: ['Montserrat', 'sans-serif'],
+        heading: ['Big Shoulders Display', 'sans-serif'],
+        serif: ['Big Shoulders Display', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -42,6 +43,11 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // Brand colors
+        'blue-hero': '#62B5E5',
+        'blue-light': '#78CAFF',
+        'blue-medium': '#177DAA',
+        'blue-dark': '#06293F',
       },
       borderRadius: {
         lg: 'var(--radius)',
