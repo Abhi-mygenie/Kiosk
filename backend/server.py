@@ -315,12 +315,26 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
     category = food.get("category", {})
     
     # Transform variations from POS format
-    # POS format: {"name": "choice of", "type": "single", "values": [{"label": "s1", "optionPrice": "0"}]}
+    # POS format: {"name": "choice of", "type": "single", "min": 0, "max": 0, "required": "on", "values": [...]}
     variation_groups = []
     for variation_group in food.get("variation", []):
         if isinstance(variation_group, dict):
             group_name = variation_group.get("name", "Choice")
-            group_type = variation_group.get("type", "single")  # single or multiple
+            group_type = variation_group.get("type", "single")  # single or multi
+            required = variation_group.get("required", "off") == "on"
+            min_select = variation_group.get("min", 0)
+            max_select = variation_group.get("max", 0)
+            
+            # Convert min/max to int if they're strings
+            try:
+                min_select = int(min_select) if min_select else 0
+            except (ValueError, TypeError):
+                min_select = 0
+            try:
+                max_select = int(max_select) if max_select else 0
+            except (ValueError, TypeError):
+                max_select = 0
+            
             values = variation_group.get("values", [])
             group_options = []
             for val in values:
@@ -339,11 +353,14 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
             if group_options:
                 variation_groups.append({
                     "group_name": group_name.upper(),
-                    "type": group_type,
+                    "type": "single" if group_type == "single" else "multiple",
+                    "required": required,
+                    "min_select": min_select,
+                    "max_select": max_select,
                     "options": group_options
                 })
     
-    # Transform addons as a separate group
+    # Transform addons as a separate group (always optional, multiple selection)
     addon_options = []
     for addon in food.get("addons", []):
         if isinstance(addon, dict):
@@ -363,6 +380,9 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
         variation_groups.append({
             "group_name": "ADD-ONS",
             "type": "multiple",
+            "required": False,
+            "min_select": 0,
+            "max_select": 0,
             "options": addon_options
         })
     
