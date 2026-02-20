@@ -196,28 +196,28 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
         >
-          <CheckCircle size={120} className="text-[#2D6A4F] mx-auto mb-6" />
+          <CheckCircle size={120} className="text-blue-medium mx-auto mb-6" />
         </motion.div>
         
-        <h1 className="text-5xl font-serif font-medium mb-4">Order Confirmed!</h1>
+        <h1 className="text-5xl font-heading font-bold mb-4 text-blue-dark uppercase tracking-wide">Order Confirmed!</h1>
         <p className="text-xl text-muted-foreground mb-2">Table Number: {tableNumber}</p>
         <p className="text-lg text-muted-foreground mb-8">Order ID: {orderId?.slice(0, 8).toUpperCase()}</p>
         
-        <div className="bg-muted p-6 rounded-sm mb-8 max-w-md mx-auto">
-          <p className="text-lg">Your order has been sent to the kitchen</p>
+        <div className="bg-blue-light/20 p-6 rounded-sm mb-8 max-w-md mx-auto border border-blue-hero/30">
+          <p className="text-lg font-medium">Your order has been sent to the kitchen</p>
           <p className="text-muted-foreground mt-2">Please proceed to Table {tableNumber}</p>
         </div>
         
         <div className="mb-8">
           <p className="text-xl text-muted-foreground">
             Redirecting to main screen in{' '}
-            <span className="font-bold text-3xl text-accent">{countdown}</span>
+            <span className="font-bold text-3xl text-blue-hero">{countdown}</span>
           </p>
         </div>
         
         <button
           onClick={onNewOrder}
-          className="bg-accent text-accent-foreground px-12 py-4 rounded-sm text-xl font-medium hover:bg-accent/90 transition-all"
+          className="bg-blue-hero text-white px-12 py-4 rounded-sm text-xl font-semibold hover:bg-blue-medium transition-all"
         >
           Start New Order
         </button>
