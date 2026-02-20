@@ -17,6 +17,11 @@ load_dotenv(ROOT_DIR / '.env')
 
 # POS API Configuration
 POS_API_BASE_URL = "https://preprod.mygenie.online/api/v1"
+POS_API_V2_URL = "https://preprod.mygenie.online/api/v2"
+
+# Cache for POS token and menu data
+pos_token_cache = {"token": None, "expires": None}
+menu_cache = {"data": None, "expires": None}
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
