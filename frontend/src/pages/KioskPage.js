@@ -456,14 +456,22 @@ const KioskPage = () => {
           ))}
         </nav>
 
-        {/* Sound Toggle Button */}
-        <div className="p-4 border-t border-border">
+        {/* Sound Toggle & Logout */}
+        <div className="p-4 border-t border-border space-y-2">
           <button
             onClick={toggleSound}
             className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80 transition-all"
           >
             {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
             <span className="text-sm">{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
+          </button>
+          <button
+            onClick={() => { touchSound.playClick(); setShowLogoutConfirm(true); }}
+            data-testid="logout-button"
+            className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+          >
+            <LogOut size={20} />
+            <span className="text-sm font-medium">Logout</span>
           </button>
         </div>
       </div>
