@@ -591,9 +591,27 @@ const KioskPage = () => {
                 <div key={item.cartId} className="bg-blue-light/10 p-3 rounded-sm border border-blue-light/30" data-testid={`cart-item-${item.cartId}`}>
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-sm text-blue-dark">{item.name}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold text-sm text-blue-dark">{item.name}</h4>
+                        {/* Cooking Instructions Icon */}
+                        <button
+                          onClick={() => { touchSound.playTap(); setEditingInstructions(item); }}
+                          data-testid={`edit-instructions-${item.cartId}`}
+                          className={`p-1 rounded transition-all ${
+                            item.specialInstructions 
+                              ? 'text-blue-hero bg-blue-hero/10' 
+                              : 'text-muted-foreground hover:text-blue-hero hover:bg-blue-hero/10'
+                          }`}
+                          title={item.specialInstructions || 'Add cooking instructions'}
+                        >
+                          <MessageSquare size={14} />
+                        </button>
+                      </div>
                       {item.variations?.length > 0 && (
                         <p className="text-xs text-blue-medium">{item.variations.join(', ')}</p>
+                      )}
+                      {item.specialInstructions && (
+                        <p className="text-xs text-muted-foreground mt-1 italic">"{item.specialInstructions}"</p>
                       )}
                     </div>
                   </div>
