@@ -917,6 +917,60 @@ const KioskPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Cooking Instructions Edit Popup */}
+      <AnimatePresence>
+        {editingInstructions && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            onClick={() => setEditingInstructions(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-sm p-6 max-w-md w-full mx-4"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-heading font-bold uppercase text-blue-dark">Cooking Instructions</h2>
+                  <p className="text-sm text-muted-foreground">{editingInstructions.name}</p>
+                </div>
+                <button
+                  onClick={() => { touchSound.playClick(); setEditingInstructions(null); }}
+                  className="p-2 hover:bg-muted rounded-sm"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <textarea
+                value={editingInstructions.specialInstructions || ''}
+                onChange={(e) => {
+                  const newInstructions = e.target.value;
+                  updateInstructions(editingInstructions.cartId, newInstructions);
+                  setEditingInstructions({ ...editingInstructions, specialInstructions: newInstructions });
+                }}
+                placeholder="E.g., Less spicy, No onions, Extra crispy..."
+                data-testid="edit-instructions-textarea"
+                className="w-full bg-muted border border-border p-3 rounded-sm text-sm focus:outline-none focus:border-blue-hero resize-none h-24 mb-2"
+                maxLength={200}
+              />
+              <p className="text-xs text-muted-foreground text-right mb-4">{(editingInstructions.specialInstructions || '').length}/200</p>
+              <button
+                onClick={() => { touchSound.playClick(); setEditingInstructions(null); }}
+                data-testid="save-instructions-button"
+                className="w-full bg-blue-hero text-white py-3 rounded-sm font-semibold hover:bg-blue-medium transition-all"
+              >
+                Done
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
