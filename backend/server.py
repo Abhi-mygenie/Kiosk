@@ -388,6 +388,7 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
         "category_name": category.get("name", ""),
         "available": food.get("status", 1) == 1,
         "variations": variations,
+        "variation_groups": variation_groups,
         "calories": calories,
         "portion_size": food.get("portion_size", "") or "",
         "allergens": food.get("allergens", []) or []
