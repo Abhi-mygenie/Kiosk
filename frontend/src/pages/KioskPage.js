@@ -773,7 +773,7 @@ const KioskPage = () => {
             {/* Header */}
             <div className="p-6 border-b border-border flex items-center justify-between bg-white">
               <div>
-                <h2 className="text-3xl font-serif font-medium">Select Your Table</h2>
+                <h2 className="text-3xl font-heading font-bold uppercase text-blue-dark">Select Your Table</h2>
                 <p className="text-muted-foreground mt-1">Tap on your table number</p>
               </div>
               <button
@@ -796,8 +796,8 @@ const KioskPage = () => {
                     data-testid={`table-${table}`}
                     className={`aspect-square rounded-lg text-2xl font-bold transition-all shadow-sm ${
                       tableNumber === table
-                        ? 'bg-accent text-white shadow-lg ring-4 ring-accent/30'
-                        : 'bg-white hover:bg-accent/10 hover:shadow-md border border-border'
+                        ? 'bg-blue-hero text-white shadow-lg ring-4 ring-blue-hero/30'
+                        : 'bg-white hover:bg-blue-light/20 hover:shadow-md border border-border'
                     }`}
                   >
                     {table}
@@ -815,7 +815,7 @@ const KioskPage = () => {
               >
                 <button
                   onClick={() => { touchSound.playClick(); setShowTableSelector(false); }}
-                  className="w-full max-w-md mx-auto block bg-accent text-accent-foreground py-4 rounded-sm text-xl font-medium hover:bg-accent/90 transition-all"
+                  className="w-full max-w-md mx-auto block bg-blue-hero text-white py-4 rounded-sm text-xl font-semibold hover:bg-blue-medium transition-all"
                 >
                   Confirm Table {tableNumber}
                 </button>
