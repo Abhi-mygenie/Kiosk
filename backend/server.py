@@ -335,17 +335,24 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
                 "price": addon_price
             })
     
+    # Safely parse calories
+    kcal_value = food.get("kcal", 0)
+    try:
+        calories = int(float(kcal_value)) if kcal_value else 0
+    except (ValueError, TypeError):
+        calories = 0
+    
     return {
         "id": str(food.get("id", "")),
         "name": food.get("name", ""),
         "description": food.get("description", "") or "",
-        "price": float(food.get("price", 0)),
+        "price": float(food.get("price", 0) or 0),
         "image": food.get("image", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"),
         "category": str(category.get("id", "")),
         "category_name": category.get("name", ""),
         "available": food.get("status", 1) == 1,
         "variations": variations,
-        "calories": int(food.get("kcal", 0) or 0),
+        "calories": calories,
         "portion_size": food.get("portion_size", "") or "",
         "allergens": food.get("allergens", []) or []
     }
