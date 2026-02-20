@@ -223,12 +223,159 @@ MENU_ITEMS = [
 async def root():
     return {"message": "Kiosk API Ready"}
 
-@api_router.get("/menu/categories", response_model=List[Category])
+
+# POS Menu Integration Helper Functions
+async def get_pos_token():
+    """Get a valid POS token, using cache if available"""
+    now = datetime.now(timezone.utc)
+    
+    # Check if cached token is still valid (cache for 1 hour)
+    if pos_token_cache["token"] and pos_token_cache["expires"] and pos_token_cache["expires"] > now:
+        return pos_token_cache["token"]
+    
+    # Get new token
+    try:
+        async with httpx.AsyncClient() as client_http:
+            response = await client_http.post(
+                f"{POS_API_BASE_URL}/auth/vendoremployee/login",
+                json={"email": "byakuya@soulking.com", "password": "Qplazm@10"},
+                headers={"Content-Type": "application/json"},
+                timeout=30.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                token = data.get("token")
+                # Cache token for 1 hour
+                from datetime import timedelta
+                pos_token_cache["token"] = token
+                pos_token_cache["expires"] = now + timedelta(hours=1)
+                return token
+    except Exception as e:
+        logger.error(f"Failed to get POS token: {e}")
+    return None
+
+
+async def fetch_pos_menu():
+    """Fetch menu from POS API"""
+    now = datetime.now(timezone.utc)
+    
+    # Check cache (cache for 5 minutes)
+    if menu_cache["data"] and menu_cache["expires"] and menu_cache["expires"] > now:
+        return menu_cache["data"]
+    
+    token = await get_pos_token()
+    if not token:
+        logger.warning("No POS token available, using fallback menu")
+        return None
+    
+    try:
+        async with httpx.AsyncClient() as client_http:
+            response = await client_http.get(
+                f"{POS_API_V2_URL}/vendoremployee/product/foods-list?food_for=Normal",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                timeout=30.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                foods = data.get("foods", [])
+                
+                # Cache for 5 minutes
+                from datetime import timedelta
+                menu_cache["data"] = foods
+                menu_cache["expires"] = now + timedelta(minutes=5)
+                
+                logger.info(f"Fetched {len(foods)} items from POS menu")
+                return foods
+    except Exception as e:
+        logger.error(f"Failed to fetch POS menu: {e}")
+    return None
+
+
+def transform_pos_food_to_menu_item(food: dict) -> dict:
+    """Transform POS food item to our MenuItem format"""
+    category = food.get("category", {})
+    
+    # Transform variations from POS format
+    variations = []
+    for v in food.get("variation", []):
+        if isinstance(v, dict):
+            variations.append({
+                "id": str(v.get("type", "")),
+                "name": v.get("type", ""),
+                "price": float(v.get("price", 0))
+            })
+    
+    # Transform addons as variations too
+    for addon in food.get("addons", []):
+        if isinstance(addon, dict):
+            addon_name = addon.get("name", "")
+            addon_price = float(addon.get("price", 0))
+            variations.append({
+                "id": f"addon_{addon.get('id', '')}",
+                "name": addon_name,
+                "price": addon_price
+            })
+    
+    return {
+        "id": str(food.get("id", "")),
+        "name": food.get("name", ""),
+        "description": food.get("description", "") or "",
+        "price": float(food.get("price", 0)),
+        "image": food.get("image", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"),
+        "category": str(category.get("id", "")),
+        "category_name": category.get("name", ""),
+        "available": food.get("status", 1) == 1,
+        "variations": variations,
+        "calories": int(food.get("kcal", 0) or 0),
+        "portion_size": food.get("portion_size", "") or "",
+        "allergens": food.get("allergens", []) or []
+    }
+
+
+@api_router.get("/menu/categories")
 async def get_categories():
+    """Get categories from POS API or fallback to hardcoded"""
+    pos_foods = await fetch_pos_menu()
+    
+    if pos_foods:
+        # Extract unique categories from POS data
+        categories_dict = {}
+        for food in pos_foods:
+            cat = food.get("category", {})
+            cat_id = str(cat.get("id", ""))
+            cat_name = cat.get("name", "")
+            if cat_id and cat_name and cat_id not in categories_dict:
+                categories_dict[cat_id] = {
+                    "id": cat_id,
+                    "name": cat_name,
+                    "image": food.get("image", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400")
+                }
+        
+        # Return sorted by name
+        return sorted(categories_dict.values(), key=lambda x: x["name"])
+    
+    # Fallback to hardcoded
     return CATEGORIES
 
-@api_router.get("/menu/items", response_model=List[MenuItem])
+
+@api_router.get("/menu/items")
 async def get_menu_items(category: Optional[str] = None):
+    """Get menu items from POS API or fallback to hardcoded"""
+    pos_foods = await fetch_pos_menu()
+    
+    if pos_foods:
+        # Transform POS foods to our format
+        items = [transform_pos_food_to_menu_item(food) for food in pos_foods if food.get("status", 1) == 1]
+        
+        if category:
+            items = [item for item in items if item["category"] == category]
+        
+        return items
+    
+    # Fallback to hardcoded
     if category:
         return [item for item in MENU_ITEMS if item["category"] == category]
     return MENU_ITEMS
