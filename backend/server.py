@@ -398,11 +398,50 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
     except (ValueError, TypeError):
         calories = 0
     
+    # Parse price fields
+    base_price = float(food.get("price", 0) or 0)
+    
+    # Parse discount
+    discount_value = food.get("discount", 0)
+    try:
+        discount = float(discount_value) if discount_value else 0
+    except (ValueError, TypeError):
+        discount = 0
+    
+    # Parse tax
+    tax_value = food.get("tax", 0)
+    try:
+        tax_percent = float(tax_value) if tax_value else 0
+    except (ValueError, TypeError):
+        tax_percent = 0
+    
+    # Check if item is complementary
+    is_complementary = str(food.get("complementary", "no")).lower() in ["yes", "true", "1"]
+    
+    # Calculate final price following strict order:
+    # If complementary = "yes" then final price = 0 (ignore discount and tax)
+    if is_complementary:
+        final_price = 0
+        discount = 0
+        tax_amount = 0
+    else:
+        # Apply discount first
+        price_after_discount = base_price - discount
+        # Then calculate tax
+        tax_amount = (price_after_discount * tax_percent) / 100
+        # Final price = price after discount + tax
+        final_price = price_after_discount + tax_amount
+    
     return {
         "id": str(food.get("id", "")),
         "name": food.get("name", ""),
         "description": food.get("description", "") or "",
-        "price": float(food.get("price", 0) or 0),
+        "price": round(final_price, 2),
+        "base_price": round(base_price, 2),
+        "is_complementary": is_complementary,
+        "discount": round(discount, 2),
+        "tax_percent": round(tax_percent, 2),
+        "tax_amount": round(tax_amount, 2) if not is_complementary else 0,
         "image": food.get("image", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"),
         "category": str(category.get("id", "")),
         "category_name": category.get("name", ""),
