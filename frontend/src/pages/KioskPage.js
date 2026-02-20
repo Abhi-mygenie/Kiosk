@@ -500,15 +500,15 @@ const KioskPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className={`rounded-sm overflow-hidden border-2 transition-all cursor-pointer relative ${
                     inCart 
-                      ? 'border-accent bg-accent/5 shadow-md' 
-                      : 'border-border bg-white hover:shadow-lg'
+                      ? 'border-blue-hero bg-blue-light/10 shadow-md' 
+                      : 'border-border bg-white hover:shadow-lg hover:border-blue-light'
                   }`}
                   onClick={() => { touchSound.playTap(); setSelectedItem(item); }}
                   data-testid={`menu-item-${item.id}`}
                 >
                   {/* Cart quantity badge */}
                   {inCart && (
-                    <div className="absolute top-2 right-2 z-10 w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
+                    <div className="absolute top-2 right-2 z-10 w-8 h-8 bg-blue-hero text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg">
                       {cartQty}
                     </div>
                   )}
@@ -516,7 +516,7 @@ const KioskPage = () => {
                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="p-3">
-                    <h3 className="font-serif font-medium text-sm mb-1 truncate">{item.name}</h3>
+                    <h3 className="font-heading font-semibold text-sm mb-1 truncate uppercase text-blue-dark">{item.name}</h3>
                     <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs text-muted-foreground">
@@ -533,7 +533,7 @@ const KioskPage = () => {
                       </div>
                     )}
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-medium">₹{item.price.toFixed(0)}</span>
+                      <span className="text-lg font-semibold text-blue-dark">₹{item.price.toFixed(0)}</span>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -541,8 +541,8 @@ const KioskPage = () => {
                         }}
                         className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                           inCart 
-                            ? 'bg-accent/20 text-accent hover:bg-accent hover:text-white' 
-                            : 'bg-accent text-accent-foreground hover:bg-accent/90'
+                            ? 'bg-blue-light/30 text-blue-medium hover:bg-blue-hero hover:text-white' 
+                            : 'bg-blue-hero text-white hover:bg-blue-medium'
                         }`}
                       >
                         <Plus size={18} />
