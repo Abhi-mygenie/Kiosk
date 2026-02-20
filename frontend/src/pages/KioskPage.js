@@ -624,7 +624,11 @@ const KioskPage = () => {
                       </div>
                     )}
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-semibold text-blue-dark">₹{item.price.toFixed(0)}</span>
+                      {item.is_complementary ? (
+                        <span className="text-lg font-semibold text-green-600">FREE</span>
+                      ) : (
+                        <span className="text-lg font-semibold text-blue-dark">₹{item.price.toFixed(0)}</span>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
