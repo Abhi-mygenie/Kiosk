@@ -91,7 +91,7 @@ const LoginPage = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   data-testid="login-password"
-                  className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+                  className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
                   autoComplete="current-password"
                 />
                 <button
@@ -113,7 +113,7 @@ const LoginPage = () => {
               type="submit"
               disabled={isLoading}
               data-testid="login-submit"
-              className="w-full bg-accent text-accent-foreground py-4 rounded-sm text-lg font-medium hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full bg-blue-hero text-white py-4 rounded-sm text-lg font-semibold hover:bg-blue-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               {isLoading ? (
                 <>
