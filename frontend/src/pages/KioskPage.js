@@ -447,11 +447,11 @@ const KioskPage = () => {
               data-testid={`category-${category.id}`}
               className={`w-full p-4 rounded-sm text-left transition-all ${
                 activeCategory === category.id
-                  ? 'bg-accent text-accent-foreground'
-                  : 'hover:bg-muted text-muted-foreground'
+                  ? 'bg-blue-hero text-white'
+                  : 'hover:bg-blue-light/20 text-muted-foreground'
               }`}
             >
-              <span className="text-sm font-medium uppercase tracking-wide">{category.name}</span>
+              <span className="text-sm font-semibold uppercase tracking-wide">{category.name}</span>
             </button>
           ))}
         </nav>
@@ -479,7 +479,7 @@ const KioskPage = () => {
       {/* MIDDLE COLUMN - Menu Items */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="p-6 bg-white border-b border-border">
-          <h1 className="text-3xl font-serif font-medium uppercase tracking-wide">
+          <h1 className="text-3xl font-heading font-bold uppercase tracking-wide text-blue-dark">
             {categories.find(c => c.id === activeCategory)?.name || 'MENU'}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">Select items to add to your order</p>
