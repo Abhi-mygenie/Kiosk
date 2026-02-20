@@ -569,15 +569,14 @@ async def get_tables():
     pos_tables = await fetch_pos_tables()
     
     if pos_tables:
-        # Transform to simplified format and group by type
+        # Transform to simplified format - only include Tables (rtype = "Table"), not Rooms
         tables = []
         for table in pos_tables:
-            if table.get("status") == 1:  # Only active tables
+            if table.get("status") == 1 and table.get("rtype") == "Table":  # Only active Tables
                 tables.append({
                     "id": str(table.get("id")),
                     "table_no": table.get("table_no", ""),
                     "title": table.get("title", ""),
-                    "type": table.get("rtype", "TB"),  # TB = Table, RM = Room
                     "waiter": f"{table.get('f_name', '') or ''} {table.get('l_name', '') or ''}".strip()
                 })
         
@@ -586,7 +585,7 @@ async def get_tables():
         return {"tables": tables, "source": "pos"}
     
     # Fallback to hardcoded tables (1-100)
-    fallback_tables = [{"id": str(i), "table_no": f"{i:02d}", "title": "", "type": "TB", "waiter": ""} for i in range(1, 101)]
+    fallback_tables = [{"id": str(i), "table_no": f"{i:02d}", "title": "", "waiter": ""} for i in range(1, 101)]
     return {"tables": fallback_tables, "source": "fallback"}
 
 @api_router.post("/orders", response_model=Order)
