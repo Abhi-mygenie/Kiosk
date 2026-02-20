@@ -430,7 +430,7 @@ const KioskPage = () => {
           <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest text-center">Breakfast Buffet</p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {categories.map((category) => (
             <button
               key={category.id}
