@@ -508,12 +508,16 @@ const KioskPage = () => {
                   </div>
                   <div className="p-3">
                     <h3 className="font-heading font-semibold text-sm mb-1 truncate uppercase text-blue-dark">{item.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-muted-foreground">
-                        {item.portion_size} • {item.calories} cal
-                      </span>
-                    </div>
+                    {item.description && (
+                      <p className="text-xs text-muted-foreground mb-1 line-clamp-1">{item.description}</p>
+                    )}
+                    {(item.portion_size || item.calories > 0) && (
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-muted-foreground">
+                          {[item.portion_size, item.calories > 0 ? `${item.calories} cal` : null].filter(Boolean).join(' • ')}
+                        </span>
+                      </div>
+                    )}
                     {item.allergens?.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-2">
                         {item.allergens.map(allergen => (
