@@ -97,7 +97,7 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - `/app/backend/server.py` - API endpoints
 
 ## Preview URL
-https://luxury-order-hub.preview.emergentagent.com
+https://hyatt-buffet-order.preview.emergentagent.com
 
 ## Hardware Confirmed
 - 21.5" Touch Screen Kiosk
