@@ -108,7 +108,7 @@ Build a self-ordering kiosk application for a 5-star hotel's breakfast buffet. T
 - `GET /api/config/branding` - Get branding config
 
 ## Preview URL
-https://hyatt-buffet-order.preview.emergentagent.com
+https://hyatt-buffet-order-1.preview.emergentagent.com
 
 ## Test Credentials
 - **POS Login:** `byakuya@soulking.com` / `Qplazm@10`
