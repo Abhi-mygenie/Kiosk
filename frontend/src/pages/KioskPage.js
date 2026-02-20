@@ -145,11 +145,11 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
         <div className="p-6 border-t border-border bg-white">
           <div className="flex items-center justify-between mb-4">
             <span className="text-lg font-medium">Total</span>
-            <span className="text-2xl font-serif font-medium">₹{calculateTotal().toFixed(2)}</span>
+            <span className="text-2xl font-heading font-semibold text-blue-dark">₹{calculateTotal().toFixed(2)}</span>
           </div>
           <button
             onClick={() => { touchSound.playAddToCart(); handleAddToCart(); }}
-            className="w-full bg-accent text-accent-foreground py-4 rounded-sm text-lg font-medium hover:bg-accent/90 transition-all"
+            className="w-full bg-blue-hero text-white py-4 rounded-sm text-lg font-semibold hover:bg-blue-medium transition-all"
           >
             Add to Cart
           </button>
