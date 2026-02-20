@@ -559,7 +559,7 @@ const KioskPage = () => {
       {/* RIGHT COLUMN - Cart/Order */}
       <div className="w-96 bg-white border-l border-border flex flex-col">
         <div className="p-4 border-b border-border">
-          <h2 className="text-xl font-serif font-medium">Your Order</h2>
+          <h2 className="text-xl font-heading font-bold uppercase text-blue-dark">Your Order</h2>
           <p className="text-sm text-muted-foreground">{cart.length} items</p>
         </div>
 
@@ -567,18 +567,18 @@ const KioskPage = () => {
         <div className="flex-1 overflow-y-auto p-4">
           {cart.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p className="text-lg mb-2">Your cart is empty</p>
+              <p className="text-lg mb-2 font-medium">Your cart is empty</p>
               <p className="text-sm">Select items from the menu</p>
             </div>
           ) : (
             <div className="space-y-3">
               {cart.map((item) => (
-                <div key={item.cartId} className="bg-muted p-3 rounded-sm" data-testid={`cart-item-${item.cartId}`}>
+                <div key={item.cartId} className="bg-blue-light/10 p-3 rounded-sm border border-blue-light/30" data-testid={`cart-item-${item.cartId}`}>
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1">
-                      <h4 className="font-medium text-sm">{item.name}</h4>
+                      <h4 className="font-semibold text-sm text-blue-dark">{item.name}</h4>
                       {item.variations?.length > 0 && (
-                        <p className="text-xs text-accent">{item.variations.join(', ')}</p>
+                        <p className="text-xs text-blue-medium">{item.variations.join(', ')}</p>
                       )}
                     </div>
                   </div>
@@ -593,19 +593,19 @@ const KioskPage = () => {
                             updateQuantity(item.cartId, item.quantity - 1);
                           }
                         }}
-                        className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-destructive/10"
+                        className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-red-50"
                       >
                         <Minus size={14} />
                       </button>
-                      <span className="w-6 text-center font-medium">{item.quantity}</span>
+                      <span className="w-6 text-center font-semibold">{item.quantity}</span>
                       <button
                         onClick={() => { touchSound.playClick(); updateQuantity(item.cartId, item.quantity + 1); }}
-                        className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-accent/10"
+                        className="w-7 h-7 bg-white rounded flex items-center justify-center hover:bg-blue-light/30"
                       >
                         <Plus size={14} />
                       </button>
                     </div>
-                    <span className="font-medium">₹{((item.totalPrice || item.price) * item.quantity).toFixed(0)}</span>
+                    <span className="font-semibold text-blue-dark">₹{((item.totalPrice || item.price) * item.quantity).toFixed(0)}</span>
                   </div>
                 </div>
               ))}
