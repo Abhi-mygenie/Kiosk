@@ -69,8 +69,31 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Variations */}
-          {item.variations?.length > 0 && (
+          {/* Variation Groups */}
+          {item.variation_groups?.length > 0 && item.variation_groups.map((group, groupIndex) => (
+            <div key={groupIndex} className="mb-6">
+              <p className="text-sm font-semibold mb-3 uppercase">{group.group_name} <span className="text-muted-foreground font-normal">(Optional)</span></p>
+              <div className="grid grid-cols-2 gap-2">
+                {group.options.map(v => (
+                  <button
+                    key={v.id}
+                    onClick={() => { touchSound.playTap(); toggleVariation(v); }}
+                    className={`p-3 rounded-sm text-left text-sm transition-all ${
+                      selectedVariations.find(sv => sv.id === v.id)
+                        ? 'bg-blue-hero text-white'
+                        : 'bg-muted hover:bg-blue-light/20'
+                    }`}
+                  >
+                    <span className="font-medium">{v.name}</span>
+                    {v.price > 0 && <span className="text-xs ml-1">+₹{v.price}</span>}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Fallback to old variations array if no variation_groups */}
+          {(!item.variation_groups || item.variation_groups.length === 0) && item.variations?.length > 0 && (
             <div className="mb-6">
               <p className="text-sm font-semibold mb-3 uppercase">Choice <span className="text-muted-foreground font-normal">(Optional)</span></p>
               <div className="grid grid-cols-2 gap-2">
