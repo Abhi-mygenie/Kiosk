@@ -854,20 +854,20 @@ const KioskPage = () => {
               onClick={e => e.stopPropagation()}
             >
               <LogOut size={48} className="mx-auto text-red-500 mb-4" />
-              <h2 className="text-2xl font-serif font-medium mb-2">Logout</h2>
+              <h2 className="text-2xl font-heading font-bold mb-2 uppercase text-blue-dark">Logout</h2>
               <p className="text-muted-foreground mb-6">Are you sure you want to logout?</p>
               <div className="flex gap-4">
                 <button
                   onClick={() => { touchSound.playClick(); setShowLogoutConfirm(false); }}
                   data-testid="logout-cancel"
-                  className="flex-1 py-3 rounded-sm border border-border hover:bg-muted transition-all font-medium"
+                  className="flex-1 py-3 rounded-sm border border-border hover:bg-muted transition-all font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleLogout}
                   data-testid="logout-confirm"
-                  className="flex-1 py-3 rounded-sm bg-red-500 text-white hover:bg-red-600 transition-all font-medium"
+                  className="flex-1 py-3 rounded-sm bg-red-500 text-white hover:bg-red-600 transition-all font-semibold"
                 >
                   Yes, Logout
                 </button>
