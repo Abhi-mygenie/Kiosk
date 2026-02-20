@@ -308,17 +308,6 @@ async def fetch_pos_menu(force_refresh_token=False):
     except Exception as e:
         logger.error(f"Failed to fetch POS menu: {e}")
     return None
-                
-                # Cache for 5 minutes
-                from datetime import timedelta
-                menu_cache["data"] = foods
-                menu_cache["expires"] = now + timedelta(minutes=5)
-                
-                logger.info(f"Fetched {len(foods)} items from POS menu")
-                return foods
-    except Exception as e:
-        logger.error(f"Failed to fetch POS menu: {e}")
-    return None
 
 
 def transform_pos_food_to_menu_item(food: dict) -> dict:
