@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AuthContext = createContext();
 
@@ -22,28 +25,36 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (username, password) => {
-    // TODO: Replace with actual POS API call
-    // For now, mock authentication
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        // Mock validation - accept any non-empty credentials for now
-        if (username && password) {
-          const userData = {
-            username,
-            loginTime: new Date().toISOString(),
-            // Will be populated from POS API later:
-            // outletId, outletName, permissions, etc.
-          };
-          setUser(userData);
-          setIsAuthenticated(true);
-          localStorage.setItem('kiosk_user', JSON.stringify(userData));
-          resolve(userData);
-        } else {
-          reject(new Error('Username and password are required'));
-        }
-      }, 800); // Simulate API delay
-    });
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
+        email,
+        password
+      });
+
+      const data = response.data;
+      const userData = {
+        email,
+        token: data.token,
+        roleName: data.role_name,
+        roles: data.role || [],
+        loginTime: new Date().toISOString()
+      };
+
+      setUser(userData);
+      setIsAuthenticated(true);
+      localStorage.setItem('kiosk_user', JSON.stringify(userData));
+      
+      return userData;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        throw new Error('Invalid email or password');
+      } else if (error.response?.status === 503) {
+        throw new Error('Unable to connect to server. Please try again.');
+      } else {
+        throw new Error(error.response?.data?.detail || 'Login failed. Please try again.');
+      }
+    }
   };
 
   const logout = () => {
