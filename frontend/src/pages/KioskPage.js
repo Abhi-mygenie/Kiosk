@@ -689,7 +689,7 @@ const KioskPage = () => {
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Enter your name"
                 data-testid="customer-name-input"
-                className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-accent"
+                className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-blue-hero"
               />
             </div>
             <div>
@@ -701,7 +701,7 @@ const KioskPage = () => {
                 onChange={(e) => handleMobileChange(e.target.value)}
                 placeholder="10-digit mobile number"
                 data-testid="customer-mobile-input"
-                className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-accent"
+                className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-blue-hero"
               />
             </div>
           </div>
@@ -727,9 +727,9 @@ const KioskPage = () => {
                 <span className="text-muted-foreground">SGST (2.5%)</span>
                 <span>₹{calculateTotals.sgst.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-border text-base font-medium">
+              <div className="flex justify-between pt-2 border-t border-border text-base font-semibold">
                 <span>Grand Total</span>
-                <span data-testid="cart-total">₹{calculateTotals.grandTotal.toFixed(2)}</span>
+                <span data-testid="cart-total" className="text-blue-dark">₹{calculateTotals.grandTotal.toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -739,9 +739,9 @@ const KioskPage = () => {
             onClick={handlePlaceOrder}
             disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
             data-testid="place-order-button"
-            className={`w-full py-4 rounded-sm text-lg font-medium transition-all ${
+            className={`w-full py-4 rounded-sm text-lg font-semibold transition-all ${
               tableNumber && cart.length > 0 && !isPlacingOrder
-                ? 'bg-accent text-accent-foreground hover:bg-accent/90'
+                ? 'bg-blue-hero text-white hover:bg-blue-medium'
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
