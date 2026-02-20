@@ -411,6 +411,13 @@ const KioskPage = () => {
     setOrderSuccess(null);
   };
 
+  const handleLogout = () => {
+    touchSound.playClick();
+    clearCart();
+    logout();
+    toast.success('Logged out successfully');
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-[#F9F8F6]">
