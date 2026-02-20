@@ -600,7 +600,7 @@ POS_WAITER_ID = "1703"  # Default waiter ID
 
 
 async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
-    """Send order to POS API"""
+    """Send order to POS API using place-order endpoint"""
     import json
     
     token = await get_pos_token()
@@ -609,73 +609,48 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
         return {"success": False, "error": "No POS token"}
     
     try:
-        # Build cart items for POS - match exact structure from curl example
+        # Build cart items for POS - match exact structure from place-order curl example
         pos_cart = []
         for item in order_input.items:
-            # Calculate item amounts
-            food_amount = float(item.price * item.quantity)
-            gst_amount = round(food_amount * 0.05, 2)  # 5% GST
-            discount_amount = 0.0
-            
             pos_cart.append({
                 "food_id": int(item.item_id),
-                "variant": "",
-                "add_on_ids": [],
-                "food_level_notes": item.special_instructions or "",
-                "add_on_qtys": [],
-                "variations": [],
+                "quantity": item.quantity,
+                "variations": [],  # Can be populated with variation data if needed
+                "variation_total": 0.0,
+                "addons_total": 0.0,
                 "add_ons": [],
                 "station": "OTHER",
-                "quantity": item.quantity,
-                "food_amount": food_amount,
-                "variation_amount": 0.0,
-                "addon_amount": 0.0,
-                "gst_amount": gst_amount,
-                "vat_amount": 0.0,
-                "discount_amount": discount_amount,
-                "service_charge": 0.0
+                "food_level_notes": item.special_instructions or "",
+                "is_inventory": "Yes",
+                "price": float(item.price)
             })
         
-        # Calculate order totals
-        subtotal = float(order_input.subtotal or order_input.total)
-        total_gst = round(float(order_input.cgst or 0) + float(order_input.sgst or 0), 2)
+        # Calculate order total
         total_amount = round(float(order_input.total), 2)
-        discount = round(float(order_input.discount or 0), 2)
+        total_gst = round(float(order_input.cgst or 0) + float(order_input.sgst or 0), 2)
         
-        # Build POS order payload - EXACT structure from curl + required fields from POS API
+        # Build POS order payload - using place-order endpoint structure
         pos_data = {
+            "payment_method": "cash_on_delivery",
+            "order_amount": str(total_amount),
+            "delivery_charge": "0.0",
+            "address_id": "",
             "restaurant_id": POS_RESTAURANT_ID,
             "user_id": "",
-            "cart": pos_cart,
-            "waiter_id": POS_WAITER_ID,
-            "payment_method": "TAB",
-            "paid_room": "",
-            "payment_status": "sucess",  # Note: POS API has typo "sucess" not "success"
-            "cust_email": "",
-            "payment_type": "prepaid",
             "order_note": "",
-            "delivery_charge": "0.0",
-            "tax_amount": total_gst,
-            "order_sub_total_amount": subtotal,
-            "order_amount": total_amount,
-            "vat_tax": 0.0,
-            "gst_tax": total_gst,
-            "address_id": "",
-            "print_kot": "Yes",
-            "self_discount": 0.0,
+            "gst_tax": str(total_gst),
+            "vat_tax": "0",
+            "tip_amount": "0",
             "order_type": "pos",
             "table_id": str(order_input.table_id or "0"),
-            "tip_amount": "0",
-            "order_discount": discount,
             "cust_mobile": order_input.customer_mobile or "",
+            "print_kot": "Yes",
+            "cust_email": "",
             "cust_name": order_input.customer_name or "",
-            "restaurant_name": POS_RESTAURANT_NAME,
-            "service_tax": 0,
-            "service_gst_tax_amount": 0,  # Required by POS API
-            "round_up": 0,
-            "tip_tax_amount": 0,
-            "transaction_id": "",
-            "room_id": ""
+            "def_order_status": 2,
+            "inventory": "Yes",
+            "inventory_negative": "Yes",
+            "cart": pos_cart
         }
         
         # Log the payload for debugging
@@ -684,10 +659,11 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
         async with httpx.AsyncClient() as client_http:
             # POS API expects multipart/form-data with 'data' field as JSON string
             response = await client_http.post(
-                f"{POS_API_V2_URL}/vendoremployee/pos/place-order-and-payment",
+                f"{POS_API_V2_URL}/vendoremployee/pos/place-order",
                 data={"data": json.dumps(pos_data)},
                 headers={
-                    "Authorization": f"Bearer {token}"
+                    "Authorization": f"Bearer {token}",
+                    "X-localization": "en"
                 },
                 timeout=30.0
             )
