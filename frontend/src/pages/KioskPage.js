@@ -485,6 +485,7 @@ const KioskPage = () => {
       
       const orderData = {
         table_number: tableNumber,
+        table_id: selectedTableId || null,
         customer_name: customerName || null,
         customer_mobile: customerMobile || null,
         items: cart.map(item => ({
@@ -492,7 +493,8 @@ const KioskPage = () => {
           name: item.name,
           price: item.totalPrice || item.price,
           quantity: item.quantity,
-          variations: item.variations || []
+          variations: item.variations || [],
+          special_instructions: item.specialInstructions || null
         })),
         subtotal: subtotal,
         discount: discount,
@@ -506,6 +508,7 @@ const KioskPage = () => {
       setOrderSuccess({ id: response.data.id, tableNumber, grandTotal, customerName });
       clearCart();
       setTableNumber('');
+      setSelectedTableId('');
       setAppliedCoupon(null);
       setCouponCode('');
       setCustomerName('');
