@@ -592,19 +592,133 @@ async def get_tables():
     fallback_tables = [{"id": str(i), "table_no": f"{i:02d}", "title": "", "waiter": ""} for i in range(1, 101)]
     return {"tables": fallback_tables, "source": "fallback"}
 
+
+# POS restaurant config (should match the POS account)
+POS_RESTAURANT_ID = "478"
+POS_RESTAURANT_NAME = "18march"
+POS_WAITER_ID = "1703"  # Default waiter ID
+
+
+async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
+    """Send order to POS API"""
+    token = await get_pos_token()
+    if not token:
+        logger.warning("No POS token available for order submission")
+        return {"success": False, "error": "No POS token"}
+    
+    try:
+        # Build cart items for POS
+        pos_cart = []
+        for item in order_input.items:
+            # Calculate item amounts
+            food_amount = item.price * item.quantity
+            gst_amount = food_amount * 0.05  # 5% GST (2.5% CGST + 2.5% SGST)
+            
+            pos_cart.append({
+                "food_id": int(item.item_id),
+                "variant": "",
+                "add_on_ids": [],
+                "food_level_notes": item.special_instructions or "",
+                "add_on_qtys": [],
+                "variations": [],
+                "add_ons": [],
+                "station": "OTHER",
+                "quantity": item.quantity,
+                "food_amount": food_amount,
+                "variation_amount": 0.0,
+                "addon_amount": 0.0,
+                "gst_amount": round(gst_amount, 2),
+                "vat_amount": 0.0,
+                "discount_amount": 0.0,
+                "service_charge": 0.0
+            })
+        
+        # Build POS order payload
+        pos_data = {
+            "restaurant_id": POS_RESTAURANT_ID,
+            "user_id": "",
+            "cart": pos_cart,
+            "waiter_id": POS_WAITER_ID,
+            "payment_method": "TAB",
+            "paid_room": "",
+            "payment_status": "sucess",
+            "cust_email": "",
+            "payment_type": "prepaid",
+            "order_note": "",
+            "delivery_charge": "0.0",
+            "tax_amount": round(order_input.cgst + order_input.sgst, 2),
+            "order_sub_total_amount": round(order_input.subtotal or order_input.total, 2),
+            "order_amount": round(order_input.total, 2),
+            "vat_tax": 0.0,
+            "gst_tax": round(order_input.cgst + order_input.sgst, 2),
+            "address_id": "",
+            "print_kot": "Yes",
+            "self_discount": 0.0,
+            "order_type": "pos",
+            "table_id": order_input.table_id or "0",
+            "tip_amount": "0",
+            "order_discount": round(order_input.discount or 0, 2),
+            "cust_mobile": order_input.customer_mobile or "",
+            "cust_name": order_input.customer_name or "",
+            "restaurant_name": POS_RESTAURANT_NAME,
+            "service_tax": 0,
+            "transaction_id": "",
+            "room_id": ""
+        }
+        
+        import json
+        
+        async with httpx.AsyncClient() as client_http:
+            # POS API expects multipart/form-data with 'data' field as JSON string
+            response = await client_http.post(
+                f"{POS_API_V2_URL}/vendoremployee/pos/place-order-and-payment",
+                data={"data": json.dumps(pos_data)},
+                headers={
+                    "Authorization": f"Bearer {token}"
+                },
+                timeout=30.0
+            )
+            
+            logger.info(f"POS Order Response Status: {response.status_code}")
+            
+            if response.status_code == 200:
+                result = response.json()
+                logger.info(f"POS Order Success: {result}")
+                return {"success": True, "data": result}
+            else:
+                logger.error(f"POS Order Failed: {response.text}")
+                return {"success": False, "error": response.text, "status_code": response.status_code}
+                
+    except Exception as e:
+        logger.error(f"POS Order Error: {e}")
+        return {"success": False, "error": str(e)}
+
+
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_input: OrderCreate):
     order = Order(**order_input.model_dump())
     
+    # Send order to POS API
+    pos_result = await send_order_to_pos(order, order_input)
+    
+    if pos_result.get("success"):
+        order.status = "confirmed"
+        # Extract POS order ID if available
+        pos_data = pos_result.get("data", {})
+        if isinstance(pos_data, dict):
+            order.pos_order_id = str(pos_data.get("order_id", ""))
+        logger.info(f"Order {order.id} sent to POS successfully")
+    else:
+        order.status = "pending_pos_sync"
+        logger.warning(f"Order {order.id} failed to sync with POS: {pos_result.get('error')}")
+    
     # Convert to dict for MongoDB
     order_dict = order.model_dump()
     order_dict['created_at'] = order_dict['created_at'].isoformat()
+    order_dict['pos_sync_result'] = pos_result
     
     # Save to database
     await db.orders.insert_one(order_dict)
-    
-    # TODO: In production, send this to external POS API
-    # await send_to_pos_api(order_dict)
     
     return order
 
