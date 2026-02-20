@@ -245,7 +245,7 @@ async def get_pos_token():
         async with httpx.AsyncClient() as client_http:
             response = await client_http.post(
                 f"{POS_API_BASE_URL}/auth/vendoremployee/login",
-                json={"email": "byakuya@soulking.com", "password": "Qplazm@10"},
+                json={"email": "owner@18march.com", "password": "Qplazm@10"},
                 headers={"Content-Type": "application/json"},
                 timeout=30.0
             )
