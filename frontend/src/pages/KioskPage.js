@@ -228,6 +228,7 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
 
 const KioskPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, getTotal, clearCart } = useCart();
+  const { logout } = useAuth();
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [activeCategory, setActiveCategory] = useState('dosa');
@@ -243,6 +244,7 @@ const KioskPage = () => {
   const [customerName, setCustomerName] = useState('');
   const [customerMobile, setCustomerMobile] = useState('');
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Initialize kiosk lock on mount
   useEffect(() => {
