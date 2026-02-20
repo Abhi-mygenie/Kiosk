@@ -499,6 +499,96 @@ async def get_menu_items(category: Optional[str] = None):
         return [item for item in MENU_ITEMS if item["category"] == category]
     return MENU_ITEMS
 
+
+# Tables cache
+tables_cache = {"data": None, "expires": None}
+
+async def fetch_pos_tables():
+    """Fetch tables from POS API"""
+    now = datetime.now(timezone.utc)
+    
+    # Check cache (cache for 5 minutes)
+    if tables_cache["data"] and tables_cache["expires"] and tables_cache["expires"] > now:
+        return tables_cache["data"]
+    
+    token = await get_pos_token()
+    if not token:
+        logger.warning("No POS token available for tables")
+        return None
+    
+    try:
+        async with httpx.AsyncClient() as client_http:
+            response = await client_http.get(
+                f"{POS_API_V2_URL}/vendoremployee/restaurant-settings/table-config",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                timeout=30.0
+            )
+            if response.status_code == 200:
+                data = response.json()
+                tables = data.get("data", {}).get("tables", [])
+                
+                # Cache for 5 minutes
+                from datetime import timedelta
+                tables_cache["data"] = tables
+                tables_cache["expires"] = now + timedelta(minutes=5)
+                
+                logger.info(f"Fetched {len(tables)} tables from POS")
+                return tables
+            elif response.status_code == 401:
+                # Token expired, clear cache and retry
+                pos_token_cache["token"] = None
+                pos_token_cache["expires"] = None
+                token = await get_pos_token()
+                if token:
+                    response = await client_http.get(
+                        f"{POS_API_V2_URL}/vendoremployee/restaurant-settings/table-config",
+                        headers={
+                            "Authorization": f"Bearer {token}",
+                            "Content-Type": "application/json"
+                        },
+                        timeout=30.0
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        tables = data.get("data", {}).get("tables", [])
+                        from datetime import timedelta
+                        tables_cache["data"] = tables
+                        tables_cache["expires"] = now + timedelta(minutes=5)
+                        return tables
+    except Exception as e:
+        logger.error(f"Failed to fetch POS tables: {e}")
+    return None
+
+
+@api_router.get("/tables")
+async def get_tables():
+    """Get tables from POS API"""
+    pos_tables = await fetch_pos_tables()
+    
+    if pos_tables:
+        # Transform to simplified format and group by type
+        tables = []
+        for table in pos_tables:
+            if table.get("status") == 1:  # Only active tables
+                tables.append({
+                    "id": str(table.get("id")),
+                    "table_no": table.get("table_no", ""),
+                    "title": table.get("title", ""),
+                    "type": table.get("rtype", "TB"),  # TB = Table, RM = Room
+                    "waiter": f"{table.get('f_name', '') or ''} {table.get('l_name', '') or ''}".strip()
+                })
+        
+        # Sort tables by table_no
+        tables.sort(key=lambda x: x["table_no"])
+        return {"tables": tables, "source": "pos"}
+    
+    # Fallback to hardcoded tables (1-100)
+    fallback_tables = [{"id": str(i), "table_no": f"{i:02d}", "title": "", "type": "TB", "waiter": ""} for i in range(1, 101)]
+    return {"tables": fallback_tables, "source": "fallback"}
+
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_input: OrderCreate):
     order = Order(**order_input.model_dump())
