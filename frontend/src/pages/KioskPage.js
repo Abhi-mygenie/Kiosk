@@ -372,10 +372,29 @@ const KioskPage = () => {
   const CGST_RATE = 2.5;
   const SGST_RATE = 2.5;
 
-  // Generate table numbers 01-100 with leading zeros
-  const allTables = useMemo(() => 
-    Array.from({ length: 100 }, (_, i) => String(i + 1).padStart(2, '0')), []
-  );
+  // Fetch tables from API
+  useEffect(() => {
+    const fetchTables = async () => {
+      setTablesLoading(true);
+      try {
+        const response = await axios.get(`${API}/tables`);
+        setTables(response.data.tables || []);
+      } catch (error) {
+        console.error('Failed to fetch tables:', error);
+        // Fallback to hardcoded tables
+        setTables(Array.from({ length: 100 }, (_, i) => ({
+          id: String(i + 1),
+          table_no: String(i + 1).padStart(2, '0'),
+          title: '',
+          type: 'TB',
+          waiter: ''
+        })));
+      } finally {
+        setTablesLoading(false);
+      }
+    };
+    fetchTables();
+  }, []);
 
   // Calculate totals with GST and discount
   const calculateTotals = useMemo(() => {
