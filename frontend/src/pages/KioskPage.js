@@ -241,7 +241,7 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
 };
 
 const KioskPage = () => {
-  const { cart, addToCart, removeFromCart, updateQuantity, getTotal, clearCart } = useCart();
+  const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
   const { logout } = useAuth();
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
