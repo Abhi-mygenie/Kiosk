@@ -51,6 +51,14 @@ export const CartProvider = ({ children }) => {
     );
   };
 
+  const updateInstructions = (cartId, instructions) => {
+    setCart(prevCart =>
+      prevCart.map(item =>
+        item.cartId === cartId ? { ...item, specialInstructions: instructions } : item
+      )
+    );
+  };
+
   const clearCart = () => {
     setCart([]);
   };
@@ -72,6 +80,7 @@ export const CartProvider = ({ children }) => {
       addToCart,
       removeFromCart,
       updateQuantity,
+      updateInstructions,
       clearCart,
       getTotal,
       getItemCount
