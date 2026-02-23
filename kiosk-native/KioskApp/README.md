@@ -1,97 +1,141 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Kiosk App - React Native Android
 
-# Getting Started
+A self-ordering kiosk application for restaurants built with React Native, targeting large Android kiosk displays (21.5", 32", and 43" screens).
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- **Login Authentication** - POS system integration
+- **Menu Browsing** - Categories and items from POS
+- **Cart Management** - Add, remove, update quantities
+- **Table Selection** - Select table for order placement
+- **Order Placement** - Send orders directly to POS system
+- **Large Screen Support** - Optimized for 21.5", 32", and 43" kiosk displays
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Tech Stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- React Native 0.84
+- TypeScript
+- React Navigation
+- AsyncStorage for token persistence
+- Axios for API calls
 
-```sh
-# Using npm
-npm start
+## Project Structure
 
-# OR using Yarn
-yarn start
+```
+KioskApp/
+├── src/
+│   ├── screens/
+│   │   ├── LoginScreen.tsx      # Login page
+│   │   └── KioskScreen.tsx      # Main kiosk interface
+│   ├── contexts/
+│   │   ├── AuthContext.tsx      # Authentication state
+│   │   └── CartContext.tsx      # Shopping cart state
+│   ├── services/
+│   │   └── api.ts               # API service layer
+│   └── utils/
+├── android/                      # Android native code
+├── App.tsx                       # Root component
+└── package.json
 ```
 
-## Step 2: Build and run your app
+## Prerequisites
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+- Node.js >= 18
+- Yarn
+- Android Studio with SDK 34+
+- Java JDK 17+
 
-### Android
+## Setup
 
-```sh
-# Using npm
-npm run android
+1. **Install Dependencies**
+   ```bash
+   cd KioskApp
+   yarn install
+   ```
 
-# OR using Yarn
+2. **Start Metro Bundler**
+   ```bash
+   yarn start
+   ```
+
+3. **Run on Android Device/Emulator**
+   ```bash
+   yarn android
+   ```
+
+## Building Release APK
+
+1. **Generate Release APK**
+   ```bash
+   cd android
+   ./gradlew assembleRelease
+   ```
+
+2. **APK Location**
+   ```
+   android/app/build/outputs/apk/release/app-release.apk
+   ```
+
+## Building Release AAB (for Play Store)
+
+```bash
+cd android
+./gradlew bundleRelease
+```
+
+AAB will be at: `android/app/build/outputs/bundle/release/app-release.aab`
+
+## API Configuration
+
+The app connects to the same backend as the web version:
+- **API Base URL**: `https://kiosk-test.preview.emergentagent.com/api`
+
+To change the API URL, edit `src/services/api.ts`:
+```typescript
+const API_BASE_URL = 'YOUR_API_URL';
+```
+
+## Kiosk Mode Setup (Optional)
+
+For production kiosk deployment, configure Android device:
+
+1. **Enable Kiosk Mode** in device settings
+2. **Set as Default Launcher** 
+3. **Disable Navigation Bar**
+4. **Enable Auto-Start on Boot**
+
+## Test Credentials
+
+- **Username**: owner@18march.com
+- **Password**: Qplazm@10
+
+## Screen Size Support
+
+The app is responsive and optimized for:
+- 21.5" displays (~1920x1080)
+- 32" displays (~1920x1080 / 2560x1440)
+- 43" displays (~1920x1080 / 3840x2160)
+
+Layout automatically adjusts based on screen width.
+
+## Troubleshooting
+
+**Metro bundler issues:**
+```bash
+yarn start --reset-cache
+```
+
+**Android build issues:**
+```bash
+cd android
+./gradlew clean
+cd ..
 yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+**Clear all caches:**
+```bash
+watchman watch-del-all
+rm -rf node_modules
+yarn install
 ```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
