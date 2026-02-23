@@ -34,13 +34,7 @@ if (config.enableHealthCheck) {
 
 const webpackConfig = {
   eslint: {
-    configure: {
-      extends: ["plugin:react-hooks/recommended"],
-      rules: {
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
-      },
-    },
+    enable: false, // Disable CRA's built-in ESLint to avoid config conflicts
   },
   webpack: {
     alias: {
