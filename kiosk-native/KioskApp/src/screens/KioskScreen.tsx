@@ -233,12 +233,12 @@ const KioskScreen: React.FC = () => {
   const selectedCategoryName = categories.find((c: any) => c.id === selectedCategory)?.name || '';
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Sidebar */}
-      <View style={styles.sidebar}>
+      <View style={[styles.sidebar, { backgroundColor: colors.card, borderRightColor: colors.border }]}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>HYATT</Text>
-          <Text style={styles.logoSubtext}>CENTRIC</Text>
+          <Text style={[styles.logoText, { color: colors.text }]}>HYATT</Text>
+          <Text style={[styles.logoSubtext, { color: colors.text }]}>CENTRIC</Text>
         </View>
         <Text style={styles.sidebarTitle}>BREAKFAST BUFFET</Text>
         
@@ -250,12 +250,12 @@ const KioskScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
         />
 
-        <View style={styles.sidebarFooter}>
+        <View style={[styles.sidebarFooter, { borderTopColor: colors.border }]}>
           <TouchableOpacity style={styles.soundButton}>
             <Text style={styles.soundButtonText}>🔊 Sound On</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-            <Text style={styles.logoutBtnText}>→ Logout</Text>
+            <Text style={[styles.logoutBtnText, { color: colors.error }]}>→ Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -264,12 +264,12 @@ const KioskScreen: React.FC = () => {
       <View style={styles.mainContent}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.categoryTitle}>{selectedCategoryName}</Text>
+            <Text style={[styles.categoryTitle, { color: colors.text }]}>{selectedCategoryName}</Text>
             <Text style={styles.categorySubtitle}>Select items to add to your order</Text>
           </View>
           {selectedTable && (
             <TouchableOpacity 
-              style={styles.tableIndicator}
+              style={[styles.tableIndicator, { backgroundColor: colors.primary }]}
               onPress={() => setShowTableModal(true)}
             >
               <Text style={styles.tableIndicatorText}>Table {selectedTable.table_no}</Text>
@@ -288,8 +288,8 @@ const KioskScreen: React.FC = () => {
       </View>
 
       {/* Cart Sidebar */}
-      <View style={styles.cartSidebar}>
-        <Text style={styles.cartTitle}>YOUR ORDER</Text>
+      <View style={[styles.cartSidebar, { backgroundColor: colors.card, borderLeftColor: colors.border }]}>
+        <Text style={[styles.cartTitle, { color: colors.text }]}>YOUR ORDER</Text>
         <Text style={styles.cartSubtitle}>{getItemCount()} items</Text>
 
         {cartItems.length === 0 ? (
@@ -306,13 +306,17 @@ const KioskScreen: React.FC = () => {
           />
         )}
 
-        <View style={styles.cartFooter}>
+        <View style={[styles.cartFooter, { borderTopColor: colors.border }]}>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalAmount}>₹{getTotal().toFixed(2)}</Text>
+            <Text style={[styles.totalAmount, { color: colors.primary }]}>₹{getTotal().toFixed(2)}</Text>
           </View>
           <TouchableOpacity
-            style={[styles.orderButton, cartItems.length === 0 && styles.orderButtonDisabled]}
+            style={[
+              styles.orderButton, 
+              { backgroundColor: colors.primary },
+              cartItems.length === 0 && styles.orderButtonDisabled
+            ]}
             onPress={handlePlaceOrder}
             disabled={cartItems.length === 0 || placingOrder}
           >
