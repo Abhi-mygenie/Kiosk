@@ -107,7 +107,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       let fetchedBranding = null;
       try {
         fetchedBranding = await brandingAPI.getConfig();
-      } catch (e) {
+      } catch {
         console.warn('Failed to fetch branding, using defaults');
       }
       updateProgress('Loading Theme', 'done');
@@ -147,7 +147,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       updateProgress('Finalizing', 'done');
 
       // Small delay to show completion
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise<void>(resolve => setTimeout(resolve, 300));
       
       setLoginProgress({ isLoggingIn: false, currentStep: '', steps: [] });
     } catch (error) {

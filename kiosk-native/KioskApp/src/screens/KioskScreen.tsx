@@ -33,7 +33,7 @@ interface Table {
 const KioskScreen: React.FC = () => {
   const { logout, menuData } = useAuth();
   const { items: cartItems, addItem, updateQuantity, clearCart, getTotal, getItemCount } = useCart();
-  const { colors, branding } = useTheme();
+  const { colors } = useTheme();
   
   // Use cached menu data from AuthContext (fetched at login) - NO API CALLS
   const categories = menuData.categories || [];

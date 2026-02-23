@@ -23,8 +23,7 @@ const AppContent: React.FC = () => {
 
 // Wrapper that provides ThemeProvider inside AuthProvider
 const ThemedApp: React.FC = () => {
-  const { branding } = useAuth();
-  
+  // branding data is now consumed directly by ThemeProvider via useAuth
   return (
     <ThemeProvider>
       <CartProvider>
