@@ -397,31 +397,7 @@ const KioskPage = () => {
   const CGST_RATE = 2.5;
   const SGST_RATE = 2.5;
 
-  // Fetch tables from API
-  useEffect(() => {
-    const fetchTables = async () => {
-      setTablesLoading(true);
-      try {
-        const response = await authAxios.get(`${API}/tables`);
-        setTables(response.data.tables || []);
-      } catch (error) {
-        console.error('Failed to fetch tables:', error);
-        // Fallback to hardcoded tables
-        setTables(Array.from({ length: 100 }, (_, i) => ({
-          id: String(i + 1),
-          table_no: String(i + 1).padStart(2, '0'),
-          title: '',
-          type: 'TB',
-          waiter: ''
-        })));
-      } finally {
-        setTablesLoading(false);
-      }
-    };
-    if (user?.token) {
-      fetchTables();
-    }
-  }, [user?.token, authAxios]);
+  // Kiosk lock and sound toggle remain the same
 
   // Calculate totals with GST and discount
   const calculateTotals = useMemo(() => {
