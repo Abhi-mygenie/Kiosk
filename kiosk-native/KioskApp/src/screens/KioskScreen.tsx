@@ -18,6 +18,11 @@ import { ordersAPI } from '../services/api';
 const { width, height } = Dimensions.get('window');
 const isLargeScreen = width > 1200;
 
+// Helper: Treat price of 1 as 0 (complimentary item indicator)
+const normalizePrice = (price: number): number => {
+  return price === 1 ? 0 : price;
+};
+
 interface Table {
   id: string;
   table_no: string;
