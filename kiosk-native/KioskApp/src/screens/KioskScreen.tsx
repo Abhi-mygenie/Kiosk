@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { ordersAPI } from '../services/api';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const isLargeScreen = width > 1200;
 
 // Helper: Treat price of 1 as 0 (complimentary item indicator)
