@@ -103,7 +103,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login, loginProgress } = useAuth();
+  const { login, loginDemo, loginProgress } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,6 +119,18 @@ const LoginPage = () => {
       toast.success('Login successful');
     } catch (error) {
       toast.error(error.message || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    try {
+      await loginDemo();
+      toast.success('Demo mode activated!');
+    } catch (error) {
+      toast.error('Failed to start demo mode');
     } finally {
       setIsLoading(false);
     }
