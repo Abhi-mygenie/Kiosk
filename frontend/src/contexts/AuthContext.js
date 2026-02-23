@@ -157,15 +157,32 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setMenuData({ categories: [], menuItems: [], tables: [] });
+    setBranding(null);
     setIsAuthenticated(false);
     localStorage.removeItem('kiosk_user');
     localStorage.removeItem('kiosk_menu_data');
+    localStorage.removeItem('kiosk_branding');
   };
 
   // Function to refresh menu data (manual refresh if needed)
   const refreshMenuData = async () => {
     if (!user?.token) return;
-    const fetchedMenuData = await fetchMenuData(user.token);
+    const authAxios = axios.create({
+      headers: { Authorization: `Bearer ${user.token}` }
+    });
+    
+    const [catRes, itemsRes, tablesRes] = await Promise.all([
+      authAxios.get(`${API_URL}/api/menu/categories`),
+      authAxios.get(`${API_URL}/api/menu/items`),
+      authAxios.get(`${API_URL}/api/tables`)
+    ]);
+    
+    const fetchedMenuData = {
+      categories: catRes.data,
+      menuItems: itemsRes.data,
+      tables: tablesRes.data.tables || []
+    };
+    
     setMenuData(fetchedMenuData);
     localStorage.setItem('kiosk_menu_data', JSON.stringify(fetchedMenuData));
   };
@@ -176,6 +193,8 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated,
       isLoading,
       menuData,
+      branding,
+      loginProgress,
       login,
       logout,
       refreshMenuData
