@@ -114,10 +114,34 @@ class Order(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class BrandingConfig(BaseModel):
-    primary_color: str = "#177DAA"
-    accent_color: str = "#62B5E5"
-    logo_url: Optional[str] = None
+    # Basic Info
     restaurant_name: str = "Hotel Lumiere"
+    logo_url: Optional[str] = None
+    
+    # Colors
+    primary_color: str = "#177DAA"
+    secondary_color: str = "#62B5E5"
+    accent_color: str = "#62B5E5"
+    text_color: str = "#1a1a1a"
+    background_color: str = "#F9F8F6"
+    
+    # Fonts
+    heading_font: str = "Georgia"
+    body_font: str = "Inter"
+    font_url: Optional[str] = None  # Google Fonts URL
+    
+    # UI Style
+    button_style: str = "rounded"  # "rounded" or "square"
+    icon_style: str = "outline"    # "filled" or "outline"
+    
+    # App Assets
+    splash_screen_image: Optional[str] = None
+    app_icon: Optional[str] = None
+    favicon: Optional[str] = None
+    
+    # Loader
+    loader_type: str = "spinner"  # "spinner", "dots", "bar"
+    loader_color: Optional[str] = None  # Defaults to primary_color if not set
 
 
 # Common variations/add-ons
