@@ -10,6 +10,11 @@ export interface CartItem {
   image?: string;
 }
 
+// Helper: Treat price of 1 as 0 (complimentary item indicator)
+const normalizePrice = (price: number): number => {
+  return price === 1 ? 0 : price;
+};
+
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
@@ -26,18 +31,24 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [items, setItems] = useState<CartItem[]>([]);
 
   const addItem = (newItem: CartItem) => {
+    // Normalize price when adding
+    const normalizedItem = {
+      ...newItem,
+      price: normalizePrice(newItem.price),
+    };
+    
     setItems(prev => {
       const existingIndex = prev.findIndex(
-        item => item.item_id === newItem.item_id && 
-        JSON.stringify(item.variations) === JSON.stringify(newItem.variations)
+        item => item.item_id === normalizedItem.item_id && 
+        JSON.stringify(item.variations) === JSON.stringify(normalizedItem.variations)
       );
       
       if (existingIndex >= 0) {
         const updated = [...prev];
-        updated[existingIndex].quantity += newItem.quantity;
+        updated[existingIndex].quantity += normalizedItem.quantity;
         return updated;
       }
-      return [...prev, newItem];
+      return [...prev, normalizedItem];
     });
   };
 
@@ -60,7 +71,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const getTotal = () => {
-    return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    return items.reduce((sum, item) => sum + (normalizePrice(item.price) * item.quantity), 0);
   };
 
   const getItemCount = () => {
