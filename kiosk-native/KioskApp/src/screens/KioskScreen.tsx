@@ -33,6 +33,7 @@ interface Table {
 const KioskScreen: React.FC = () => {
   const { logout, menuData } = useAuth();
   const { items: cartItems, addItem, updateQuantity, clearCart, getTotal, getItemCount } = useCart();
+  const { colors, branding } = useTheme();
   
   // Use cached menu data from AuthContext (fetched at login) - NO API CALLS
   const categories = menuData.categories || [];
@@ -104,7 +105,7 @@ const KioskScreen: React.FC = () => {
     <TouchableOpacity
       style={[
         styles.categoryItem,
-        selectedCategory === item.id && styles.categoryItemSelected,
+        selectedCategory === item.id && { backgroundColor: colors.primary },
       ]}
       onPress={() => setSelectedCategory(item.id)}
     >
@@ -123,7 +124,7 @@ const KioskScreen: React.FC = () => {
     <View style={styles.menuCard}>
       <Image source={{ uri: item.image }} style={styles.menuImage} />
       <View style={styles.menuContent}>
-        <Text style={styles.menuName}>{item.name}</Text>
+        <Text style={[styles.menuName, { color: colors.text }]}>{item.name}</Text>
         <Text style={styles.menuDescription} numberOfLines={2}>
           {item.description}
         </Text>
@@ -143,12 +144,12 @@ const KioskScreen: React.FC = () => {
         )}
         <View style={styles.menuFooter}>
           {normalizePrice(item.price) > 0 ? (
-            <Text style={styles.menuPrice}>₹{normalizePrice(item.price)}</Text>
+            <Text style={[styles.menuPrice, { color: colors.primary }]}>₹{normalizePrice(item.price)}</Text>
           ) : (
             <Text style={styles.menuPrice}></Text>
           )}
           <TouchableOpacity
-            style={styles.addButton}
+            style={[styles.addButton, { backgroundColor: colors.primary }]}
             onPress={() => handleAddToCart(item)}
           >
             <Text style={styles.addButtonText}>+</Text>
@@ -161,9 +162,9 @@ const KioskScreen: React.FC = () => {
   const renderCartItem = ({ item }: { item: any }) => (
     <View style={styles.cartItem}>
       <View style={styles.cartItemInfo}>
-        <Text style={styles.cartItemName} numberOfLines={1}>{item.name}</Text>
+        <Text style={[styles.cartItemName, { color: colors.text }]} numberOfLines={1}>{item.name}</Text>
         {normalizePrice(item.price) > 0 && (
-          <Text style={styles.cartItemPrice}>₹{normalizePrice(item.price)}</Text>
+          <Text style={[styles.cartItemPrice, { color: colors.primary }]}>₹{normalizePrice(item.price)}</Text>
         )}
       </View>
       <View style={styles.cartItemQuantity}>
@@ -173,7 +174,7 @@ const KioskScreen: React.FC = () => {
         >
           <Text style={styles.quantityButtonText}>-</Text>
         </TouchableOpacity>
-        <Text style={styles.quantityText}>{item.quantity}</Text>
+        <Text style={[styles.quantityText, { color: colors.text }]}>{item.quantity}</Text>
         <TouchableOpacity
           style={styles.quantityButton}
           onPress={() => updateQuantity(item.item_id, item.quantity + 1)}
@@ -187,7 +188,7 @@ const KioskScreen: React.FC = () => {
   const renderTableModal = () => (
     <View style={styles.modalOverlay}>
       <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>Select Table</Text>
+        <Text style={[styles.modalTitle, { color: colors.text }]}>Select Table</Text>
         <ScrollView style={styles.tableList}>
           <View style={styles.tableGrid}>
             {tables.slice(0, 20).map((table: Table) => (
@@ -195,7 +196,7 @@ const KioskScreen: React.FC = () => {
                 key={table.id}
                 style={[
                   styles.tableItem,
-                  selectedTable?.id === table.id && styles.tableItemSelected,
+                  selectedTable?.id === table.id && { borderColor: colors.primary, backgroundColor: '#E0F2FE' },
                 ]}
                 onPress={() => {
                   setSelectedTable(table);
@@ -220,9 +221,9 @@ const KioskScreen: React.FC = () => {
   // No loading state needed - data is cached from login
   if (categories.length === 0) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <Text style={styles.loadingText}>No menu data available. Please re-login.</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <TouchableOpacity style={[styles.logoutButton, { backgroundColor: colors.error }]} onPress={logout}>
           <Text style={styles.logoutButtonText}>Logout</Text>
         </TouchableOpacity>
       </View>
