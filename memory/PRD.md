@@ -53,20 +53,46 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 
 ## What's Been Implemented
 
-### Feb 23, 2026
+### Feb 23, 2026 (Session 2)
+- **Branding API optimization**: Moved branding API call from app load to login flow
+- **Login progress loader**: Added beautiful step-by-step loading overlay during login:
+  - Authenticating
+  - Loading Theme (branding)
+  - Loading Categories
+  - Loading Menu Items
+  - Loading Tables
+  - Finalizing Setup
+- **Enhanced caching**: Branding now cached in localStorage alongside menu data
+- **Fallback behavior**: App uses hardcoded defaults if branding API not called or fails
+
+### Feb 23, 2026 (Session 1)
 - Cloned and deployed web version from GitHub
 - All web features working (login, menu, cart, orders)
 - Created React Native Android project structure
-- Implemented native screens:
-  - LoginScreen.tsx
-  - KioskScreen.tsx
-- Implemented contexts:
-  - AuthContext.tsx
-  - CartContext.tsx
-- Implemented services:
-  - api.ts (same backend as web)
+- Implemented native screens: LoginScreen.tsx, KioskScreen.tsx
+- Implemented contexts: AuthContext.tsx, CartContext.tsx
+- Implemented services: api.ts (same backend as web)
 - Configured Android for large kiosk displays
 - Added landscape orientation support
+- Client-side caching: Menu data fetched only at login
+- Price normalization: Items with price `1` treated as `0`
+- Dynamic branding: Web UI fully themed via `/api/config/branding`
+
+## API Call Behavior
+
+### During Login (All calls made sequentially with progress)
+1. `POST /api/auth/login` - Authenticate user
+2. `GET /api/config/branding` - Fetch theme/branding
+3. `GET /api/menu/categories` - Fetch categories
+4. `GET /api/menu/items` - Fetch menu items
+5. `GET /api/tables` - Fetch tables
+
+### After Login (Cached session)
+- No API calls for menu/categories/tables (uses localStorage cache)
+- Only `POST /api/orders` when placing an order
+
+### On App Reload (With cached session)
+- No API calls - loads directly from localStorage cache
 
 ## API Endpoints (Shared)
 - POST /api/auth/login
@@ -85,7 +111,15 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 ```
 /app/
 ├── backend/           # FastAPI backend (unchanged)
-├── frontend/          # React web app (unchanged)
+├── frontend/          # React web app
+│   └── src/
+│       ├── contexts/
+│       │   ├── AuthContext.js   # Login, caching, progress tracking
+│       │   ├── ThemeContext.js  # Dynamic branding (uses cached data)
+│       │   └── CartContext.js   # Cart management
+│       └── pages/
+│           ├── LoginPage.js     # Login with progress overlay
+│           └── KioskPage.js     # Main kiosk interface
 ├── kiosk-native/
 │   └── KioskApp/     # React Native Android app
 │       ├── src/
@@ -101,6 +135,9 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 ### P0 (Critical)
 - [x] Web version deployment
 - [x] Native app structure
+- [x] Client-side caching (login only)
+- [x] Dynamic branding for web
+- [ ] Apply dynamic branding to React Native app
 - [ ] Build APK for testing
 
 ### P1 (High Priority)
@@ -109,9 +146,10 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 - [ ] Receipt printing integration
 
 ### P2 (Medium Priority)
-- [ ] Offline mode with menu caching
+- [ ] Offline mode with local database
 - [ ] Push notifications
 - [ ] Multiple language support
+- [ ] Admin panel for branding settings
 
 ### P3 (Future)
 - [ ] Barcode scanner integration
@@ -119,7 +157,7 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 - [ ] Customer loyalty program
 
 ## Next Tasks
-1. Build debug APK for testing on actual kiosk devices
-2. Test on 21.5", 32", and 43" displays
-3. Add item variation selection UI
-4. Implement receipt printing
+1. Apply dynamic branding to React Native app (same fallback logic as web)
+2. Build debug APK for testing on actual kiosk devices
+3. Test on 21.5", 32", and 43" displays
+4. Add item variation selection UI
