@@ -73,10 +73,11 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
     return Object.values(groupSelections).flat();
   };
 
-  // Calculate total price
+  // Calculate total price (treat price of 1 as 0)
   const calculateTotal = () => {
-    const variationTotal = getAllSelectedVariations().reduce((sum, v) => sum + v.price, 0);
-    return (item.price + variationTotal) * quantity;
+    const basePrice = normalizePrice(item.price);
+    const variationTotal = getAllSelectedVariations().reduce((sum, v) => sum + normalizePrice(v.price), 0);
+    return (basePrice + variationTotal) * quantity;
   };
 
   // Check if all required groups have selections
@@ -109,13 +110,17 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
       return;
     }
     
+    const basePrice = normalizePrice(item.price);
+    const variationPriceTotal = selectedVariations.reduce((sum, v) => sum + normalizePrice(v.price), 0);
+    
     onAddToCart({
       ...item,
+      price: basePrice,
       variations: selectedVariations.map(v => v.name),
       variationDetails: selectedVariations,
       quantity,
       specialInstructions,
-      totalPrice: item.price + selectedVariations.reduce((sum, v) => sum + v.price, 0)
+      totalPrice: basePrice + variationPriceTotal
     });
     onClose();
   };
