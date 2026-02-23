@@ -88,7 +88,7 @@ AAB will be at: `android/app/build/outputs/bundle/release/app-release.aab`
 ## API Configuration
 
 The app connects to the same backend as the web version:
-- **API Base URL**: `https://kiosk-test.preview.emergentagent.com/api`
+- **API Base URL**: `https://kiosk-preview.preview.emergentagent.com/api`
 
 To change the API URL, edit `src/services/api.ts`:
 ```typescript
