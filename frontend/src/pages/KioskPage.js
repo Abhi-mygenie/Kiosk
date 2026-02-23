@@ -737,8 +737,8 @@ const KioskPage = () => {
                         <Plus size={14} />
                       </button>
                     </div>
-                    {!item.is_complementary && (item.totalPrice || item.price) > 0 && (
-                      <span className="font-semibold text-blue-dark">₹{((item.totalPrice || item.price) * item.quantity).toFixed(0)}</span>
+                    {!item.is_complementary && normalizePrice(item.totalPrice || item.price) > 0 && (
+                      <span className="font-semibold text-blue-dark">₹{(normalizePrice(item.totalPrice || item.price) * item.quantity).toFixed(0)}</span>
                     )}
                   </div>
                 </div>
