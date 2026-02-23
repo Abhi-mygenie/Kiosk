@@ -118,30 +118,31 @@ class BrandingConfig(BaseModel):
     restaurant_name: str = "Hotel Lumiere"
     logo_url: Optional[str] = None
     
-    # Colors
-    primary_color: str = "#177DAA"
-    secondary_color: str = "#62B5E5"
-    accent_color: str = "#62B5E5"
-    text_color: str = "#1a1a1a"
-    background_color: str = "#F9F8F6"
+    # Colors (matching current UI)
+    primary_color: str = "#177DAA"      # --blue-medium, used for buttons/accents
+    secondary_color: str = "#62B5E5"    # --blue-hero
+    accent_color: str = "#62B5E5"       # --blue-hero
+    text_color: str = "#06293F"         # --blue-dark (foreground)
+    background_color: str = "#F9F8F6"   # Current background
     
-    # Fonts
-    heading_font: str = "Georgia"
-    body_font: str = "Inter"
-    font_url: Optional[str] = None  # Google Fonts URL
+    # Fonts (matching current UI)
+    heading_font: str = "Big Shoulders Display"  # font-serif/font-heading in tailwind
+    body_font: str = "Montserrat"                # font-sans in tailwind
+    font_url: str = "https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap"
     
-    # UI Style
-    button_style: str = "rounded"  # "rounded" or "square"
-    icon_style: str = "outline"    # "filled" or "outline"
+    # UI Style (matching current UI)
+    button_style: str = "rounded"   # Current buttons are rounded
+    icon_style: str = "outline"     # Using Lucide outline icons
+    border_radius: str = "8px"      # --radius value
     
     # App Assets
     splash_screen_image: Optional[str] = None
     app_icon: Optional[str] = None
     favicon: Optional[str] = None
     
-    # Loader
-    loader_type: str = "spinner"  # "spinner", "dots", "bar"
-    loader_color: Optional[str] = None  # Defaults to primary_color if not set
+    # Loader (matching current UI)
+    loader_type: str = "spinner"
+    loader_color: str = "#177DAA"   # primary color
 
 
 # Common variations/add-ons
