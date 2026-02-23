@@ -37,8 +37,10 @@ const KioskScreen: React.FC = () => {
   
   // Use cached menu data from AuthContext (fetched at login) - NO API CALLS
   const categories = menuData.categories || [];
-  const menuItems = menuData.menuItems || [];
   const tables = menuData.tables || [];
+  
+  // Memoize menuItems to prevent reference changes
+  const menuItems = useMemo(() => menuData.menuItems || [], [menuData.menuItems]);
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     categories.length > 0 ? categories[0].id : null
