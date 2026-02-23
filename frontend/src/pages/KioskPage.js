@@ -644,10 +644,10 @@ const KioskPage = () => {
                       </div>
                     )}
                     <div className="flex items-center justify-between">
-                      {!item.is_complementary && (
-                        <span className="text-lg font-semibold text-blue-dark">₹{item.price.toFixed(0)}</span>
+                      {!item.is_complementary && normalizePrice(item.price) > 0 && (
+                        <span className="text-lg font-semibold text-blue-dark">₹{normalizePrice(item.price).toFixed(0)}</span>
                       )}
-                      {item.is_complementary && <span></span>}
+                      {(item.is_complementary || normalizePrice(item.price) === 0) && <span></span>}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
