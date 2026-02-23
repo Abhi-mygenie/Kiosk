@@ -444,29 +444,7 @@ const KioskPage = () => {
     setCouponError('');
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [catRes, itemsRes] = await Promise.all([
-          authAxios.get(`${API}/menu/categories`),
-          authAxios.get(`${API}/menu/items`)
-        ]);
-        setCategories(catRes.data);
-        setMenuItems(itemsRes.data);
-        // Set first category as active
-        if (catRes.data.length > 0 && !activeCategory) {
-          setActiveCategory(catRes.data[0].id);
-        }
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (user?.token) {
-      fetchData();
-    }
-  }, [user?.token, authAxios]);
+  // No API calls for menu - data comes from AuthContext (cached at login)
 
   const filteredItems = menuItems.filter(item => item.category === activeCategory);
 
