@@ -62,12 +62,14 @@ export const AuthProvider = ({ children }) => {
     const storedUser = localStorage.getItem('kiosk_user');
     const storedMenuData = localStorage.getItem('kiosk_menu_data');
     const storedBranding = localStorage.getItem('kiosk_branding');
+    const storedDemoMode = localStorage.getItem('kiosk_demo_mode');
     
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
         setUser(userData);
         setIsAuthenticated(true);
+        setIsDemoMode(storedDemoMode === 'true');
         
         // Restore cached menu data
         if (storedMenuData) {
@@ -82,6 +84,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('kiosk_user');
         localStorage.removeItem('kiosk_menu_data');
         localStorage.removeItem('kiosk_branding');
+        localStorage.removeItem('kiosk_demo_mode');
       }
     }
     setIsLoading(false);
