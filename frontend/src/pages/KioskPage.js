@@ -334,7 +334,7 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
 
 const KioskPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
-  const { logout, user, menuData } = useAuth();
+  const { logout, user, menuData, isDemoMode } = useAuth();
   
   // Use cached menu data from AuthContext (fetched at login)
   const [categories, setCategories] = useState(menuData.categories || []);
