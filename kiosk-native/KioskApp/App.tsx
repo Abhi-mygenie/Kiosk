@@ -1,44 +1,41 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React from 'react';
+import { StatusBar, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import { CartProvider } from './src/contexts/CartContext';
+import LoginScreen from './src/screens/LoginScreen';
+import KioskScreen from './src/screens/KioskScreen';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+const AppContent: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth();
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#177DAA" />
+      </View>
+    );
+  }
 
+  return isAuthenticated ? <KioskScreen /> : <LoginScreen />;
+};
+
+const App: React.FC = () => {
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <AuthProvider>
+      <CartProvider>
+        <StatusBar barStyle="dark-content" backgroundColor="#F9F8F6" />
+        <AppContent />
+      </CartProvider>
+    </AuthProvider>
   );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F9F8F6',
   },
 });
 
