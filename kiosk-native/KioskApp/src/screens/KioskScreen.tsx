@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,30 +13,10 @@ import {
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
-import { menuAPI, tablesAPI, ordersAPI } from '../services/api';
+import { ordersAPI } from '../services/api';
 
 const { width, height } = Dimensions.get('window');
 const isLargeScreen = width > 1200;
-
-interface Category {
-  id: string;
-  name: string;
-  image: string;
-}
-
-interface MenuItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  category_name?: string;
-  calories?: number;
-  portion_size?: string;
-  allergens?: string[];
-  available?: boolean;
-}
 
 interface Table {
   id: string;
@@ -45,60 +25,27 @@ interface Table {
 }
 
 const KioskScreen: React.FC = () => {
-  const { logout } = useAuth();
+  const { logout, menuData } = useAuth();
   const { items: cartItems, addItem, updateQuantity, clearCart, getTotal, getItemCount } = useCart();
   
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [tables, setTables] = useState<Table[]>([]);
+  // Use cached menu data from AuthContext (fetched at login) - NO API CALLS
+  const categories = menuData.categories || [];
+  const menuItems = menuData.menuItems || [];
+  const tables = menuData.tables || [];
+  
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    categories.length > 0 ? categories[0].id : null
+  );
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
-  const [loading, setLoading] = useState(true);
   const [showTableModal, setShowTableModal] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // Filter items by selected category
+  const filteredItems = useMemo(() => {
+    return menuItems.filter((item: any) => item.category === selectedCategory);
+  }, [menuItems, selectedCategory]);
 
-  useEffect(() => {
-    if (selectedCategory) {
-      loadMenuItems(selectedCategory);
-    }
-  }, [selectedCategory]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [categoriesData, tablesData] = await Promise.all([
-        menuAPI.getCategories(),
-        tablesAPI.getTables(),
-      ]);
-      
-      setCategories(categoriesData);
-      setTables(tablesData.tables || []);
-      
-      if (categoriesData.length > 0) {
-        setSelectedCategory(categoriesData[0].id);
-      }
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      Alert.alert('Error', 'Failed to load menu data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadMenuItems = async (categoryId: string) => {
-    try {
-      const items = await menuAPI.getItems(categoryId);
-      setMenuItems(items);
-    } catch (error) {
-      console.error('Failed to load menu items:', error);
-    }
-  };
-
-  const handleAddToCart = (item: MenuItem) => {
+  const handleAddToCart = (item: any) => {
     addItem({
       item_id: item.id,
       name: item.name,
@@ -147,7 +94,7 @@ const KioskScreen: React.FC = () => {
     }
   };
 
-  const renderCategoryItem = ({ item }: { item: Category }) => (
+  const renderCategoryItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={[
         styles.categoryItem,
@@ -166,7 +113,7 @@ const KioskScreen: React.FC = () => {
     </TouchableOpacity>
   );
 
-  const renderMenuItem = ({ item }: { item: MenuItem }) => (
+  const renderMenuItem = ({ item }: { item: any }) => (
     <View style={styles.menuCard}>
       <Image source={{ uri: item.image }} style={styles.menuImage} />
       <View style={styles.menuContent}>
@@ -181,7 +128,7 @@ const KioskScreen: React.FC = () => {
         )}
         {item.allergens && item.allergens.length > 0 && (
           <View style={styles.allergenContainer}>
-            {item.allergens.map((allergen, index) => (
+            {item.allergens.map((allergen: string, index: number) => (
               <View key={index} style={styles.allergenTag}>
                 <Text style={styles.allergenText}>{allergen}</Text>
               </View>
@@ -231,7 +178,7 @@ const KioskScreen: React.FC = () => {
         <Text style={styles.modalTitle}>Select Table</Text>
         <ScrollView style={styles.tableList}>
           <View style={styles.tableGrid}>
-            {tables.slice(0, 20).map((table) => (
+            {tables.slice(0, 20).map((table: Table) => (
               <TouchableOpacity
                 key={table.id}
                 style={[
@@ -258,16 +205,19 @@ const KioskScreen: React.FC = () => {
     </View>
   );
 
-  if (loading) {
+  // No loading state needed - data is cached from login
+  if (categories.length === 0) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#177DAA" />
-        <Text style={styles.loadingText}>Loading menu...</Text>
+        <Text style={styles.loadingText}>No menu data available. Please re-login.</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  const selectedCategoryName = categories.find(c => c.id === selectedCategory)?.name || '';
+  const selectedCategoryName = categories.find((c: any) => c.id === selectedCategory)?.name || '';
 
   return (
     <View style={styles.container}>
@@ -291,8 +241,8 @@ const KioskScreen: React.FC = () => {
           <TouchableOpacity style={styles.soundButton}>
             <Text style={styles.soundButtonText}>🔊 Sound On</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
-            <Text style={styles.logoutButtonText}>→ Logout</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+            <Text style={styles.logoutBtnText}>→ Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -315,7 +265,7 @@ const KioskScreen: React.FC = () => {
         </View>
 
         <FlatList
-          data={menuItems}
+          data={filteredItems}
           renderItem={renderMenuItem}
           keyExtractor={(item) => item.id}
           numColumns={isLargeScreen ? 3 : 2}
@@ -387,6 +337,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#6B7280',
   },
+  logoutButton: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: '#EF4444',
+    borderRadius: 8,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
   
   // Sidebar
   sidebar: {
@@ -453,10 +413,10 @@ const styles = StyleSheet.create({
     color: '#374151',
     textAlign: 'center',
   },
-  logoutButton: {
+  logoutBtn: {
     padding: 12,
   },
-  logoutButtonText: {
+  logoutBtnText: {
     fontSize: 14,
     color: '#EF4444',
     textAlign: 'center',
