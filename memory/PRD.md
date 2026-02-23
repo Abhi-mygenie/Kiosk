@@ -144,7 +144,7 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 - [x] Native app structure
 - [x] Client-side caching (login only)
 - [x] Dynamic branding for web
-- [ ] Apply dynamic branding to React Native app
+- [x] Apply dynamic branding to React Native app
 - [ ] Build APK for testing
 
 ### P1 (High Priority)
