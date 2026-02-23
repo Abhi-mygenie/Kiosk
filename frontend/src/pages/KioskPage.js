@@ -11,6 +11,11 @@ import kioskLock from '@/utils/kioskLock';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Helper: Treat price of 1 as 0 (complimentary item indicator)
+const normalizePrice = (price) => {
+  return price === 1 ? 0 : price;
+};
+
 // Create axios instance with auth interceptor
 const createAuthAxios = (token) => {
   const instance = axios.create();
