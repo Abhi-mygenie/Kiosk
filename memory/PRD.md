@@ -164,7 +164,6 @@ A self-ordering kiosk system for restaurants (Hyatt Centric) with POS integratio
 - [ ] Customer loyalty program
 
 ## Next Tasks
-1. Apply dynamic branding to React Native app (same fallback logic as web)
-2. Build debug APK for testing on actual kiosk devices
-3. Test on 21.5", 32", and 43" displays
-4. Add item variation selection UI
+1. Build debug APK for testing on actual kiosk devices
+2. Test on 21.5", 32", and 43" displays
+3. Add item variation selection UI
