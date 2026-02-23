@@ -341,13 +341,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#F9F8F6',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F9F8F6',
   },
   loadingText: {
     marginTop: 16,
@@ -357,7 +355,6 @@ const styles = StyleSheet.create({
   logoutButton: {
     marginTop: 20,
     padding: 12,
-    backgroundColor: '#EF4444',
     borderRadius: 8,
   },
   logoutButtonText: {
@@ -368,9 +365,7 @@ const styles = StyleSheet.create({
   // Sidebar
   sidebar: {
     width: isLargeScreen ? 200 : 160,
-    backgroundColor: '#fff',
     borderRightWidth: 1,
-    borderRightColor: '#E5E7EB',
     paddingTop: 24,
   },
   logoContainer: {
@@ -380,11 +375,9 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: isLargeScreen ? 20 : 16,
     fontWeight: 'bold',
-    color: '#1a1a1a',
   },
   logoSubtext: {
     fontSize: isLargeScreen ? 14 : 12,
-    color: '#1a1a1a',
   },
   sidebarTitle: {
     fontSize: isLargeScreen ? 12 : 10,
@@ -402,10 +395,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: 'transparent',
   },
-  categoryItemSelected: {
-    backgroundColor: '#177DAA',
-    borderLeftColor: '#177DAA',
-  },
   categoryText: {
     fontSize: isLargeScreen ? 14 : 12,
     fontWeight: '600',
@@ -417,7 +406,6 @@ const styles = StyleSheet.create({
   sidebarFooter: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
   },
   soundButton: {
     padding: 12,
@@ -435,7 +423,6 @@ const styles = StyleSheet.create({
   },
   logoutBtnText: {
     fontSize: 14,
-    color: '#EF4444',
     textAlign: 'center',
   },
 
@@ -453,7 +440,6 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: isLargeScreen ? 32 : 24,
     fontWeight: 'bold',
-    color: '#1a1a1a',
   },
   categorySubtitle: {
     fontSize: isLargeScreen ? 16 : 14,
@@ -461,7 +447,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   tableIndicator: {
-    backgroundColor: '#177DAA',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -497,7 +482,6 @@ const styles = StyleSheet.create({
   menuName: {
     fontSize: isLargeScreen ? 16 : 14,
     fontWeight: 'bold',
-    color: '#1a1a1a',
     marginBottom: 4,
   },
   menuDescription: {
@@ -535,12 +519,10 @@ const styles = StyleSheet.create({
   menuPrice: {
     fontSize: isLargeScreen ? 18 : 16,
     fontWeight: 'bold',
-    color: '#177DAA',
   },
   addButton: {
     width: 36,
     height: 36,
-    backgroundColor: '#177DAA',
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
@@ -554,15 +536,12 @@ const styles = StyleSheet.create({
   // Cart Sidebar
   cartSidebar: {
     width: isLargeScreen ? 300 : 240,
-    backgroundColor: '#fff',
     borderLeftWidth: 1,
-    borderLeftColor: '#E5E7EB',
     padding: 20,
   },
   cartTitle: {
     fontSize: isLargeScreen ? 20 : 18,
     fontWeight: 'bold',
-    color: '#1a1a1a',
   },
   cartSubtitle: {
     fontSize: 14,
@@ -601,11 +580,9 @@ const styles = StyleSheet.create({
   cartItemName: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#1a1a1a',
   },
   cartItemPrice: {
     fontSize: 13,
-    color: '#177DAA',
     marginTop: 2,
   },
   cartItemQuantity: {
@@ -629,11 +606,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     fontSize: 16,
     fontWeight: '600',
-    color: '#1a1a1a',
   },
   cartFooter: {
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
     paddingTop: 16,
   },
   totalRow: {
@@ -649,10 +624,8 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#177DAA',
   },
   orderButton: {
-    backgroundColor: '#177DAA',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -687,7 +660,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1a1a1a',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -709,10 +681,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: 'transparent',
-  },
-  tableItemSelected: {
-    borderColor: '#177DAA',
-    backgroundColor: '#E0F2FE',
   },
   tableNumber: {
     fontSize: 18,
