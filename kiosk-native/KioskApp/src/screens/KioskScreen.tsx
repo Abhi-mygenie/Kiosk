@@ -141,7 +141,11 @@ const KioskScreen: React.FC = () => {
           </View>
         )}
         <View style={styles.menuFooter}>
-          <Text style={styles.menuPrice}>₹{item.price}</Text>
+          {normalizePrice(item.price) > 0 ? (
+            <Text style={styles.menuPrice}>₹{normalizePrice(item.price)}</Text>
+          ) : (
+            <Text style={styles.menuPrice}></Text>
+          )}
           <TouchableOpacity
             style={styles.addButton}
             onPress={() => handleAddToCart(item)}
@@ -157,7 +161,9 @@ const KioskScreen: React.FC = () => {
     <View style={styles.cartItem}>
       <View style={styles.cartItemInfo}>
         <Text style={styles.cartItemName} numberOfLines={1}>{item.name}</Text>
-        <Text style={styles.cartItemPrice}>₹{item.price}</Text>
+        {normalizePrice(item.price) > 0 && (
+          <Text style={styles.cartItemPrice}>₹{normalizePrice(item.price)}</Text>
+        )}
       </View>
       <View style={styles.cartItemQuantity}>
         <TouchableOpacity
