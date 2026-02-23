@@ -242,6 +242,31 @@ const LoginPage = () => {
                 )}
               </button>
             </form>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-muted-foreground">or</span>
+              </div>
+            </div>
+
+            {/* Demo Mode Button */}
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              disabled={isLoading}
+              data-testid="demo-mode-btn"
+              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-sm text-lg font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
+            >
+              <Play size={22} fill="currentColor" />
+              Try Demo Mode
+            </button>
+            <p className="text-xs text-muted-foreground text-center mt-3">
+              Explore the kiosk without real orders
+            </p>
           </div>
         </motion.div>
 
