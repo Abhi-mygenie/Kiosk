@@ -324,9 +324,13 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
 
 const KioskPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
-  const { logout, user } = useAuth();
-  const [categories, setCategories] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
+  const { logout, user, menuData } = useAuth();
+  
+  // Use cached menu data from AuthContext (fetched at login)
+  const [categories, setCategories] = useState(menuData.categories || []);
+  const [menuItems, setMenuItems] = useState(menuData.menuItems || []);
+  const [tables, setTables] = useState(menuData.tables || []);
+  
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');
@@ -334,7 +338,7 @@ const KioskPage = () => {
   const [showTableSelector, setShowTableSelector] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
@@ -344,10 +348,16 @@ const KioskPage = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [editingInstructions, setEditingInstructions] = useState(null); // For editing instructions popup
 
-  // Create authenticated axios instance
+  // Create authenticated axios instance (only for placing orders)
   const authAxios = useMemo(() => createAuthAxios(user?.token), [user?.token]);
-  const [tables, setTables] = useState([]);
   const [tablesLoading, setTablesLoading] = useState(false);
+
+  // Set initial active category from cached data
+  useEffect(() => {
+    if (categories.length > 0 && !activeCategory) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [categories, activeCategory]);
 
   // Initialize kiosk lock on mount
   useEffect(() => {
