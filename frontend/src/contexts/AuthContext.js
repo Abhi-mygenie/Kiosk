@@ -291,10 +291,12 @@ export const AuthProvider = ({ children }) => {
       user,
       isAuthenticated,
       isLoading,
+      isDemoMode,
       menuData,
       branding,
       loginProgress,
       login,
+      loginDemo,
       logout,
       refreshMenuData
     }}>
