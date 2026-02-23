@@ -187,14 +187,80 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Demo mode login - no real API calls, uses sample data
+  const loginDemo = async () => {
+    try {
+      setLoginProgress({ isLoggingIn: true, currentStep: 'Starting Demo...', steps: [] });
+      
+      // Simulate loading steps with delays
+      updateProgress('Authenticating', 'loading');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      updateProgress('Authenticating', 'done');
+      
+      updateProgress('Loading Theme', 'loading');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      updateProgress('Loading Theme', 'done');
+      
+      updateProgress('Loading Categories', 'loading');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      updateProgress('Loading Categories', 'done');
+      
+      updateProgress('Loading Menu Items', 'loading');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      updateProgress('Loading Menu Items', 'done');
+      
+      updateProgress('Loading Tables', 'loading');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      updateProgress('Loading Tables', 'done');
+      
+      updateProgress('Finalizing', 'loading');
+      
+      const demoUserData = {
+        email: 'demo@kiosk.local',
+        token: 'demo-token-' + Date.now(),
+        roleName: 'Demo User',
+        roles: ['demo'],
+        loginTime: new Date().toISOString(),
+        isDemo: true
+      };
+      
+      const demoMenuData = {
+        categories: DEMO_CATEGORIES,
+        menuItems: DEMO_MENU_ITEMS,
+        tables: DEMO_TABLES
+      };
+      
+      setUser(demoUserData);
+      setMenuData(demoMenuData);
+      setBranding(null);
+      setIsAuthenticated(true);
+      setIsDemoMode(true);
+      
+      localStorage.setItem('kiosk_user', JSON.stringify(demoUserData));
+      localStorage.setItem('kiosk_menu_data', JSON.stringify(demoMenuData));
+      localStorage.setItem('kiosk_demo_mode', 'true');
+      
+      updateProgress('Finalizing', 'done');
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      setLoginProgress({ isLoggingIn: false, currentStep: '', steps: [] });
+      return demoUserData;
+    } catch (error) {
+      setLoginProgress({ isLoggingIn: false, currentStep: '', steps: [] });
+      throw error;
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setMenuData({ categories: [], menuItems: [], tables: [] });
     setBranding(null);
     setIsAuthenticated(false);
+    setIsDemoMode(false);
     localStorage.removeItem('kiosk_user');
     localStorage.removeItem('kiosk_menu_data');
     localStorage.removeItem('kiosk_branding');
+    localStorage.removeItem('kiosk_demo_mode');
   };
 
   // Function to refresh menu data (manual refresh if needed)
