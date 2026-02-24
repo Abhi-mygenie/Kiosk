@@ -65,6 +65,12 @@ const KioskScreen: React.FC = () => {
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
   const [showTableModal, setShowTableModal] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
+  
+  // Customization modal state
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [groupSelections, setGroupSelections] = useState<Record<string, VariationOption[]>>({});
+  const [quantity, setQuantity] = useState(1);
+  const [specialInstructions, setSpecialInstructions] = useState('');
 
   // Filter items by selected category
   const filteredItems = useMemo(() => {
