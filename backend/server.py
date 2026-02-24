@@ -119,21 +119,21 @@ class BrandingConfig(BaseModel):
     logo_url: Optional[str] = None
     
     # Colors (matching current UI)
-    primary_color: str = "#177DAA"      # --blue-medium, used for buttons/accents
-    secondary_color: str = "#62B5E5"    # --blue-hero
-    accent_color: str = "#62B5E5"       # --blue-hero
-    text_color: str = "#06293F"         # --blue-dark (foreground)
-    background_color: str = "#F9F8F6"   # Current background
+    primary_color: str = "#177DAA"
+    secondary_color: str = "#62B5E5"
+    accent_color: str = "#62B5E5"
+    text_color: str = "#06293F"
+    background_color: str = "#F9F8F6"
     
     # Fonts (matching current UI)
-    heading_font: str = "Big Shoulders Display"  # font-serif/font-heading in tailwind
-    body_font: str = "Montserrat"                # font-sans in tailwind
+    heading_font: str = "Big Shoulders Display"
+    body_font: str = "Montserrat"
     font_url: str = "https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap"
     
     # UI Style (matching current UI)
-    button_style: str = "rounded"   # Current buttons are rounded
-    icon_style: str = "outline"     # Using Lucide outline icons
-    border_radius: str = "8px"      # --radius value
+    button_style: str = "rounded"
+    icon_style: str = "outline"
+    border_radius: str = "8px"
     
     # App Assets
     splash_screen_image: Optional[str] = None
@@ -142,123 +142,7 @@ class BrandingConfig(BaseModel):
     
     # Loader (matching current UI)
     loader_type: str = "spinner"
-    loader_color: str = "#177DAA"   # primary color
-
-
-# Common variations/add-ons
-DOSA_VARIATIONS = [
-    {"id": "plain", "name": "PLAIN", "price": 0.0},
-    {"id": "butter", "name": "BUTTER", "price": 1.0},
-    {"id": "cheese", "name": "CHEESE", "price": 2.0},
-    {"id": "masala", "name": "MASALA", "price": 2.0},
-    {"id": "masala_cheese", "name": "MASALA CHEESE", "price": 3.0},
-    {"id": "mysore", "name": "MYSORE", "price": 1.5},
-    {"id": "ghee", "name": "GHEE", "price": 1.5},
-    {"id": "crispy", "name": "CRISPY", "price": 0.0},
-    {"id": "podi", "name": "PODI", "price": 1.0},
-    {"id": "onion", "name": "ONION", "price": 1.0},
-    {"id": "chilli", "name": "CHILLI", "price": 0.5},
-    {"id": "no_chilli", "name": "NO CHILLI", "price": 0.0},
-    {"id": "paper", "name": "PAPER", "price": 0.5},
-    {"id": "ragi", "name": "RAGI", "price": 1.0},
-    {"id": "jain", "name": "JAIN", "price": 0.0},
-    {"id": "less_oil", "name": "LESS OIL", "price": 0.0},
-    {"id": "no_oil", "name": "NO OIL", "price": 0.0},
-]
-
-EGG_VARIATIONS = [
-    {"id": "plain", "name": "PLAIN", "price": 0.0},
-    {"id": "cheese", "name": "CHEESE", "price": 2.0},
-    {"id": "butter", "name": "BUTTER", "price": 1.0},
-    {"id": "onion", "name": "ONION", "price": 0.5},
-    {"id": "tomato", "name": "TOMATO", "price": 0.5},
-    {"id": "capsicum", "name": "CAPSICUM", "price": 1.0},
-    {"id": "mushroom", "name": "MUSHROOM", "price": 2.0},
-    {"id": "masala", "name": "MASALA", "price": 1.0},
-    {"id": "less_spicy", "name": "LESS SPICY", "price": 0.0},
-    {"id": "extra_spicy", "name": "EXTRA SPICY", "price": 0.0},
-]
-
-PARATHA_VARIATIONS = [
-    {"id": "plain", "name": "PLAIN", "price": 0.0},
-    {"id": "butter", "name": "BUTTER", "price": 1.0},
-    {"id": "ghee", "name": "GHEE", "price": 1.5},
-    {"id": "cheese", "name": "CHEESE", "price": 2.0},
-    {"id": "extra_stuffing", "name": "EXTRA STUFFING", "price": 2.0},
-    {"id": "jain", "name": "JAIN", "price": 0.0},
-    {"id": "less_oil", "name": "LESS OIL", "price": 0.0},
-    {"id": "no_oil", "name": "NO OIL", "price": 0.0},
-]
-
-WAFFLES_VARIATIONS = [
-    {"id": "plain", "name": "PLAIN", "price": 0.0},
-    {"id": "extra_chocolate", "name": "EXTRA CHOCOLATE", "price": 2.0},
-    {"id": "extra_cream", "name": "EXTRA CREAM", "price": 1.5},
-    {"id": "ice_cream", "name": "ICE CREAM", "price": 3.0},
-    {"id": "nuts", "name": "NUTS", "price": 1.5},
-    {"id": "honey", "name": "HONEY", "price": 1.0},
-    {"id": "maple_syrup", "name": "MAPLE SYRUP", "price": 1.0},
-    {"id": "berries", "name": "BERRIES", "price": 2.0},
-]
-
-# Mock data for menu categories
-CATEGORIES = [
-    {
-        "id": "dosa",
-        "name": "DOSA",
-        "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400"
-    },
-    {
-        "id": "egg",
-        "name": "EGG",
-        "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400"
-    },
-    {
-        "id": "paratha",
-        "name": "PARATHA",
-        "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400"
-    },
-    {
-        "id": "waffles",
-        "name": "WAFFLES",
-        "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400"
-    }
-]
-
-# Mock data for menu items
-MENU_ITEMS = [
-    # DOSA
-    {"id": "1", "name": "Plain Dosa", "description": "Classic South Indian crispy dosa", "price": 8.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa", "variations": DOSA_VARIATIONS, "calories": 168, "portion_size": "200 gm", "allergens": ["Gluten"]},
-    {"id": "2", "name": "Masala Dosa", "description": "Crispy dosa filled with spiced potato", "price": 10.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa", "variations": DOSA_VARIATIONS, "calories": 250, "portion_size": "250 gm", "allergens": ["Gluten"]},
-    {"id": "3", "name": "Mysore Masala Dosa", "description": "Spicy red chutney dosa with potato", "price": 11.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa", "variations": DOSA_VARIATIONS, "calories": 280, "portion_size": "280 gm", "allergens": ["Gluten", "Spicy"]},
-    {"id": "4", "name": "Ghee Roast Dosa", "description": "Crispy dosa roasted in pure ghee", "price": 12.99, "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=400", "category": "dosa", "variations": DOSA_VARIATIONS, "calories": 300, "portion_size": "220 gm", "allergens": ["Gluten", "Dairy"]},
-    {"id": "5", "name": "Cheese Dosa", "description": "Dosa topped with melted cheese", "price": 13.99, "image": "https://images.unsplash.com/photo-1694849224835-6187a8d2d6e9?w=400", "category": "dosa", "variations": DOSA_VARIATIONS, "calories": 350, "portion_size": "300 gm", "allergens": ["Gluten", "Dairy"]},
-    {"id": "6", "name": "Rava Dosa", "description": "Crispy semolina dosa", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "dosa", "variations": DOSA_VARIATIONS, "calories": 180, "portion_size": "180 gm", "allergens": ["Gluten"]},
-    
-    # EGG
-    {"id": "7", "name": "Scrambled Eggs", "description": "Fluffy scrambled eggs with herbs", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg", "variations": EGG_VARIATIONS, "calories": 140, "portion_size": "100 gm", "allergens": ["Eggs"]},
-    {"id": "8", "name": "Omelette", "description": "Three-egg omelette with vegetables", "price": 8.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg", "variations": EGG_VARIATIONS, "calories": 210, "portion_size": "150 gm", "allergens": ["Eggs"]},
-    {"id": "9", "name": "Eggs Benedict", "description": "Poached eggs on English muffin", "price": 12.99, "image": "https://images.unsplash.com/photo-1608039755401-742074f0548d?w=400", "category": "egg", "variations": EGG_VARIATIONS, "calories": 450, "portion_size": "250 gm", "allergens": ["Eggs", "Gluten", "Dairy"]},
-    {"id": "10", "name": "Boiled Eggs", "description": "Perfectly boiled eggs (2 pcs)", "price": 5.99, "image": "https://images.unsplash.com/photo-1587486937736-e6c447887f99?w=400", "category": "egg", "variations": EGG_VARIATIONS, "calories": 155, "portion_size": "100 gm", "allergens": ["Eggs"]},
-    {"id": "11", "name": "Egg Bhurji", "description": "Indian style spiced scrambled eggs", "price": 9.99, "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400", "category": "egg", "variations": EGG_VARIATIONS, "calories": 200, "portion_size": "120 gm", "allergens": ["Eggs", "Spicy"]},
-    {"id": "12", "name": "Bull's Eye", "description": "Fried eggs sunny side up (2 pcs)", "price": 7.99, "image": "https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=400", "category": "egg", "variations": EGG_VARIATIONS, "calories": 180, "portion_size": "100 gm", "allergens": ["Eggs"]},
-    
-    # PARATHA
-    {"id": "13", "name": "Plain Paratha", "description": "Whole wheat layered flatbread", "price": 5.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS, "calories": 120, "portion_size": "80 gm", "allergens": ["Gluten"]},
-    {"id": "14", "name": "Aloo Paratha", "description": "Stuffed potato paratha", "price": 7.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS, "calories": 200, "portion_size": "120 gm", "allergens": ["Gluten"]},
-    {"id": "15", "name": "Paneer Paratha", "description": "Stuffed cottage cheese paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS, "calories": 250, "portion_size": "150 gm", "allergens": ["Gluten", "Dairy"]},
-    {"id": "16", "name": "Gobi Paratha", "description": "Stuffed cauliflower paratha", "price": 8.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS, "calories": 180, "portion_size": "130 gm", "allergens": ["Gluten"]},
-    {"id": "17", "name": "Mix Veg Paratha", "description": "Mixed vegetable stuffed paratha", "price": 9.99, "image": "https://images.unsplash.com/photo-1630383249896-424e482df921?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS, "calories": 220, "portion_size": "140 gm", "allergens": ["Gluten"]},
-    {"id": "18", "name": "Laccha Paratha", "description": "Multi-layered crispy paratha", "price": 6.99, "image": "https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=400", "category": "paratha", "variations": PARATHA_VARIATIONS, "calories": 150, "portion_size": "90 gm", "allergens": ["Gluten"]},
-    
-    # WAFFLES
-    {"id": "19", "name": "Classic Waffle", "description": "Belgian waffle with maple syrup", "price": 10.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS, "calories": 290, "portion_size": "180 gm", "allergens": ["Gluten", "Eggs", "Dairy"]},
-    {"id": "20", "name": "Chocolate Waffle", "description": "Waffle with chocolate sauce", "price": 12.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS, "calories": 380, "portion_size": "200 gm", "allergens": ["Gluten", "Eggs", "Dairy"]},
-    {"id": "21", "name": "Berry Waffle", "description": "Waffle with fresh berries", "price": 13.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS, "calories": 320, "portion_size": "190 gm", "allergens": ["Gluten", "Eggs", "Dairy"]},
-    {"id": "22", "name": "Nutella Waffle", "description": "Waffle with Nutella spread", "price": 14.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS, "calories": 450, "portion_size": "220 gm", "allergens": ["Gluten", "Eggs", "Dairy", "Nuts"]},
-    {"id": "23", "name": "Savory Waffle", "description": "Waffle with cheese and herbs", "price": 11.99, "image": "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS, "calories": 310, "portion_size": "170 gm", "allergens": ["Gluten", "Eggs", "Dairy"]},
-    {"id": "24", "name": "Ice Cream Waffle", "description": "Waffle with vanilla ice cream", "price": 15.99, "image": "https://images.unsplash.com/photo-1568051243851-f9b136146e97?w=400", "category": "waffles", "variations": WAFFLES_VARIATIONS, "calories": 520, "portion_size": "250 gm", "allergens": ["Gluten", "Eggs", "Dairy"]}
-]
+    loader_color: str = "#177DAA"
 
 
 @api_router.get("/")
@@ -276,7 +160,7 @@ async def fetch_pos_menu(token: str, force_refresh: bool = False):
         return menu_cache["data"]
     
     if not token:
-        logger.warning("No POS token available, using fallback menu")
+        logger.warning("No POS token provided")
         return None
     
     try:
@@ -314,17 +198,15 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
     category = food.get("category", {})
     
     # Transform variations from POS format
-    # POS format: {"name": "choice of", "type": "single", "min": 0, "max": 0, "required": "on", "values": [...]}
     variation_groups = []
     for variation_group in food.get("variation", []):
         if isinstance(variation_group, dict):
             group_name = variation_group.get("name", "Choice")
-            group_type = variation_group.get("type", "single")  # single or multi
+            group_type = variation_group.get("type", "single")
             required = variation_group.get("required", "off") == "on"
             min_select = variation_group.get("min", 0)
             max_select = variation_group.get("max", 0)
             
-            # Convert min/max to int if they're strings
             try:
                 min_select = int(min_select) if min_select else 0
             except (ValueError, TypeError):
@@ -359,7 +241,7 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
                     "options": group_options
                 })
     
-    # Transform addons as a separate group (always optional, multiple selection)
+    # Transform addons as a separate group
     addon_options = []
     for addon in food.get("addons", []):
         if isinstance(addon, dict):
@@ -385,7 +267,7 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
             "options": addon_options
         })
     
-    # Flatten for backward compatibility (old variations array)
+    # Flatten for backward compatibility
     variations = []
     for group in variation_groups:
         variations.extend(group["options"])
@@ -417,18 +299,14 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
     # Check if item is complementary
     is_complementary = str(food.get("complementary", "no")).lower() in ["yes", "true", "1"]
     
-    # Calculate final price following strict order:
-    # If complementary = "yes" then final price = 0 (ignore discount and tax)
+    # Calculate final price
     if is_complementary:
         final_price = 0
         discount = 0
         tax_amount = 0
     else:
-        # Apply discount first
         price_after_discount = base_price - discount
-        # Then calculate tax
         tax_amount = (price_after_discount * tax_percent) / 100
-        # Final price = price after discount + tax
         final_price = price_after_discount + tax_amount
     
     return {
@@ -441,7 +319,7 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
         "discount": round(discount, 2),
         "tax_percent": round(tax_percent, 2),
         "tax_amount": round(tax_amount, 2) if not is_complementary else 0,
-        "image": food.get("image", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400"),
+        "image": food.get("image", ""),
         "category": str(category.get("id", "")),
         "category_name": category.get("name", ""),
         "available": food.get("status", 1) == 1,
@@ -455,50 +333,54 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
 
 @api_router.get("/menu/categories")
 async def get_categories(authorization: Optional[str] = Header(None)):
-    """Get categories from POS API or fallback to hardcoded"""
+    """Get categories from POS API - requires authentication"""
     token = get_token_from_header(authorization)
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Authorization token required")
+    
     pos_foods = await fetch_pos_menu(token)
     
-    if pos_foods:
-        # Extract unique categories from POS data
-        categories_dict = {}
-        for food in pos_foods:
-            cat = food.get("category", {})
-            cat_id = str(cat.get("id", ""))
-            cat_name = cat.get("name", "")
-            if cat_id and cat_name and cat_id not in categories_dict:
-                categories_dict[cat_id] = {
-                    "id": cat_id,
-                    "name": cat_name,
-                    "image": food.get("image", "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400")
-                }
-        
-        # Return sorted by name
-        return sorted(categories_dict.values(), key=lambda x: x["name"])
+    if not pos_foods:
+        raise HTTPException(status_code=503, detail="Unable to fetch menu from POS")
     
-    # Fallback to hardcoded
-    return CATEGORIES
+    # Extract unique categories from POS data
+    categories_dict = {}
+    for food in pos_foods:
+        cat = food.get("category", {})
+        cat_id = str(cat.get("id", ""))
+        cat_name = cat.get("name", "")
+        if cat_id and cat_name and cat_id not in categories_dict:
+            categories_dict[cat_id] = {
+                "id": cat_id,
+                "name": cat_name,
+                "image": food.get("image", "")
+            }
+    
+    # Return sorted by name
+    return sorted(categories_dict.values(), key=lambda x: x["name"])
 
 
 @api_router.get("/menu/items")
 async def get_menu_items(category: Optional[str] = None, authorization: Optional[str] = Header(None)):
-    """Get menu items from POS API or fallback to hardcoded"""
+    """Get menu items from POS API - requires authentication"""
     token = get_token_from_header(authorization)
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Authorization token required")
+    
     pos_foods = await fetch_pos_menu(token)
     
-    if pos_foods:
-        # Transform POS foods to our format
-        items = [transform_pos_food_to_menu_item(food) for food in pos_foods if food.get("status", 1) == 1]
-        
-        if category:
-            items = [item for item in items if item["category"] == category]
-        
-        return items
+    if not pos_foods:
+        raise HTTPException(status_code=503, detail="Unable to fetch menu from POS")
     
-    # Fallback to hardcoded
+    # Transform POS foods to our format
+    items = [transform_pos_food_to_menu_item(food) for food in pos_foods if food.get("status", 1) == 1]
+    
     if category:
-        return [item for item in MENU_ITEMS if item["category"] == category]
-    return MENU_ITEMS
+        items = [item for item in items if item["category"] == category]
+    
+    return items
 
 
 # Tables cache
@@ -508,7 +390,7 @@ async def fetch_pos_tables(token: str):
     """Fetch tables from POS API using the provided token"""
     now = datetime.now(timezone.utc)
     
-    # Check cache (cache for 5 minutes) - also check if same token
+    # Check cache (cache for 5 minutes)
     if tables_cache["data"] and tables_cache["expires"] and tables_cache["expires"] > now and tables_cache["token"] == token:
         return tables_cache["data"]
     
@@ -548,35 +430,37 @@ async def fetch_pos_tables(token: str):
 
 @api_router.get("/tables")
 async def get_tables(authorization: Optional[str] = Header(None)):
-    """Get tables from POS API"""
+    """Get tables from POS API - requires authentication"""
     token = get_token_from_header(authorization)
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Authorization token required")
+    
     pos_tables = await fetch_pos_tables(token)
     
-    if pos_tables:
-        # Transform to simplified format - only include Tables (rtype = "TB"), not Rooms (RM)
-        tables = []
-        for table in pos_tables:
-            if table.get("status") == 1 and table.get("rtype") == "TB":  # Only active Tables
-                tables.append({
-                    "id": str(table.get("id")),
-                    "table_no": table.get("table_no", ""),
-                    "title": table.get("title", ""),
-                    "waiter": f"{table.get('f_name', '') or ''} {table.get('l_name', '') or ''}".strip()
-                })
-        
-        # Sort tables by table_no
-        tables.sort(key=lambda x: x["table_no"])
-        return {"tables": tables, "source": "pos"}
+    if not pos_tables:
+        raise HTTPException(status_code=503, detail="Unable to fetch tables from POS")
     
-    # Fallback to hardcoded tables (1-100)
-    fallback_tables = [{"id": str(i), "table_no": f"{i:02d}", "title": "", "waiter": ""} for i in range(1, 101)]
-    return {"tables": fallback_tables, "source": "fallback"}
+    # Transform to simplified format - only include Tables (rtype = "TB"), not Rooms (RM)
+    tables = []
+    for table in pos_tables:
+        if table.get("status") == 1 and table.get("rtype") == "TB":
+            tables.append({
+                "id": str(table.get("id")),
+                "table_no": table.get("table_no", ""),
+                "title": table.get("title", ""),
+                "waiter": f"{table.get('f_name', '') or ''} {table.get('l_name', '') or ''}".strip()
+            })
+    
+    # Sort tables by table_no
+    tables.sort(key=lambda x: x["table_no"])
+    return {"tables": tables, "source": "pos"}
 
 
 # POS restaurant config (should match the POS account)
 POS_RESTAURANT_ID = "478"
 POS_RESTAURANT_NAME = "18march"
-POS_WAITER_ID = "1703"  # Default waiter ID
+POS_WAITER_ID = "1703"
 
 
 async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) -> dict:
@@ -588,7 +472,7 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
         return {"success": False, "error": "No POS token"}
     
     try:
-        # Build cart items for POS - exact structure from place-order-and-payment curl
+        # Build cart items for POS
         pos_cart = []
         for item in order_input.items:
             food_amount = float(item.price * item.quantity)
@@ -617,7 +501,7 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
         total_amount = round(float(order_input.total), 2)
         discount = round(float(order_input.discount or 0), 2)
         
-        # Build POS order payload - exact structure from working curl
+        # Build POS order payload
         pos_data = {
             "restaurant_id": POS_RESTAURANT_ID,
             "user_id": "",
@@ -653,11 +537,9 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
             "tip_tax_amount": 0.0
         }
         
-        # Log the payload for debugging
         logger.info(f"POS Order Payload: {json.dumps(pos_data, indent=2)}")
         
         async with httpx.AsyncClient() as client_http:
-            # POS API expects multipart/form-data with 'data' field as JSON string
             response = await client_http.post(
                 f"{POS_API_V2_URL}/vendoremployee/pos/place-order-and-payment",
                 data={"data": json.dumps(pos_data)},
@@ -670,7 +552,6 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
             
             logger.info(f"POS Order Response Status: {response.status_code}")
             
-            # Try to parse JSON response
             try:
                 result = response.json()
                 logger.info(f"POS Order Response JSON: {result}")
@@ -698,6 +579,10 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
 @api_router.post("/orders", response_model=Order)
 async def create_order(order_input: OrderCreate, authorization: Optional[str] = Header(None)):
     token = get_token_from_header(authorization)
+    
+    if not token:
+        raise HTTPException(status_code=401, detail="Authorization token required")
+    
     order = Order(**order_input.model_dump())
     
     # Send order to POS API
@@ -705,7 +590,6 @@ async def create_order(order_input: OrderCreate, authorization: Optional[str] = 
     
     if pos_result.get("success"):
         order.status = "confirmed"
-        # Extract POS order ID if available
         pos_data = pos_result.get("data", {})
         if isinstance(pos_data, dict):
             order.pos_order_id = str(pos_data.get("order_id", ""))
