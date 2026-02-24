@@ -615,6 +615,9 @@ const KioskScreen: React.FC = () => {
 
       {/* Table Selection Modal */}
       {showTableModal && renderTableModal()}
+
+      {/* Customization Modal */}
+      {renderCustomizationModal()}
     </View>
   );
 };
