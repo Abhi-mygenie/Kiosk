@@ -475,22 +475,31 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
         # Build cart items for POS buffet order
         pos_cart = []
         for item in order_input.items:
-            # Map variations - join as comma-separated string for 'variant' field
-            variant_str = ",".join(item.variations) if item.variations else ""
-            
-            # Build variations array for POS (format: [{label: "MOONG", optionPrice: "0"}])
+            # Build variations array in POS format: 
+            # [{"name": "CHOICE", "values": {"label": ["MOONG", "CHEESE"]}}]
             variations_array = []
-            for var in (item.variations or []):
+            
+            # Use grouped_variations if available (preferred - from frontend)
+            if item.grouped_variations:
+                for group_name, labels in item.grouped_variations.items():
+                    if labels:  # Only include groups with selections
+                        variations_array.append({
+                            "name": group_name,
+                            "values": {"label": labels}
+                        })
+            # Fallback: if flat variations list is provided but no grouped_variations
+            elif item.variations:
+                # Put all variations under a single "CHOICE" group
                 variations_array.append({
-                    "label": var,
-                    "optionPrice": "0"
+                    "name": "CHOICE",
+                    "values": {"label": item.variations}
                 })
             
             pos_cart.append({
                 "priority": "No",
                 "food_id": int(item.item_id),
                 "quantity": item.quantity,
-                "variant": variant_str,
+                "variant": "",
                 "add_on_ids": [],
                 "add_on_qtys": [],
                 "variations": variations_array,
