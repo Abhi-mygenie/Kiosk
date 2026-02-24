@@ -612,12 +612,12 @@ async def create_order(order_input: OrderCreate, authorization: Optional[str] = 
         status_code = pos_result.get("status_code", 500)
         
         # Parse error message for user-friendly display
-        if "Unauthorized" in str(error_msg) or status_code == 401:
-            detail = "Session expired. Please logout and login again."
-        elif "timeout" in str(error_msg).lower():
+        if "timeout" in str(error_msg).lower():
             detail = "Server is busy. Please try again."
+        elif status_code == 500:
+            detail = "Server error. Please try again or contact staff."
         else:
-            detail = "Failed to place order. Please try again or contact staff."
+            detail = "Failed to place order. Please try again."
         
         logger.error(f"Order failed: {error_msg}")
         raise HTTPException(status_code=503, detail=detail)
