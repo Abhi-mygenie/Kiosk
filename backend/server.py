@@ -592,8 +592,12 @@ async def create_order(order_input: OrderCreate, authorization: Optional[str] = 
         order.status = "confirmed"
         pos_data = pos_result.get("data", {})
         if isinstance(pos_data, dict):
-            order.pos_order_id = str(pos_data.get("order_id", ""))
-        logger.info(f"Order {order.id} sent to POS successfully")
+            pos_order_id = pos_data.get("order_id") or pos_data.get("id")
+            if pos_order_id:
+                order.pos_order_id = str(pos_order_id)
+                # Use POS order_id as the display ID
+                order.id = str(pos_order_id)
+        logger.info(f"Order {order.id} sent to POS successfully, POS Order ID: {order.pos_order_id}")
     else:
         order.status = "pending_pos_sync"
         logger.warning(f"Order {order.id} failed to sync with POS: {pos_result.get('error')}")
