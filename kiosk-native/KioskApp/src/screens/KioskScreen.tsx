@@ -59,6 +59,7 @@ const KioskScreen: React.FC = () => {
       item_id: item.id,
       name: item.name,
       price: item.price,
+      originalPrice: item.price, // Keep original price for API
       quantity: 1,
       variations: [],
       image: item.image,
