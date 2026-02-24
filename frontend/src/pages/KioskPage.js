@@ -242,7 +242,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
 
         {/* Footer */}
         <div className="p-6 border-t border-border bg-white">
-          {!item.is_complementary && (
+          {calculateTotal() > 0 && (
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg font-medium">Total</span>
               <span className="text-2xl font-heading font-semibold text-blue-dark">₹{calculateTotal().toFixed(2)}</span>
