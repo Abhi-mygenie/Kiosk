@@ -457,14 +457,13 @@ async def get_tables(authorization: Optional[str] = Header(None)):
     return {"tables": tables, "source": "pos"}
 
 
-# POS restaurant config (should match the POS account)
-POS_RESTAURANT_ID = "478"
-POS_RESTAURANT_NAME = "18march"
-POS_WAITER_ID = "1703"
+# POS restaurant config - Hyatt Candolim
+POS_RESTAURANT_ID = "401"
+POS_RESTAURANT_NAME = "Hyatt"
 
 
 async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) -> dict:
-    """Send order to POS API using place-order-and-payment endpoint"""
+    """Send order to POS API using buffet-place-order endpoint"""
     import json
     
     if not token:
@@ -472,77 +471,47 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
         return {"success": False, "error": "No POS token"}
     
     try:
-        # Build cart items for POS
+        # Build cart items for POS buffet order
         pos_cart = []
         for item in order_input.items:
-            food_amount = float(item.price * item.quantity)
             pos_cart.append({
+                "priority": "No",
                 "food_id": int(item.item_id),
+                "quantity": item.quantity,
                 "variant": "",
                 "add_on_ids": [],
-                "food_level_notes": item.special_instructions or "",
                 "add_on_qtys": [],
                 "variations": [],
                 "add_ons": [],
-                "station": "OTHER",
-                "quantity": item.quantity,
-                "price": float(item.price),  # Required by POS API
-                "food_amount": food_amount,
-                "variation_amount": 0.0,
-                "addon_amount": 0.0,
-                "gst_amount": 0.0,
-                "vat_amount": 0.0,
-                "discount_amount": 0.0,
-                "service_charge": 0.0
+                "food_level_notes": item.special_instructions or "",
+                "price": float(item.price)
             })
         
-        # Calculate order totals
-        subtotal = float(order_input.subtotal or order_input.total)
-        total_gst = round(float(order_input.cgst or 0) + float(order_input.sgst or 0), 2)
+        # Calculate order total
         total_amount = round(float(order_input.total), 2)
-        discount = round(float(order_input.discount or 0), 2)
         
-        # Build POS order payload
+        # Build POS buffet order payload
         pos_data = {
+            "payment_method": "cash_on_delivery",
+            "order_amount": str(total_amount),
+            "delivery_charge": "0.0",
+            "address_id": "",
             "restaurant_id": POS_RESTAURANT_ID,
             "user_id": "",
-            "cart": pos_cart,
-            "waiter_id": POS_WAITER_ID,
-            "payment_method": "TAB",
-            "paid_room": "",
-            "payment_status": "success",
-            "cust_email": "",
-            "payment_type": "prepaid",
             "order_note": "",
-            "delivery_charge": "0.0",
-            "tax_amount": total_gst,
-            "order_sub_total_amount": subtotal,
-            "order_amount": total_amount,
-            "vat_tax": 0.0,
-            "gst_tax": total_gst,
-            "address_id": "",
-            "print_kot": "Yes",
-            "self_discount": 0.0,
             "order_type": "pos",
-            "table_id": str(order_input.table_id or "0"),
-            "tip_amount": "0",
-            "order_discount": discount,
+            "table_id": str(order_input.table_id or ""),
             "cust_mobile": order_input.customer_mobile or "",
+            "cust_email": "",
             "cust_name": order_input.customer_name or "",
-            "restaurant_name": POS_RESTAURANT_NAME,
-            "service_tax": 0,
-            "transaction_id": "",
-            "room_id": "",
-            "service_gst_tax_amount": 0.0,
-            "round_up": 0.0,
-            "tip_tax_amount": 0.0
+            "cart": pos_cart
         }
         
-        logger.info(f"POS Order Payload: {json.dumps(pos_data, indent=2)}")
+        logger.info(f"POS Buffet Order Payload: {json.dumps(pos_data, indent=2)}")
         
         async with httpx.AsyncClient() as client_http:
             response = await client_http.post(
-                f"{POS_API_V2_URL}/vendoremployee/pos/place-order-and-payment",
+                f"{POS_API_V2_URL}/vendoremployee/buffet/buffet-place-order",
                 data={"data": json.dumps(pos_data)},
                 headers={
                     "Authorization": f"Bearer {token}",
@@ -551,14 +520,14 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
                 timeout=30.0
             )
             
-            logger.info(f"POS Order Response Status: {response.status_code}")
+            logger.info(f"POS Buffet Order Response Status: {response.status_code}")
             
             try:
                 result = response.json()
-                logger.info(f"POS Order Response JSON: {result}")
+                logger.info(f"POS Buffet Order Response JSON: {result}")
             except:
                 result = {"raw_response": response.text[:500]}
-                logger.info(f"POS Order Response Text: {response.text[:500]}")
+                logger.info(f"POS Buffet Order Response Text: {response.text[:500]}")
             
             if response.status_code == 200:
                 if isinstance(result, dict) and (result.get("message") or result.get("order_id")):
@@ -567,7 +536,7 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
                     return {"success": False, "error": str(result.get("errors")), "data": result}
                 return {"success": True, "data": result}
             else:
-                logger.error(f"POS Order Failed: Status {response.status_code}")
+                logger.error(f"POS Buffet Order Failed: Status {response.status_code}")
                 return {"success": False, "error": str(result), "status_code": response.status_code}
                 
     except Exception as e:
