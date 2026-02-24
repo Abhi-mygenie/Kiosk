@@ -3,25 +3,27 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 export interface CartItem {
   item_id: string;
   name: string;
-  price: number;
+  price: number;           // Display price (normalized)
+  originalPrice: number;   // Original price for API
   quantity: number;
   variations: string[];
   special_instructions?: string;
   image?: string;
 }
 
-// Helper: Treat price of 1 as 0 (complimentary item indicator)
+// Helper: Treat price of 1 as 0 for display (complimentary item indicator)
 const normalizePrice = (price: number): number => {
   return price === 1 ? 0 : price;
 };
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: CartItem) => void;
+  addItem: (item: Omit<CartItem, 'originalPrice'> & { originalPrice?: number }) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   getTotal: () => number;
+  getApiTotal: () => number;
   getItemCount: () => number;
 }
 
@@ -30,11 +32,13 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addItem = (newItem: CartItem) => {
-    // Normalize price when adding
-    const normalizedItem = {
+  const addItem = (newItem: Omit<CartItem, 'originalPrice'> & { originalPrice?: number }) => {
+    // Store both original price (for API) and normalized price (for display)
+    const originalPrice = newItem.originalPrice || newItem.price;
+    const normalizedItem: CartItem = {
       ...newItem,
-      price: normalizePrice(newItem.price),
+      originalPrice: originalPrice,
+      price: normalizePrice(originalPrice),
     };
     
     setItems(prev => {
@@ -70,8 +74,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setItems([]);
   };
 
+  // Get total for display (normalized prices - ₹1 shown as ₹0)
   const getTotal = () => {
-    return items.reduce((sum, item) => sum + (normalizePrice(item.price) * item.quantity), 0);
+    return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  };
+
+  // Get total for API (original prices - ₹1 stays ₹1)
+  const getApiTotal = () => {
+    return items.reduce((sum, item) => sum + (item.originalPrice * item.quantity), 0);
   };
 
   const getItemCount = () => {
@@ -86,6 +96,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       updateQuantity, 
       clearCart, 
       getTotal,
+      getApiTotal,
       getItemCount 
     }}>
       {children}
