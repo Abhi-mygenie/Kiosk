@@ -309,10 +309,12 @@ const KioskScreen: React.FC = () => {
         )}
 
         <View style={[styles.cartFooter, { borderTopColor: colors.border }]}>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={[styles.totalAmount, { color: colors.primary }]}>₹{getTotal().toFixed(2)}</Text>
-          </View>
+          {getTotal() > 0 && (
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total</Text>
+              <Text style={[styles.totalAmount, { color: colors.primary }]}>₹{getTotal().toFixed(2)}</Text>
+            </View>
+          )}
           <TouchableOpacity
             style={[
               styles.orderButton, 
