@@ -484,7 +484,8 @@ const KioskPage = () => {
         items: cart.map(item => ({
           item_id: item.id,
           name: item.name,
-          price: item.totalPrice || item.price,
+          // Use original price for API (not normalized), fallback to price if originalPrice not set
+          price: item.originalTotalPrice || item.originalPrice || item.totalPrice || item.price,
           quantity: item.quantity,
           variations: item.variations || [],
           special_instructions: item.specialInstructions || null
