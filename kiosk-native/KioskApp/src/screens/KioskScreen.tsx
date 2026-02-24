@@ -320,6 +320,151 @@ const KioskScreen: React.FC = () => {
     </View>
   );
 
+  // Customization Modal
+  const renderCustomizationModal = () => {
+    if (!selectedItem) return null;
+
+    const variationGroups: VariationGroup[] = selectedItem.variation_groups || [];
+    const basePrice = normalizePrice(selectedItem.price);
+    const variationTotal = getAllSelectedVariations().reduce((sum, v) => sum + normalizePrice(v.price), 0);
+    const totalPrice = (basePrice + variationTotal) * quantity;
+
+    return (
+      <Modal
+        visible={!!selectedItem}
+        transparent
+        animationType="fade"
+        onRequestClose={closeCustomizationModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.customizationModal, { backgroundColor: colors.card }]}>
+            {/* Header */}
+            <View style={styles.customizationHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.customizationCategory}>{selectedItem.category_name || ''}</Text>
+                <Text style={[styles.customizationTitle, { color: colors.text }]}>{selectedItem.name}</Text>
+                {selectedItem.description && (
+                  <Text style={styles.customizationDescription}>{selectedItem.description}</Text>
+                )}
+              </View>
+              <TouchableOpacity onPress={closeCustomizationModal} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.customizationBody}>
+              {/* Variation Groups */}
+              {variationGroups.map((group, groupIndex) => (
+                <View key={groupIndex} style={styles.variationGroup}>
+                  <View style={styles.variationGroupHeader}>
+                    <Text style={styles.variationGroupName}>{group.group_name}</Text>
+                    <Text style={[
+                      styles.variationGroupRequired,
+                      { color: group.required ? colors.error : '#9CA3AF' }
+                    ]}>
+                      ({group.required ? 'Required' : 'Optional'})
+                    </Text>
+                    <Text style={styles.variationGroupType}>
+                      • {group.type === 'single' ? 'Select one' : 'Select multiple'}
+                    </Text>
+                  </View>
+                  <View style={styles.variationOptions}>
+                    {group.options.map(option => (
+                      <TouchableOpacity
+                        key={option.id}
+                        style={[
+                          styles.variationOption,
+                          isOptionSelected(group.group_name, option.id) && {
+                            backgroundColor: colors.primary,
+                          }
+                        ]}
+                        onPress={() => handleVariationSelect(group, option)}
+                      >
+                        <Text style={[
+                          styles.variationOptionText,
+                          isOptionSelected(group.group_name, option.id) && { color: '#fff' }
+                        ]}>
+                          {option.name}
+                        </Text>
+                        {option.price > 0 && (
+                          <Text style={[
+                            styles.variationOptionPrice,
+                            isOptionSelected(group.group_name, option.id) && { color: '#fff' }
+                          ]}>
+                            +₹{option.price}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              ))}
+
+              {/* Special Instructions */}
+              <View style={styles.instructionsSection}>
+                <Text style={styles.instructionsLabel}>
+                  COOKING INSTRUCTIONS <Text style={{ color: '#9CA3AF' }}>(Optional)</Text>
+                </Text>
+                <TextInput
+                  style={styles.instructionsInput}
+                  placeholder="E.g., Less spicy, No onions..."
+                  placeholderTextColor="#9CA3AF"
+                  value={specialInstructions}
+                  onChangeText={setSpecialInstructions}
+                  multiline
+                  maxLength={200}
+                />
+                <Text style={styles.instructionsCount}>{specialInstructions.length}/200</Text>
+              </View>
+
+              {/* Quantity */}
+              <View style={styles.quantitySection}>
+                <Text style={styles.quantityLabel}>Quantity</Text>
+                <View style={styles.quantityControls}>
+                  <TouchableOpacity
+                    style={styles.quantityBtn}
+                    onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                  >
+                    <Text style={styles.quantityBtnText}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={[styles.quantityValue, { color: colors.text }]}>{quantity}</Text>
+                  <TouchableOpacity
+                    style={styles.quantityBtn}
+                    onPress={() => setQuantity(quantity + 1)}
+                  >
+                    <Text style={styles.quantityBtnText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+
+            {/* Footer */}
+            <View style={[styles.customizationFooter, { borderTopColor: colors.border }]}>
+              {totalPrice > 0 && (
+                <View style={styles.totalRow}>
+                  <Text style={styles.totalLabel}>Total</Text>
+                  <Text style={[styles.totalAmount, { color: colors.text }]}>₹{totalPrice.toFixed(2)}</Text>
+                </View>
+              )}
+              <TouchableOpacity
+                style={[
+                  styles.addToCartButton,
+                  { backgroundColor: hasRequiredSelections() ? colors.primary : '#9CA3AF' }
+                ]}
+                onPress={handleAddToCartFromModal}
+                disabled={!hasRequiredSelections()}
+              >
+                <Text style={styles.addToCartButtonText}>
+                  {hasRequiredSelections() ? 'Add to Cart' : 'Select Required Options'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
   const renderTableModal = () => (
     <View style={styles.modalOverlay}>
       <View style={styles.modalContent}>
