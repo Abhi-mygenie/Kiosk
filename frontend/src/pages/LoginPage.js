@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Lock, Eye, EyeOff, LogIn, Check, Loader2, Play } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, LogIn, Check, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
@@ -103,7 +103,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login, loginDemo, loginProgress } = useAuth();
+  const { login, loginProgress } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,18 +119,6 @@ const LoginPage = () => {
       toast.success('Login successful');
     } catch (error) {
       toast.error(error.message || 'Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async () => {
-    setIsLoading(true);
-    try {
-      await loginDemo();
-      toast.success('Demo mode activated!');
-    } catch (error) {
-      toast.error('Failed to start demo mode');
     } finally {
       setIsLoading(false);
     }
@@ -242,31 +230,6 @@ const LoginPage = () => {
                 )}
               </button>
             </form>
-
-            {/* Divider */}
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-white text-muted-foreground">or</span>
-              </div>
-            </div>
-
-            {/* Demo Mode Button */}
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              disabled={isLoading}
-              data-testid="demo-mode-btn"
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-4 rounded-sm text-lg font-semibold hover:from-emerald-600 hover:to-teal-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
-            >
-              <Play size={22} fill="currentColor" />
-              Try Demo Mode
-            </button>
-            <p className="text-xs text-muted-foreground text-center mt-3">
-              Explore the kiosk without real orders
-            </p>
           </div>
         </motion.div>
 
