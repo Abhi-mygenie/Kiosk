@@ -486,6 +486,7 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
                 "add_ons": [],
                 "station": "OTHER",
                 "quantity": item.quantity,
+                "price": float(item.price),  # Required by POS API
                 "food_amount": food_amount,
                 "variation_amount": 0.0,
                 "addon_amount": 0.0,
