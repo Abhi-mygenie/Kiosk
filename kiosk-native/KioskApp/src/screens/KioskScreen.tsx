@@ -89,6 +89,8 @@ const KioskScreen: React.FC = () => {
           price: item.originalPrice || item.price,
           quantity: item.quantity,
           variations: item.variations,
+          // Pass grouped variations for POS API format
+          grouped_variations: item.grouped_variations || {},
         })),
         total: getTotal(),
       };
