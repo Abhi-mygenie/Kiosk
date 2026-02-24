@@ -80,6 +80,7 @@ class CartItem(BaseModel):
     price: float
     quantity: int
     variations: List[str] = []
+    grouped_variations: dict = {}  # {"CHOICE": ["MOONG"], "FILLING": ["ALMOND"]}
     special_instructions: Optional[str] = None
 
 class OrderCreate(BaseModel):
