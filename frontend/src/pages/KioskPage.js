@@ -476,21 +476,6 @@ const KioskPage = () => {
     try {
       const { subtotal, discount, cgst, sgst, grandTotal } = calculateTotals;
       
-      // Demo mode - simulate order without real API call
-      if (isDemoMode) {
-        await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate network delay
-        const demoOrderId = 'DEMO-' + Date.now().toString(36).toUpperCase();
-        setOrderSuccess({ id: demoOrderId, tableNumber, grandTotal, customerName, isDemo: true });
-        clearCart();
-        setTableNumber('');
-        setSelectedTableId('');
-        setAppliedCoupon(null);
-        setCouponCode('');
-        setCustomerName('');
-        setCustomerMobile('');
-        return;
-      }
-      
       const orderData = {
         table_number: tableNumber,
         table_id: selectedTableId || null,
