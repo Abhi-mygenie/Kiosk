@@ -19,7 +19,7 @@ const normalizePrice = (price: number): number => {
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, 'originalPrice'> & { originalPrice?: number }) => void;
+  addItem: (item: Omit<CartItem, 'originalPrice'> & { originalPrice?: number; grouped_variations?: Record<string, string[]> }) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
