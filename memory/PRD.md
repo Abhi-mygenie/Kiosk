@@ -61,7 +61,7 @@ Pull https://github.com/Abhi-mygenie/Kiosk/tree/conflict_kios_latest, then switc
 - **Password:** Qplazm@10
 
 ## Preview URL
-https://order-placement-1.preview.emergentagent.com
+https://kiosk-ordering.preview.emergentagent.com
 
 ## React Native Setup (for mobile)
 ```bash

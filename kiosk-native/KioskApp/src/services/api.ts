@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // API Base URL - same as web version
-const API_BASE_URL = 'https://order-placement-1.preview.emergentagent.com/api';
+const API_BASE_URL = 'https://kiosk-ordering.preview.emergentagent.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
