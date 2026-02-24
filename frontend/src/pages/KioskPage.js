@@ -504,6 +504,8 @@ const KioskPage = () => {
           price: item.originalTotalPrice || item.originalPrice || item.totalPrice || item.price,
           quantity: item.quantity,
           variations: item.variations || [],
+          // Send grouped variations for POS API format: {"CHOICE": ["MOONG"], "FILLING": ["ALMOND"]}
+          grouped_variations: item.groupedVariations || {},
           special_instructions: item.specialInstructions || null
         })),
         subtotal: subtotal,
