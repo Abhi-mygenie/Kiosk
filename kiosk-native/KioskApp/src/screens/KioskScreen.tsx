@@ -84,7 +84,8 @@ const KioskScreen: React.FC = () => {
         items: cartItems.map(item => ({
           item_id: item.item_id,
           name: item.name,
-          price: item.price,
+          // Use original price for API (₹1 stays ₹1, not normalized to ₹0)
+          price: item.originalPrice || item.price,
           quantity: item.quantity,
           variations: item.variations,
         })),
