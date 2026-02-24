@@ -881,6 +881,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 2,
   },
+  cartItemVariations: {
+    fontSize: 11,
+    color: '#177DAA',
+    marginTop: 2,
+  },
+  cartItemInstructions: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
   cartItemQuantity: {
     flexDirection: 'row',
     alignItems: 'center',
