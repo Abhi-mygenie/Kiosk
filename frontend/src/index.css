@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+@layer base {
+    :root {
+        --background: 0 0% 98%;
+        --foreground: 200 83% 14%;
+        --card: 0 0% 100%;
+        --card-foreground: 200 83% 14%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 200 83% 14%;
+        --primary: 197 74% 64%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 197 100% 73%;
+        --secondary-foreground: 200 83% 14%;
+        --muted: 197 30% 95%;
+        --muted-foreground: 197 20% 40%;
+        --accent: 197 74% 64%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 60% 50%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 197 20% 88%;
+        --input: 197 20% 88%;
+        --ring: 197 74% 64%;
+        --radius: 2px;
+        
+        /* Brand Colors */
+        --blue-hero: #62B5E5;
+        --blue-light: #78CAFF;
+        --blue-medium: #177DAA;
+        --blue-dark: #06293F;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+
+    [data-debug-wrapper="true"] > * {
+        margin-left: inherit;
+        margin-right: inherit;
+        margin-top: inherit;
+        margin-bottom: inherit;
+        padding-left: inherit;
+        padding-right: inherit;
+        padding-top: inherit;
+        padding-bottom: inherit;
+        column-gap: inherit;
+        row-gap: inherit;
+        gap: inherit;
+        border-left-width: inherit;
+        border-right-width: inherit;
+        border-top-width: inherit;
+        border-bottom-width: inherit;
+        border-left-style: inherit;
+        border-right-style: inherit;
+        border-top-style: inherit;
+        border-bottom-style: inherit;
+        border-left-color: inherit;
+        border-right-color: inherit;
+        border-top-color: inherit;
+        border-bottom-color: inherit;
+    }
+}
+
+/* Kiosk specific styles */
+.kiosk-container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.touch-target {
+    min-width: 60px;
+    min-height: 60px;
+}
+
+/* Hide scrollbars but maintain functionality */
+.scrollable {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollable::-webkit-scrollbar {
+    display: none;
+}

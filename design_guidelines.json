@@ -1,0 +1,110 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "Lumiere Morning Kiosk",
+      "tone": "Elegant, Intuitive, Serene, Premium",
+      "target_devices": ["21.5 inch Touchscreen (1920x1080)", "32 inch Touchscreen (4k or 1080p)"],
+      "input_method": "Touch only (No keyboard, no mouse)"
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Playfair Display, serif",
+        "body": "Manrope, sans-serif",
+        "ui": "Manrope, sans-serif"
+      },
+      "scale": {
+        "display": "text-6xl md:text-8xl tracking-tight leading-none",
+        "h1": "text-4xl md:text-6xl tracking-tight font-medium",
+        "h2": "text-3xl md:text-4xl tracking-normal",
+        "h3": "text-2xl md:text-3xl font-medium",
+        "body_lg": "text-lg md:text-xl leading-relaxed",
+        "body": "text-base md:text-lg leading-relaxed",
+        "caption": "text-sm uppercase tracking-widest"
+      }
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "hsl(var(--primary))", 
+          "foreground": "hsl(var(--primary-foreground))"
+        },
+        "background": "#F9F8F6", 
+        "foreground": "#1A1A1A",
+        "card": "#FFFFFF",
+        "card_foreground": "#1A1A1A",
+        "muted": "#F0EFEA",
+        "muted_foreground": "#666055",
+        "accent": "#C5A059", 
+        "accent_foreground": "#FFFFFF",
+        "border": "#E5E0D8"
+      },
+      "usage": {
+        "primary_action": "bg-primary text-white (Dynamic via API, default Black or Gold)",
+        "secondary_action": "bg-transparent border border-foreground/20 text-foreground",
+        "feedback_success": "#2D6A4F (Deep Emerald)",
+        "feedback_error": "#9B2226 (Garnet Red)"
+      }
+    },
+    "spacing": {
+      "touch_targets": "Min 60px x 60px for all interactive elements",
+      "grid_gap": "gap-6 md:gap-8",
+      "section_padding": "p-8 md:p-12"
+    },
+    "visual_enhancers": {
+      "radius": "rounded-sm (2px)",
+      "shadows": "shadow-[0_4px_20px_-2px_rgba(0,0,0,0.05)]",
+      "glassmorphism": "backdrop-blur-md bg-white/80 border border-white/20",
+      "borders": "border border-[#E5E0D8]"
+    }
+  },
+  "layout_strategies": {
+    "kiosk_grid": {
+      "description": "2-column layout. Left Sidebar (25%) for Navigation/Categories. Right Content (75%) for Grid.",
+      "responsive": "On 21.5 inch, standard layout. On 32 inch, increase padding and font sizes (use '2xl:' prefix in Tailwind)."
+    },
+    "card_style": "Minimalist. Image takes 60% height. Text below. Add Button is a clear circle or pill."
+  },
+  "components": {
+    "Navigation": {
+      "path": "src/components/layout/SidebarNav.js",
+      "style": "Vertical sidebar. Icons + Text. Active state has a vertical line indicator.",
+      "icons": "Lucide React (Home, Coffee, Utensils, ShoppingCart)"
+    },
+    "MenuCard": {
+      "path": "src/components/menu/MenuItemCard.js",
+      "style": "Image top, Title serif, Price sans-serif. 'Add' button prominent."
+    },
+    "NumberPad": {
+      "path": "src/components/ui/NumberPad.js",
+      "style": "Grid of numbers 1-9, 0. Large buttons (80px+). No keyboard.",
+      "usage": "Table selection, Quantity adjustment"
+    },
+    "CartDrawer": {
+      "path": "src/components/cart/CartDrawer.js",
+      "style": "Slide from right. Summary of items. Large 'Checkout' button."
+    }
+  },
+  "image_assets": {
+    "welcome_hero": "https://images.pexels.com/photos/12255469/pexels-photo-12255469.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "categories": {
+      "Hot Breakfast": "https://images.unsplash.com/photo-1768406041776-c5460d9fd638?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "Bakery & Pastry": "https://images.pexels.com/photos/14686507/pexels-photo-14686507.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "Fruits & Healthy": "https://images.pexels.com/photos/7937384/pexels-photo-7937384.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "Beverages": "https://images.unsplash.com/photo-1718795903419-2bc5bba08d2f?crop=entropy&cs=srgb&fm=jpg&q=85"
+    }
+  },
+  "universal_guidelines": [
+    "TOUCH FIRST: All buttons must be large enough for a finger.",
+    "NO SCROLLBARS: Hide scrollbars using 'scrollbar-hide' utility but allow scrolling.",
+    "DYNAMIC BRANDING: The 'primary' color should be CSS variable based so API can update it.",
+    "ACCESSIBILITY: High contrast text. Clear feedback on touch.",
+    "ANIMATION: Smooth transitions between pages. No jarring cuts. Use Framer Motion for page exits."
+  ],
+  "instructions_to_main_agent": [
+    "1. Setup Tailwind config with the 'Morning Luxury' palette.",
+    "2. Create the 'NumberPad' component immediately as it's core to the 'No Keyboard' constraint.",
+    "3. Build the 'Layout' with a persistent Sidebar for categories.",
+    "4. Mock the API for 'Brand Colors' in a Context Provider (e.g., ThemeContext).",
+    "5. Use the selected images for the mock data."
+  ]
+}
