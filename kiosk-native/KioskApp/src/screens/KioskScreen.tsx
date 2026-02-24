@@ -983,6 +983,169 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6B7280',
   },
+
+  // Customization Modal Styles
+  customizationModal: {
+    width: isLargeScreen ? 500 : '90%',
+    maxHeight: '85%',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  customizationHeader: {
+    flexDirection: 'row',
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  customizationCategory: {
+    fontSize: 12,
+    color: '#177DAA',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  customizationTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  customizationDescription: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: '#374151',
+  },
+  customizationBody: {
+    padding: 20,
+    maxHeight: 400,
+  },
+  variationGroup: {
+    marginBottom: 20,
+  },
+  variationGroupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    flexWrap: 'wrap',
+  },
+  variationGroupName: {
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    marginRight: 8,
+  },
+  variationGroupRequired: {
+    fontSize: 12,
+  },
+  variationGroupType: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    marginLeft: 8,
+  },
+  variationOptions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  variationOption: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 8,
+    minWidth: '45%',
+  },
+  variationOptionText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#374151',
+  },
+  variationOptionPrice: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  instructionsSection: {
+    marginBottom: 20,
+  },
+  instructionsLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  instructionsInput: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 14,
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  instructionsCount: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    textAlign: 'right',
+    marginTop: 4,
+  },
+  quantitySection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  quantityLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  quantityControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quantityBtn: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityBtnText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#374151',
+  },
+  quantityValue: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginHorizontal: 20,
+  },
+  customizationFooter: {
+    padding: 20,
+    borderTopWidth: 1,
+  },
+  addToCartButton: {
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  addToCartButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
 export default KioskScreen;
