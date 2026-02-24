@@ -2,7 +2,8 @@ import React, { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
 
-// Helper: Treat price of 1 as 0 (complimentary item indicator)
+// Helper: Treat price of 1 as 0 for display (complimentary item indicator)
+// But keep original price for API calls
 const normalizePrice = (price) => {
   return price === 1 ? 0 : price;
 };
@@ -28,12 +29,19 @@ export const CartProvider = ({ children }) => {
         return newCart;
       }
       
-      // New item with unique variations/instructions - normalize price
+      // Store both original price (for API) and display price (for UI)
+      const originalPrice = item.price;
+      const originalTotalPrice = item.totalPrice || item.price;
+      
       return [...prevCart, { 
         ...item, 
         cartId: itemKey,
-        price: normalizePrice(item.price),
-        totalPrice: item.totalPrice ? normalizePrice(item.totalPrice) : normalizePrice(item.price),
+        // Original prices for API calls
+        originalPrice: originalPrice,
+        originalTotalPrice: originalTotalPrice,
+        // Normalized prices for UI display
+        price: normalizePrice(originalPrice),
+        totalPrice: normalizePrice(originalTotalPrice),
         quantity: item.quantity || 1,
         variations: item.variations || [],
         specialInstructions: item.specialInstructions || ''
@@ -70,9 +78,18 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
+  // Get total for display (normalized prices)
   const getTotal = () => {
     return cart.reduce((total, item) => {
-      const itemPrice = normalizePrice(item.totalPrice || item.price);
+      const itemPrice = item.totalPrice || item.price;
+      return total + (itemPrice * item.quantity);
+    }, 0);
+  };
+
+  // Get total for API (original prices)
+  const getApiTotal = () => {
+    return cart.reduce((total, item) => {
+      const itemPrice = item.originalTotalPrice || item.originalPrice || item.totalPrice || item.price;
       return total + (itemPrice * item.quantity);
     }, 0);
   };
@@ -90,6 +107,7 @@ export const CartProvider = ({ children }) => {
       updateInstructions,
       clearCart,
       getTotal,
+      getApiTotal,
       getItemCount
     }}>
       {children}
