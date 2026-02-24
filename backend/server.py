@@ -474,14 +474,25 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
         # Build cart items for POS buffet order
         pos_cart = []
         for item in order_input.items:
+            # Map variations - join as comma-separated string for 'variant' field
+            variant_str = ",".join(item.variations) if item.variations else ""
+            
+            # Build variations array for POS (format: [{label: "MOONG", optionPrice: "0"}])
+            variations_array = []
+            for var in (item.variations or []):
+                variations_array.append({
+                    "label": var,
+                    "optionPrice": "0"
+                })
+            
             pos_cart.append({
                 "priority": "No",
                 "food_id": int(item.item_id),
                 "quantity": item.quantity,
-                "variant": "",
+                "variant": variant_str,
                 "add_on_ids": [],
                 "add_on_qtys": [],
-                "variations": [],
+                "variations": variations_array,
                 "add_ons": [],
                 "food_level_notes": item.special_instructions or "",
                 "price": float(item.price)
