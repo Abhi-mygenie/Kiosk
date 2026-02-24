@@ -298,6 +298,16 @@ const KioskScreen: React.FC = () => {
     <View style={styles.cartItem}>
       <View style={styles.cartItemInfo}>
         <Text style={[styles.cartItemName, { color: colors.text }]} numberOfLines={1}>{item.name}</Text>
+        {item.variations && item.variations.length > 0 && (
+          <Text style={styles.cartItemVariations} numberOfLines={1}>
+            {item.variations.join(', ')}
+          </Text>
+        )}
+        {item.special_instructions && (
+          <Text style={styles.cartItemInstructions} numberOfLines={1}>
+            "{item.special_instructions}"
+          </Text>
+        )}
         {normalizePrice(item.price) > 0 && (
           <Text style={[styles.cartItemPrice, { color: colors.primary }]}>₹{normalizePrice(item.price)}</Text>
         )}
