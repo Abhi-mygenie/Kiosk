@@ -459,7 +459,23 @@ const KioskPage = () => {
   const filteredItems = menuItems.filter(item => item.category === activeCategory);
 
   const handleAddToCart = (item) => {
-    addToCart(item);
+    // Include grouped variations for proper API mapping
+    const itemWithGroupedVariations = {
+      ...item,
+      // Store grouped variations for API: { "CHOICE": ["MOONG"], "FILLING": ["ALMOND"] }
+      groupedVariations: item.variationDetails?.reduce((acc, v) => {
+        // Find which group this variation belongs to
+        const sourceItem = menuItems.find(mi => mi.id === item.id);
+        const group = sourceItem?.variation_groups?.find(g => 
+          g.options.some(opt => opt.name === v.name)
+        );
+        const groupName = group?.group_name || 'CHOICE';
+        if (!acc[groupName]) acc[groupName] = [];
+        acc[groupName].push(v.name);
+        return acc;
+      }, {}) || {}
+    };
+    addToCart(itemWithGroupedVariations);
     toast.success(`${item.name} added to cart`);
   };
 
