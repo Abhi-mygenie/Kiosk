@@ -33,13 +33,14 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addItem = (newItem: Omit<CartItem, 'originalPrice'> & { originalPrice?: number }) => {
+  const addItem = (newItem: Omit<CartItem, 'originalPrice'> & { originalPrice?: number; grouped_variations?: Record<string, string[]> }) => {
     // Store both original price (for API) and normalized price (for display)
     const originalPrice = newItem.originalPrice || newItem.price;
     const normalizedItem: CartItem = {
       ...newItem,
       originalPrice: originalPrice,
       price: normalizePrice(originalPrice),
+      grouped_variations: newItem.grouped_variations || {},
     };
     
     setItems(prev => {
