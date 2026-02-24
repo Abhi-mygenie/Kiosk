@@ -77,14 +77,119 @@ const KioskScreen: React.FC = () => {
     return menuItems.filter((item: any) => item.category === selectedCategory);
   }, [menuItems, selectedCategory]);
 
+  // Open customization modal
+  const openCustomizationModal = (item: any) => {
+    setSelectedItem(item);
+    setGroupSelections({});
+    setQuantity(1);
+    setSpecialInstructions('');
+  };
+
+  // Close customization modal
+  const closeCustomizationModal = () => {
+    setSelectedItem(null);
+    setGroupSelections({});
+    setQuantity(1);
+    setSpecialInstructions('');
+  };
+
+  // Handle variation selection
+  const handleVariationSelect = (group: VariationGroup, option: VariationOption) => {
+    setGroupSelections(prev => {
+      const currentSelections = prev[group.group_name] || [];
+      const isSelected = currentSelections.some(v => v.id === option.id);
+      
+      if (group.type === 'single') {
+        // Single selection: replace any existing
+        if (isSelected && !group.required) {
+          return { ...prev, [group.group_name]: [] };
+        }
+        return { ...prev, [group.group_name]: [option] };
+      } else {
+        // Multiple selection: toggle
+        if (isSelected) {
+          return { ...prev, [group.group_name]: currentSelections.filter(v => v.id !== option.id) };
+        }
+        return { ...prev, [group.group_name]: [...currentSelections, option] };
+      }
+    });
+  };
+
+  // Check if option is selected
+  const isOptionSelected = (groupName: string, optionId: string) => {
+    return (groupSelections[groupName] || []).some(v => v.id === optionId);
+  };
+
+  // Get all selected variations flattened
+  const getAllSelectedVariations = () => {
+    return Object.values(groupSelections).flat();
+  };
+
+  // Check if all required groups have selections
+  const hasRequiredSelections = () => {
+    if (!selectedItem?.variation_groups) return true;
+    return selectedItem.variation_groups.every((group: VariationGroup) => {
+      if (!group.required) return true;
+      return (groupSelections[group.group_name] || []).length > 0;
+    });
+  };
+
+  // Build grouped variations for API
+  const buildGroupedVariations = (): Record<string, string[]> => {
+    const result: Record<string, string[]> = {};
+    Object.entries(groupSelections).forEach(([groupName, options]) => {
+      if (options.length > 0) {
+        result[groupName] = options.map(opt => opt.name);
+      }
+    });
+    return result;
+  };
+
+  // Add item to cart from customization modal
+  const handleAddToCartFromModal = () => {
+    if (!selectedItem) return;
+    
+    if (!hasRequiredSelections()) {
+      Alert.alert('Required Options', 'Please select all required options');
+      return;
+    }
+
+    const selectedVariations = getAllSelectedVariations();
+    const basePrice = selectedItem.price;
+    const variationPriceTotal = selectedVariations.reduce((sum, v) => sum + normalizePrice(v.price), 0);
+    
+    addItem({
+      item_id: selectedItem.id,
+      name: selectedItem.name,
+      price: normalizePrice(basePrice) + variationPriceTotal,
+      originalPrice: basePrice, // Keep original for API
+      quantity: quantity,
+      variations: selectedVariations.map(v => v.name),
+      grouped_variations: buildGroupedVariations(),
+      special_instructions: specialInstructions || undefined,
+      image: selectedItem.image,
+    });
+
+    closeCustomizationModal();
+  };
+
+  // Direct add for items without variations
   const handleAddToCart = (item: any) => {
+    // If item has variations, open modal
+    if (item.variation_groups && item.variation_groups.length > 0) {
+      openCustomizationModal(item);
+      return;
+    }
+    
+    // No variations - add directly
     addItem({
       item_id: item.id,
       name: item.name,
       price: item.price,
-      originalPrice: item.price, // Keep original price for API
+      originalPrice: item.price,
       quantity: 1,
       variations: [],
+      grouped_variations: {},
       image: item.image,
     });
   };
