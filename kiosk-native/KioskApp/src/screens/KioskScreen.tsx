@@ -91,13 +91,14 @@ const KioskScreen: React.FC = () => {
         total: getTotal(),
       };
 
-      await ordersAPI.createOrder(orderData);
-      Alert.alert('Success', 'Order placed successfully!');
+      const response = await ordersAPI.createOrder(orderData);
+      Alert.alert('Order Confirmed', `Order ID: ${response.id || response.pos_order_id}\nTable: ${selectedTable.table_no}`);
       clearCart();
       setSelectedTable(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to place order:', error);
-      Alert.alert('Error', 'Failed to place order');
+      const errorMessage = error.response?.data?.detail || 'Failed to place order. Please try again.';
+      Alert.alert('Order Failed', errorMessage);
     } finally {
       setPlacingOrder(false);
     }
