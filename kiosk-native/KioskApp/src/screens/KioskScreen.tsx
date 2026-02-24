@@ -10,6 +10,8 @@ import {
   Dimensions,
   ActivityIndicator,
   Alert,
+  TextInput,
+  Modal,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
@@ -28,6 +30,21 @@ interface Table {
   id: string;
   table_no: string;
   title?: string;
+}
+
+interface VariationOption {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface VariationGroup {
+  group_name: string;
+  type: 'single' | 'multiple';
+  required: boolean;
+  min_select: number;
+  max_select: number;
+  options: VariationOption[];
 }
 
 const KioskScreen: React.FC = () => {
