@@ -7,6 +7,7 @@ export interface CartItem {
   originalPrice: number;   // Original price for API
   quantity: number;
   variations: string[];
+  grouped_variations?: Record<string, string[]>;  // {"CHOICE": ["MOONG"], "FILLING": ["ALMOND"]}
   special_instructions?: string;
   image?: string;
 }
