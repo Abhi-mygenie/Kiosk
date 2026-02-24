@@ -5,9 +5,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
-        heading: ['Big Shoulders Display', 'sans-serif'],
-        serif: ['Big Shoulders Display', 'sans-serif'],
+        sans: ['var(--font-body)', 'Montserrat', 'sans-serif'],
+        heading: ['var(--font-heading)', 'Big Shoulders Display', 'sans-serif'],
+        serif: ['var(--font-heading)', 'Big Shoulders Display', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -43,11 +43,11 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Brand colors
-        'blue-hero': '#62B5E5',
-        'blue-light': '#78CAFF',
-        'blue-medium': '#177DAA',
-        'blue-dark': '#06293F',
+        // Brand colors - now using CSS variables
+        'blue-hero': 'var(--blue-hero, #62B5E5)',
+        'blue-light': 'var(--blue-light, #78CAFF)',
+        'blue-medium': 'var(--blue-medium, #177DAA)',
+        'blue-dark': 'var(--blue-dark, #06293F)',
       },
       borderRadius: {
         lg: 'var(--radius)',

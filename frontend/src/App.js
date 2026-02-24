@@ -35,16 +35,16 @@ const AppContent = () => {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <ThemeProvider>
         <CartProvider>
           <BrowserRouter>
             <Toaster position="top-center" richColors />
             <AppContent />
           </BrowserRouter>
         </CartProvider>
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

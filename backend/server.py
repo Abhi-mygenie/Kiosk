@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Header
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -26,9 +26,8 @@ logger = logging.getLogger(__name__)
 POS_API_BASE_URL = "https://preprod.mygenie.online/api/v1"
 POS_API_V2_URL = "https://preprod.mygenie.online/api/v2"
 
-# Cache for POS token and menu data
-pos_token_cache = {"token": None, "expires": None}
-menu_cache = {"data": None, "expires": None}
+# Cache for menu data (token comes from user now)
+menu_cache = {"data": None, "expires": None, "token": None}
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
@@ -40,6 +39,13 @@ app = FastAPI()
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+
+# Helper function to extract token from Authorization header
+def get_token_from_header(authorization: Optional[str] = None) -> Optional[str]:
+    if authorization and authorization.startswith("Bearer "):
+        return authorization[7:]
+    return None
 
 
 # Define Models
@@ -108,10 +114,35 @@ class Order(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class BrandingConfig(BaseModel):
-    primary_color: str = "#177DAA"
-    accent_color: str = "#62B5E5"
-    logo_url: Optional[str] = None
+    # Basic Info
     restaurant_name: str = "Hotel Lumiere"
+    logo_url: Optional[str] = None
+    
+    # Colors (matching current UI)
+    primary_color: str = "#177DAA"      # --blue-medium, used for buttons/accents
+    secondary_color: str = "#62B5E5"    # --blue-hero
+    accent_color: str = "#62B5E5"       # --blue-hero
+    text_color: str = "#06293F"         # --blue-dark (foreground)
+    background_color: str = "#F9F8F6"   # Current background
+    
+    # Fonts (matching current UI)
+    heading_font: str = "Big Shoulders Display"  # font-serif/font-heading in tailwind
+    body_font: str = "Montserrat"                # font-sans in tailwind
+    font_url: str = "https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap"
+    
+    # UI Style (matching current UI)
+    button_style: str = "rounded"   # Current buttons are rounded
+    icon_style: str = "outline"     # Using Lucide outline icons
+    border_radius: str = "8px"      # --radius value
+    
+    # App Assets
+    splash_screen_image: Optional[str] = None
+    app_icon: Optional[str] = None
+    favicon: Optional[str] = None
+    
+    # Loader (matching current UI)
+    loader_type: str = "spinner"
+    loader_color: str = "#177DAA"   # primary color
 
 
 # Common variations/add-ons
@@ -236,50 +267,14 @@ async def root():
 
 
 # POS Menu Integration Helper Functions
-async def get_pos_token():
-    """Get a valid POS token, using cache if available"""
+async def fetch_pos_menu(token: str, force_refresh: bool = False):
+    """Fetch menu from POS API using the provided token"""
     now = datetime.now(timezone.utc)
     
-    # Check if cached token is still valid (cache for 1 hour)
-    if pos_token_cache["token"] and pos_token_cache["expires"] and pos_token_cache["expires"] > now:
-        return pos_token_cache["token"]
-    
-    # Get new token
-    try:
-        async with httpx.AsyncClient() as client_http:
-            response = await client_http.post(
-                f"{POS_API_BASE_URL}/auth/vendoremployee/login",
-                json={"email": "owner@18march.com", "password": "Qplazm@10"},
-                headers={"Content-Type": "application/json"},
-                timeout=30.0
-            )
-            if response.status_code == 200:
-                data = response.json()
-                token = data.get("token")
-                # Cache token for 1 hour
-                from datetime import timedelta
-                pos_token_cache["token"] = token
-                pos_token_cache["expires"] = now + timedelta(hours=1)
-                return token
-    except Exception as e:
-        logger.error(f"Failed to get POS token: {e}")
-    return None
-
-
-async def fetch_pos_menu(force_refresh_token=False):
-    """Fetch menu from POS API"""
-    now = datetime.now(timezone.utc)
-    
-    # Check cache (cache for 5 minutes)
-    if not force_refresh_token and menu_cache["data"] and menu_cache["expires"] and menu_cache["expires"] > now:
+    # Check cache (cache for 5 minutes) - also check if same token
+    if not force_refresh and menu_cache["data"] and menu_cache["expires"] and menu_cache["expires"] > now and menu_cache["token"] == token:
         return menu_cache["data"]
     
-    # Clear token cache if force refresh
-    if force_refresh_token:
-        pos_token_cache["token"] = None
-        pos_token_cache["expires"] = None
-    
-    token = await get_pos_token()
     if not token:
         logger.warning("No POS token available, using fallback menu")
         return None
@@ -302,13 +297,13 @@ async def fetch_pos_menu(force_refresh_token=False):
                 from datetime import timedelta
                 menu_cache["data"] = foods
                 menu_cache["expires"] = now + timedelta(minutes=5)
+                menu_cache["token"] = token
                 
                 logger.info(f"Fetched {len(foods)} items from POS menu")
                 return foods
-            elif response.status_code == 401 and not force_refresh_token:
-                # Token expired, retry with fresh token
-                logger.warning("POS token expired, refreshing...")
-                return await fetch_pos_menu(force_refresh_token=True)
+            elif response.status_code == 401:
+                logger.warning("POS token expired or invalid")
+                return None
     except Exception as e:
         logger.error(f"Failed to fetch POS menu: {e}")
     return None
@@ -459,9 +454,10 @@ def transform_pos_food_to_menu_item(food: dict) -> dict:
 
 
 @api_router.get("/menu/categories")
-async def get_categories():
+async def get_categories(authorization: Optional[str] = Header(None)):
     """Get categories from POS API or fallback to hardcoded"""
-    pos_foods = await fetch_pos_menu()
+    token = get_token_from_header(authorization)
+    pos_foods = await fetch_pos_menu(token)
     
     if pos_foods:
         # Extract unique categories from POS data
@@ -485,9 +481,10 @@ async def get_categories():
 
 
 @api_router.get("/menu/items")
-async def get_menu_items(category: Optional[str] = None):
+async def get_menu_items(category: Optional[str] = None, authorization: Optional[str] = Header(None)):
     """Get menu items from POS API or fallback to hardcoded"""
-    pos_foods = await fetch_pos_menu()
+    token = get_token_from_header(authorization)
+    pos_foods = await fetch_pos_menu(token)
     
     if pos_foods:
         # Transform POS foods to our format
@@ -505,17 +502,16 @@ async def get_menu_items(category: Optional[str] = None):
 
 
 # Tables cache
-tables_cache = {"data": None, "expires": None}
+tables_cache = {"data": None, "expires": None, "token": None}
 
-async def fetch_pos_tables():
-    """Fetch tables from POS API"""
+async def fetch_pos_tables(token: str):
+    """Fetch tables from POS API using the provided token"""
     now = datetime.now(timezone.utc)
     
-    # Check cache (cache for 5 minutes)
-    if tables_cache["data"] and tables_cache["expires"] and tables_cache["expires"] > now:
+    # Check cache (cache for 5 minutes) - also check if same token
+    if tables_cache["data"] and tables_cache["expires"] and tables_cache["expires"] > now and tables_cache["token"] == token:
         return tables_cache["data"]
     
-    token = await get_pos_token()
     if not token:
         logger.warning("No POS token available for tables")
         return None
@@ -538,39 +534,23 @@ async def fetch_pos_tables():
                 from datetime import timedelta
                 tables_cache["data"] = tables
                 tables_cache["expires"] = now + timedelta(minutes=5)
+                tables_cache["token"] = token
                 
                 logger.info(f"Fetched {len(tables)} tables from POS")
                 return tables
             elif response.status_code == 401:
-                # Token expired, clear cache and retry
-                pos_token_cache["token"] = None
-                pos_token_cache["expires"] = None
-                token = await get_pos_token()
-                if token:
-                    response = await client_http.get(
-                        f"{POS_API_V2_URL}/vendoremployee/restaurant-settings/table-config",
-                        headers={
-                            "Authorization": f"Bearer {token}",
-                            "Content-Type": "application/json"
-                        },
-                        timeout=30.0
-                    )
-                    if response.status_code == 200:
-                        data = response.json()
-                        tables = data.get("data", {}).get("tables", [])
-                        from datetime import timedelta
-                        tables_cache["data"] = tables
-                        tables_cache["expires"] = now + timedelta(minutes=5)
-                        return tables
+                logger.warning("POS token expired or invalid for tables")
+                return None
     except Exception as e:
         logger.error(f"Failed to fetch POS tables: {e}")
     return None
 
 
 @api_router.get("/tables")
-async def get_tables():
+async def get_tables(authorization: Optional[str] = Header(None)):
     """Get tables from POS API"""
-    pos_tables = await fetch_pos_tables()
+    token = get_token_from_header(authorization)
+    pos_tables = await fetch_pos_tables(token)
     
     if pos_tables:
         # Transform to simplified format - only include Tables (rtype = "TB"), not Rooms (RM)
@@ -599,11 +579,10 @@ POS_RESTAURANT_NAME = "18march"
 POS_WAITER_ID = "1703"  # Default waiter ID
 
 
-async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
+async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) -> dict:
     """Send order to POS API using place-order-and-payment endpoint"""
     import json
     
-    token = await get_pos_token()
     if not token:
         logger.warning("No POS token available for order submission")
         return {"success": False, "error": "No POS token"}
@@ -717,11 +696,12 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate) -> dict:
 
 
 @api_router.post("/orders", response_model=Order)
-async def create_order(order_input: OrderCreate):
+async def create_order(order_input: OrderCreate, authorization: Optional[str] = Header(None)):
+    token = get_token_from_header(authorization)
     order = Order(**order_input.model_dump())
     
     # Send order to POS API
-    pos_result = await send_order_to_pos(order, order_input)
+    pos_result = await send_order_to_pos(order, order_input, token)
     
     if pos_result.get("success"):
         order.status = "confirmed"

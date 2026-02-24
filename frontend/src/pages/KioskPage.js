@@ -11,6 +11,23 @@ import kioskLock from '@/utils/kioskLock';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Helper: Treat price of 1 as 0 (complimentary item indicator)
+const normalizePrice = (price) => {
+  return price === 1 ? 0 : price;
+};
+
+// Create axios instance with auth interceptor
+const createAuthAxios = (token) => {
+  const instance = axios.create();
+  instance.interceptors.request.use((config) => {
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+  return instance;
+};
+
 // Customization Modal Component
 const CustomizationModal = ({ item, onClose, onAddToCart }) => {
   // Track selections per group for proper single/multiple handling
@@ -56,10 +73,11 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
     return Object.values(groupSelections).flat();
   };
 
-  // Calculate total price
+  // Calculate total price (treat price of 1 as 0)
   const calculateTotal = () => {
-    const variationTotal = getAllSelectedVariations().reduce((sum, v) => sum + v.price, 0);
-    return (item.price + variationTotal) * quantity;
+    const basePrice = normalizePrice(item.price);
+    const variationTotal = getAllSelectedVariations().reduce((sum, v) => sum + normalizePrice(v.price), 0);
+    return (basePrice + variationTotal) * quantity;
   };
 
   // Check if all required groups have selections
@@ -92,13 +110,17 @@ const CustomizationModal = ({ item, onClose, onAddToCart }) => {
       return;
     }
     
+    const basePrice = normalizePrice(item.price);
+    const variationPriceTotal = selectedVariations.reduce((sum, v) => sum + normalizePrice(v.price), 0);
+    
     onAddToCart({
       ...item,
+      price: basePrice,
       variations: selectedVariations.map(v => v.name),
       variationDetails: selectedVariations,
       quantity,
       specialInstructions,
-      totalPrice: item.price + selectedVariations.reduce((sum, v) => sum + v.price, 0)
+      totalPrice: basePrice + variationPriceTotal
     });
     onClose();
   };
@@ -312,9 +334,13 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
 
 const KioskPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
-  const { logout } = useAuth();
-  const [categories, setCategories] = useState([]);
-  const [menuItems, setMenuItems] = useState([]);
+  const { logout, user, menuData, isDemoMode } = useAuth();
+  
+  // Use cached menu data from AuthContext (fetched at login)
+  const [categories, setCategories] = useState(menuData.categories || []);
+  const [menuItems, setMenuItems] = useState(menuData.menuItems || []);
+  const [tables, setTables] = useState(menuData.tables || []);
+  
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');
@@ -322,7 +348,7 @@ const KioskPage = () => {
   const [showTableSelector, setShowTableSelector] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
@@ -331,8 +357,17 @@ const KioskPage = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [editingInstructions, setEditingInstructions] = useState(null); // For editing instructions popup
-  const [tables, setTables] = useState([]);
+
+  // Create authenticated axios instance (only for placing orders)
+  const authAxios = useMemo(() => createAuthAxios(user?.token), [user?.token]);
   const [tablesLoading, setTablesLoading] = useState(false);
+
+  // Set initial active category from cached data
+  useEffect(() => {
+    if (categories.length > 0 && !activeCategory) {
+      setActiveCategory(categories[0].id);
+    }
+  }, [categories, activeCategory]);
 
   // Initialize kiosk lock on mount
   useEffect(() => {
@@ -372,29 +407,7 @@ const KioskPage = () => {
   const CGST_RATE = 2.5;
   const SGST_RATE = 2.5;
 
-  // Fetch tables from API
-  useEffect(() => {
-    const fetchTables = async () => {
-      setTablesLoading(true);
-      try {
-        const response = await axios.get(`${API}/tables`);
-        setTables(response.data.tables || []);
-      } catch (error) {
-        console.error('Failed to fetch tables:', error);
-        // Fallback to hardcoded tables
-        setTables(Array.from({ length: 100 }, (_, i) => ({
-          id: String(i + 1),
-          table_no: String(i + 1).padStart(2, '0'),
-          title: '',
-          type: 'TB',
-          waiter: ''
-        })));
-      } finally {
-        setTablesLoading(false);
-      }
-    };
-    fetchTables();
-  }, []);
+  // Kiosk lock and sound toggle remain the same
 
   // Calculate totals with GST and discount
   const calculateTotals = useMemo(() => {
@@ -441,27 +454,7 @@ const KioskPage = () => {
     setCouponError('');
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [catRes, itemsRes] = await Promise.all([
-          axios.get(`${API}/menu/categories`),
-          axios.get(`${API}/menu/items`)
-        ]);
-        setCategories(catRes.data);
-        setMenuItems(itemsRes.data);
-        // Set first category as active
-        if (catRes.data.length > 0 && !activeCategory) {
-          setActiveCategory(catRes.data[0].id);
-        }
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  // No API calls for menu - data comes from AuthContext (cached at login)
 
   const filteredItems = menuItems.filter(item => item.category === activeCategory);
 
@@ -482,6 +475,21 @@ const KioskPage = () => {
     setIsPlacingOrder(true);
     try {
       const { subtotal, discount, cgst, sgst, grandTotal } = calculateTotals;
+      
+      // Demo mode - simulate order without real API call
+      if (isDemoMode) {
+        await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate network delay
+        const demoOrderId = 'DEMO-' + Date.now().toString(36).toUpperCase();
+        setOrderSuccess({ id: demoOrderId, tableNumber, grandTotal, customerName, isDemo: true });
+        clearCart();
+        setTableNumber('');
+        setSelectedTableId('');
+        setAppliedCoupon(null);
+        setCouponCode('');
+        setCustomerName('');
+        setCustomerMobile('');
+        return;
+      }
       
       const orderData = {
         table_number: tableNumber,
@@ -504,7 +512,7 @@ const KioskPage = () => {
         total: grandTotal
       };
 
-      const response = await axios.post(`${API}/orders`, orderData);
+      const response = await authAxios.post(`${API}/orders`, orderData);
       setOrderSuccess({ id: response.data.id, tableNumber, grandTotal, customerName });
       clearCart();
       setTableNumber('');
@@ -651,10 +659,10 @@ const KioskPage = () => {
                       </div>
                     )}
                     <div className="flex items-center justify-between">
-                      {!item.is_complementary && (
-                        <span className="text-lg font-semibold text-blue-dark">₹{item.price.toFixed(0)}</span>
+                      {!item.is_complementary && normalizePrice(item.price) > 0 && (
+                        <span className="text-lg font-semibold text-blue-dark">₹{normalizePrice(item.price).toFixed(0)}</span>
                       )}
-                      {item.is_complementary && <span></span>}
+                      {(item.is_complementary || normalizePrice(item.price) === 0) && <span></span>}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -688,8 +696,8 @@ const KioskPage = () => {
         <div className="flex-1 overflow-y-auto p-4">
           {cart.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p className="text-lg mb-2 font-medium">Your cart is empty</p>
-              <p className="text-sm">Select items from the menu</p>
+              <p className="text-lg mb-2 font-medium">Your breakfast awaits.</p>
+              <p className="text-sm">Select from the menu.</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -744,7 +752,9 @@ const KioskPage = () => {
                         <Plus size={14} />
                       </button>
                     </div>
-                    <span className="font-semibold text-blue-dark">₹{((item.totalPrice || item.price) * item.quantity).toFixed(0)}</span>
+                    {!item.is_complementary && normalizePrice(item.totalPrice || item.price) > 0 && (
+                      <span className="font-semibold text-blue-dark">₹{(normalizePrice(item.totalPrice || item.price) * item.quantity).toFixed(0)}</span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -754,31 +764,25 @@ const KioskPage = () => {
 
         {/* Order Footer */}
         <div className="p-4 border-t border-border bg-white">
-          {/* Table Selection - Moved to top */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Table Number</label>
-            <button
-              onClick={() => setShowTableSelector(true)}
-              data-testid="select-table-button"
-              className={`w-full p-3 rounded-sm text-left border-2 transition-all ${
-                tableNumber 
-                  ? 'bg-blue-light/10 border-blue-hero' 
-                  : 'bg-muted border-border hover:border-blue-light'
-              }`}
-            >
-              {tableNumber ? (
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl font-heading font-bold text-blue-dark">Table {tableNumber}</span>
-                  <span className="text-sm text-blue-hero">Tap to change</span>
-                </div>
-              ) : (
-                <span className="text-muted-foreground">Tap to select table</span>
-              )}
-            </button>
-          </div>
+          {/* Show selected table with change option - only when table is selected */}
+          {tableNumber && (
+            <div className="mb-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Table:</span>
+                <span className="text-lg font-heading font-bold text-blue-dark">{tableNumber}</span>
+              </div>
+              <button
+                onClick={() => { touchSound.playClick(); setShowTableSelector(true); }}
+                data-testid="change-table-button"
+                className="text-sm text-blue-hero hover:text-blue-medium underline"
+              >
+                Change
+              </button>
+            </div>
+          )}
 
-          {/* Coupon Code */}
-          {cart.length > 0 && (
+          {/* Coupon Code - Hidden for now */}
+          {/* {cart.length > 0 && (
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">Coupon Code</label>
               {appliedCoupon ? (
@@ -816,10 +820,10 @@ const KioskPage = () => {
               )}
               {couponError && <p className="text-xs text-destructive mt-1">{couponError}</p>}
             </div>
-          )}
+          )} */}
 
-          {/* Customer Info */}
-          <div className="mb-4 space-y-3">
+          {/* Customer Info - Hidden for now */}
+          {/* <div className="mb-4 space-y-3">
             <div>
               <label className="block text-sm font-medium mb-1">Name (Optional)</label>
               <input
@@ -843,10 +847,10 @@ const KioskPage = () => {
                 className="w-full bg-muted border border-border p-2 rounded-sm text-sm focus:outline-none focus:border-blue-hero"
               />
             </div>
-          </div>
+          </div> */}
 
-          {/* Bill Summary with GST */}
-          {cart.length > 0 && (
+          {/* Bill Summary with GST - Only show if total > 0 */}
+          {cart.length > 0 && calculateTotals.grandTotal > 0 && (
             <div className="border-t border-border pt-3 mb-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
@@ -892,7 +896,7 @@ const KioskPage = () => {
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
           >
-            {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : !tableNumber ? 'Select Table' : `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}`}
+            {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
           </button>
         </div>
       </div>
@@ -1002,10 +1006,16 @@ const KioskPage = () => {
                 className="p-6 border-t border-border bg-white"
               >
                 <button
-                  onClick={() => { touchSound.playClick(); setShowTableSelector(false); }}
-                  className="w-full max-w-md mx-auto block bg-blue-hero text-white py-4 rounded-sm text-xl font-semibold hover:bg-blue-medium transition-all"
+                  onClick={() => { 
+                    touchSound.playClick(); 
+                    setShowTableSelector(false);
+                    // Directly place the order
+                    setTimeout(() => handlePlaceOrder(), 100);
+                  }}
+                  disabled={isPlacingOrder}
+                  className="w-full max-w-md mx-auto block bg-blue-hero text-white py-4 rounded-sm text-xl font-semibold hover:bg-blue-medium transition-all disabled:bg-muted disabled:text-muted-foreground"
                 >
-                  Confirm Table {tableNumber}
+                  {isPlacingOrder ? 'Placing Order...' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
                 </button>
               </motion.div>
             )}

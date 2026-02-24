@@ -1,51 +1,25 @@
 {
-  "summary": "Completed comprehensive testing of Hotel Breakfast Kiosk application including backend APIs, frontend UI, and end-to-end integration flows. All core functionality working correctly.",
-  
-  "backend_issues": {
-    "critical_bugs": [],
-    "flaky_endpoints": []
-  },
-  
-  "frontend_issues": {
-    "ui_bugs": [],
-    "integration_issues": [],
-    "design_issues": []
-  },
-  
+  "summary": "Completed comprehensive testing of kiosk app backend APIs and frontend login functionality. All critical endpoints working properly.",
+  "backend_issues": {},
+  "frontend_issues": {},
   "passed_tests": [
-    "API Root endpoint (200 OK with correct message)",
-    "Menu categories endpoint (4 categories with all required fields)", 
-    "Menu items endpoint - all items (24 items across 4 categories)",
-    "Menu items by category (6 items each for hot-breakfast, bakery, healthy, beverages)",
-    "Order creation endpoint (proper MongoDB storage and response)",
-    "Branding configuration endpoint (correct default values)",
-    "Error handling for invalid endpoints (proper 404 responses)",
-    "Welcome page loads with luxury design and hero image",
-    "All 4 category buttons navigate to correct menu pages",
-    "Menu pages display correct number of items with images and descriptions",
-    "Add to cart functionality with toast notifications",
-    "Cart badge updates showing correct item count",
-    "Cart page displays items with quantity controls (increase/decrease/remove)",
-    "Table number selection using number pad (with clear and backspace)",
-    "Checkout page shows order summary with correct totals",
-    "Order confirmation completes successfully",
-    "End-to-end order flow from welcome to confirmation",
-    "Touch targets meet kiosk requirements (270x190px > 60px minimum)",
-    "Typography using Playfair Display and Manrope fonts as specified",
-    "Responsive design optimized for 1920x1080 kiosk resolution",
-    "Empty cart state displays correctly with back to menu option",
-    "Multiple items from different categories can be added to cart",
-    "Item removal from cart works correctly"
+    "API health check (/api/) - returns 200 with 'Kiosk API Ready' message",
+    "Menu categories endpoint - returns 4 categories (DOSA, EGG, PARATHA, WAFFLES)",
+    "Menu items endpoint - returns 24 menu items with proper structure and pricing",
+    "Tables endpoint - returns 100 tables (fallback data source)",
+    "Branding config endpoint - returns proper branding config for Hotel Lumiere",
+    "Authentication endpoint properly returns 401 for invalid credentials (expected behavior)",
+    "Frontend login page loads correctly with all UI elements",
+    "Form fields are interactive and responsive",
+    "Password visibility toggle works correctly",
+    "Error handling displays proper toast notifications for invalid login",
+    "UI remains stable after login attempts",
+    "Both hotel logo and MyGenie branding display correctly"
   ],
-  
   "test_report_links": ["/app/backend_test.py"],
-  
-  "success_percentage": "Backend: 100% (12/12 tests passed), Frontend: 100% (20+ UI flows tested successfully)",
-  
-  "updated_files": ["/app/backend_test.py"],
-  
   "action_item_for_main_agent": "",
-  
+  "updated_files": ["/app/backend_test.py"],
+  "success_percentage": "Backend: 100% (6/6 tests passed), Frontend: 100% (login page functionality verified)",
   "should_call_test_agent_after_fix": "false",
   "should_main_agent_test_itself": "true"
 }

@@ -2,6 +2,11 @@ import React, { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext();
 
+// Helper: Treat price of 1 as 0 (complimentary item indicator)
+const normalizePrice = (price) => {
+  return price === 1 ? 0 : price;
+};
+
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
@@ -23,10 +28,12 @@ export const CartProvider = ({ children }) => {
         return newCart;
       }
       
-      // New item with unique variations/instructions
+      // New item with unique variations/instructions - normalize price
       return [...prevCart, { 
         ...item, 
         cartId: itemKey,
+        price: normalizePrice(item.price),
+        totalPrice: item.totalPrice ? normalizePrice(item.totalPrice) : normalizePrice(item.price),
         quantity: item.quantity || 1,
         variations: item.variations || [],
         specialInstructions: item.specialInstructions || ''
@@ -65,7 +72,7 @@ export const CartProvider = ({ children }) => {
 
   const getTotal = () => {
     return cart.reduce((total, item) => {
-      const itemPrice = item.totalPrice || item.price;
+      const itemPrice = normalizePrice(item.totalPrice || item.price);
       return total + (itemPrice * item.quantity);
     }, 0);
   };

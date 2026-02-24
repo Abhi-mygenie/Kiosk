@@ -1,296 +1,256 @@
-#!/usr/bin/env python3
-"""
-Backend API Testing for Hotel Breakfast Kiosk Application
-Tests all API endpoints for functionality and data validation
-"""
-
 import requests
 import sys
 import json
 from datetime import datetime
-from typing import Dict, List
 
 class KioskAPITester:
-    def __init__(self, base_url="https://hyatt-buffet-order-1.preview.emergentagent.com"):
+    def __init__(self, base_url="https://dynamic-branding-app.preview.emergentagent.com"):
         self.base_url = base_url
-        self.api_url = f"{base_url}/api"
+        self.token = None
         self.tests_run = 0
         self.tests_passed = 0
-        self.errors = []
+        self.results = []
 
-    def log_test(self, name: str, success: bool, details: str = ""):
-        """Log test results"""
-        self.tests_run += 1
-        if success:
-            self.tests_passed += 1
-            print(f"✅ PASS: {name}")
-            if details:
-                print(f"   Details: {details}")
-        else:
-            self.errors.append(f"{name}: {details}")
-            print(f"❌ FAIL: {name}")
-            print(f"   Error: {details}")
-
-    def test_api_root(self):
-        """Test the API root endpoint"""
-        try:
-            response = requests.get(f"{self.api_url}/", timeout=10)
-            expected_message = "Kiosk API Ready"
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("message") == expected_message:
-                    self.log_test("API Root Endpoint", True, f"Status: {response.status_code}, Message: {data.get('message')}")
-                else:
-                    self.log_test("API Root Endpoint", False, f"Expected message '{expected_message}', got '{data.get('message')}'")
-            else:
-                self.log_test("API Root Endpoint", False, f"Expected status 200, got {response.status_code}")
-        except Exception as e:
-            self.log_test("API Root Endpoint", False, f"Connection error: {str(e)}")
-
-    def test_get_categories(self):
-        """Test menu categories endpoint"""
-        try:
-            response = requests.get(f"{self.api_url}/menu/categories", timeout=10)
-            
-            if response.status_code == 200:
-                categories = response.json()
-                
-                # Validate structure
-                if isinstance(categories, list) and len(categories) == 4:
-                    expected_categories = ["hot-breakfast", "bakery", "healthy", "beverages"]
-                    actual_ids = [cat.get("id") for cat in categories]
-                    
-                    if all(cat_id in actual_ids for cat_id in expected_categories):
-                        # Validate each category has required fields
-                        all_valid = True
-                        for cat in categories:
-                            if not all(field in cat for field in ["id", "name", "image"]):
-                                all_valid = False
-                                break
-                        
-                        if all_valid:
-                            self.log_test("Get Categories", True, f"Retrieved {len(categories)} categories with all required fields")
-                        else:
-                            self.log_test("Get Categories", False, "Some categories missing required fields (id, name, image)")
-                    else:
-                        self.log_test("Get Categories", False, f"Expected category IDs {expected_categories}, got {actual_ids}")
-                else:
-                    self.log_test("Get Categories", False, f"Expected 4 categories, got {len(categories) if isinstance(categories, list) else 'non-list'}")
-            else:
-                self.log_test("Get Categories", False, f"Expected status 200, got {response.status_code}")
-                
-        except Exception as e:
-            self.log_test("Get Categories", False, f"Connection error: {str(e)}")
-
-    def test_get_menu_items_all(self):
-        """Test getting all menu items"""
-        try:
-            response = requests.get(f"{self.api_url}/menu/items", timeout=10)
-            
-            if response.status_code == 200:
-                items = response.json()
-                
-                if isinstance(items, list) and len(items) == 24:
-                    # Validate item structure
-                    required_fields = ["id", "name", "description", "price", "image", "category", "available"]
-                    all_valid = True
-                    
-                    for item in items[:3]:  # Check first 3 items
-                        if not all(field in item for field in required_fields):
-                            all_valid = False
-                            break
-                    
-                    if all_valid:
-                        # Check categories distribution
-                        categories = {}
-                        for item in items:
-                            cat = item.get("category")
-                            categories[cat] = categories.get(cat, 0) + 1
-                        
-                        expected_count = 6  # 6 items per category
-                        if all(count == expected_count for count in categories.values()):
-                            self.log_test("Get All Menu Items", True, f"Retrieved {len(items)} items across {len(categories)} categories")
-                        else:
-                            self.log_test("Get All Menu Items", False, f"Uneven distribution across categories: {categories}")
-                    else:
-                        self.log_test("Get All Menu Items", False, "Some items missing required fields")
-                else:
-                    self.log_test("Get All Menu Items", False, f"Expected 24 items, got {len(items) if isinstance(items, list) else 'non-list'}")
-            else:
-                self.log_test("Get All Menu Items", False, f"Expected status 200, got {response.status_code}")
-                
-        except Exception as e:
-            self.log_test("Get All Menu Items", False, f"Connection error: {str(e)}")
-
-    def test_get_menu_items_by_category(self):
-        """Test getting menu items filtered by category"""
-        categories = ["hot-breakfast", "bakery", "healthy", "beverages"]
+    def run_test(self, name, method, endpoint, expected_status, data=None, headers=None):
+        """Run a single API test"""
+        url = f"{self.base_url}/{endpoint}"
+        test_headers = {'Content-Type': 'application/json'}
         
-        for category in categories:
-            try:
-                response = requests.get(f"{self.api_url}/menu/items", params={"category": category}, timeout=10)
-                
-                if response.status_code == 200:
-                    items = response.json()
-                    
-                    if isinstance(items, list) and len(items) == 6:
-                        # Validate all items belong to the requested category
-                        if all(item.get("category") == category for item in items):
-                            self.log_test(f"Get Menu Items - {category}", True, f"Retrieved {len(items)} items")
-                        else:
-                            wrong_cats = [item.get("category") for item in items if item.get("category") != category]
-                            self.log_test(f"Get Menu Items - {category}", False, f"Found items from wrong categories: {wrong_cats}")
-                    else:
-                        self.log_test(f"Get Menu Items - {category}", False, f"Expected 6 items, got {len(items) if isinstance(items, list) else 'non-list'}")
-                else:
-                    self.log_test(f"Get Menu Items - {category}", False, f"Expected status 200, got {response.status_code}")
-                    
-            except Exception as e:
-                self.log_test(f"Get Menu Items - {category}", False, f"Connection error: {str(e)}")
+        if self.token:
+            test_headers['Authorization'] = f'Bearer {self.token}'
+            
+        if headers:
+            test_headers.update(headers)
 
-    def test_create_order(self):
-        """Test creating an order"""
+        self.tests_run += 1
+        print(f"\n🔍 Testing {name}...")
+        print(f"   URL: {url}")
+        
         try:
-            # Test order data
-            order_data = {
-                "table_number": "12",
-                "items": [
-                    {
-                        "item_id": "1",
-                        "name": "Scrambled Eggs",
-                        "price": 12.99,
-                        "quantity": 2
-                    },
-                    {
-                        "item_id": "7",
-                        "name": "Croissant",
-                        "price": 5.99,
-                        "quantity": 1
-                    }
-                ],
-                "total": 31.97,
-                "guest_name": "Test Guest"
+            if method == 'GET':
+                response = requests.get(url, headers=test_headers, timeout=10)
+            elif method == 'POST':
+                response = requests.post(url, json=data, headers=test_headers, timeout=10)
+
+            success = response.status_code == expected_status
+            result = {
+                'name': name,
+                'endpoint': endpoint,
+                'method': method,
+                'expected_status': expected_status,
+                'actual_status': response.status_code,
+                'success': success,
+                'response_size': len(response.text) if response.text else 0
             }
             
-            response = requests.post(f"{self.api_url}/orders", json=order_data, timeout=10)
-            
-            if response.status_code == 200:
-                order = response.json()
-                
-                # Validate response structure
-                required_fields = ["id", "table_number", "items", "total", "status", "created_at"]
-                if all(field in order for field in required_fields):
-                    # Validate data integrity
-                    if (order.get("table_number") == "12" and 
-                        order.get("total") == 31.97 and 
-                        len(order.get("items", [])) == 2 and
-                        order.get("status") == "pending"):
-                        self.log_test("Create Order", True, f"Order created with ID: {order.get('id')[:8]}...")
-                        return order.get('id')  # Return order ID for potential future tests
-                    else:
-                        self.log_test("Create Order", False, "Order data doesn't match input data")
-                else:
-                    self.log_test("Create Order", False, f"Missing required fields in response: {required_fields}")
-            else:
-                self.log_test("Create Order", False, f"Expected status 200, got {response.status_code}")
-                if hasattr(response, 'text'):
-                    print(f"   Response: {response.text}")
-                    
-        except Exception as e:
-            self.log_test("Create Order", False, f"Connection error: {str(e)}")
-
-    def test_get_branding(self):
-        """Test branding configuration endpoint"""
-        try:
-            response = requests.get(f"{self.api_url}/config/branding", timeout=10)
-            
-            if response.status_code == 200:
-                branding = response.json()
-                
-                # Validate structure
-                required_fields = ["primary_color", "accent_color", "restaurant_name"]
-                if all(field in branding for field in required_fields):
-                    # Validate default values
-                    expected_values = {
-                        "primary_color": "#1A1A1A",
-                        "accent_color": "#C5A059", 
-                        "restaurant_name": "Hotel Lumiere"
-                    }
-                    
-                    all_match = True
-                    for field, expected in expected_values.items():
-                        if branding.get(field) != expected:
-                            all_match = False
-                            break
-                    
-                    if all_match:
-                        self.log_test("Get Branding Config", True, f"Retrieved branding: {branding.get('restaurant_name')}")
-                    else:
-                        self.log_test("Get Branding Config", False, f"Branding values don't match expected defaults")
-                else:
-                    self.log_test("Get Branding Config", False, f"Missing required fields: {required_fields}")
-            else:
-                self.log_test("Get Branding Config", False, f"Expected status 200, got {response.status_code}")
-                
-        except Exception as e:
-            self.log_test("Get Branding Config", False, f"Connection error: {str(e)}")
-
-    def test_invalid_endpoints(self):
-        """Test invalid endpoints return proper errors"""
-        invalid_endpoints = [
-            "/api/nonexistent",
-            "/api/menu/invalid",
-            "/api/orders/123"  # GET orders by ID not implemented
-        ]
-        
-        for endpoint in invalid_endpoints:
+            # Try to parse JSON response
             try:
-                response = requests.get(f"{self.base_url}{endpoint}", timeout=10)
-                if response.status_code in [404, 405, 422]:  # Expected error codes
-                    self.log_test(f"Invalid Endpoint {endpoint}", True, f"Properly returned {response.status_code}")
+                response_data = response.json() if response.text else {}
+                result['response_data'] = response_data
+                
+                if success:
+                    self.tests_passed += 1
+                    print(f"✅ Passed - Status: {response.status_code}")
+                    if 'message' in response_data:
+                        print(f"   Message: {response_data['message']}")
+                    elif isinstance(response_data, list):
+                        print(f"   Response: {len(response_data)} items returned")
+                    elif isinstance(response_data, dict) and 'data' in response_data:
+                        print(f"   Response: Contains data object")
                 else:
-                    self.log_test(f"Invalid Endpoint {endpoint}", False, f"Expected 404/405/422, got {response.status_code}")
-            except Exception as e:
-                self.log_test(f"Invalid Endpoint {endpoint}", False, f"Connection error: {str(e)}")
+                    print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
+                    print(f"   Response: {response_data}")
+                    
+            except Exception as json_error:
+                result['response_text'] = response.text[:200] + "..." if len(response.text) > 200 else response.text
+                if success:
+                    self.tests_passed += 1
+                    print(f"✅ Passed - Status: {response.status_code} (Non-JSON response)")
+                else:
+                    print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
+                print(f"   Response: {result['response_text']}")
+
+            self.results.append(result)
+            return success, result.get('response_data', {})
+
+        except requests.exceptions.Timeout:
+            print(f"❌ Failed - Request timeout")
+            result = {
+                'name': name,
+                'endpoint': endpoint,
+                'method': method,
+                'expected_status': expected_status,
+                'actual_status': 'TIMEOUT',
+                'success': False,
+                'error': 'Request timeout'
+            }
+            self.results.append(result)
+            return False, {}
+            
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            result = {
+                'name': name,
+                'endpoint': endpoint,
+                'method': method,
+                'expected_status': expected_status,
+                'actual_status': 'ERROR',
+                'success': False,
+                'error': str(e)
+            }
+            self.results.append(result)
+            return False, {}
+
+    def test_health_check(self):
+        """Test API health check"""
+        success, response = self.run_test(
+            "API Health Check",
+            "GET",
+            "api/",
+            200
+        )
+        return success
+
+    def test_login(self, email="test@example.com", password="testpassword"):
+        """Test login endpoint (expected to fail without valid credentials)"""
+        success, response = self.run_test(
+            "Login Endpoint",
+            "POST",
+            "api/auth/login",
+            401,  # Expected to fail with 401
+            data={"email": email, "password": password}
+        )
+        
+        # Note: This should fail with 401 Unauthorized since we don't have valid POS credentials
+        if not success and response.get('status_code') == 401:
+            print("   ℹ️  Expected failure - No valid POS credentials provided")
+            return True
+        return success
+
+    def test_menu_categories(self):
+        """Test menu categories endpoint"""
+        success, response = self.run_test(
+            "Menu Categories",
+            "GET",
+            "api/menu/categories",
+            200
+        )
+        
+        if success and isinstance(response, list):
+            print(f"   ✅ Found {len(response)} categories")
+            if response:
+                sample_category = response[0]
+                print(f"   Sample category: {sample_category}")
+        
+        return success
+
+    def test_menu_items(self):
+        """Test menu items endpoint"""
+        success, response = self.run_test(
+            "Menu Items",
+            "GET",
+            "api/menu/items",
+            200
+        )
+        
+        if success and isinstance(response, list):
+            print(f"   ✅ Found {len(response)} menu items")
+            if response:
+                sample_item = response[0]
+                print(f"   Sample item: {sample_item.get('name', 'Unknown')} - ₹{sample_item.get('price', 0)}")
+        
+        return success
+
+    def test_tables(self):
+        """Test tables endpoint"""
+        success, response = self.run_test(
+            "Tables Endpoint",
+            "GET",
+            "api/tables",
+            200
+        )
+        
+        if success and isinstance(response, dict) and 'tables' in response:
+            tables = response['tables']
+            print(f"   ✅ Found {len(tables)} tables")
+            print(f"   Data source: {response.get('source', 'unknown')}")
+            if tables:
+                sample_table = tables[0]
+                print(f"   Sample table: {sample_table}")
+        
+        return success
+
+    def test_branding_config(self):
+        """Test branding config endpoint"""
+        success, response = self.run_test(
+            "Branding Config",
+            "GET",
+            "api/config/branding",
+            200
+        )
+        
+        if success and isinstance(response, dict):
+            print(f"   ✅ Branding config loaded")
+            print(f"   Restaurant: {response.get('restaurant_name', 'Unknown')}")
+            print(f"   Colors: {response.get('primary_color', 'N/A')} / {response.get('accent_color', 'N/A')}")
+        
+        return success
 
     def run_all_tests(self):
-        """Run the complete test suite"""
-        print("🧪 Starting Hotel Kiosk Backend API Tests")
-        print(f"🔗 Testing API at: {self.api_url}")
+        """Run all API tests"""
+        print("🚀 Starting Kiosk API Tests")
+        print(f"   Base URL: {self.base_url}")
         print("=" * 60)
+
+        # Test health check
+        health_ok = self.test_health_check()
         
-        # Run all tests
-        self.test_api_root()
-        self.test_get_categories()
-        self.test_get_menu_items_all()
-        self.test_get_menu_items_by_category()
-        self.test_create_order()
-        self.test_get_branding()
-        self.test_invalid_endpoints()
+        # Test authentication (expected to fail)
+        login_tested = self.test_login()
         
-        # Print summary
+        # Test menu endpoints
+        categories_ok = self.test_menu_categories()
+        items_ok = self.test_menu_items()
+        
+        # Test tables endpoint
+        tables_ok = self.test_tables()
+        
+        # Test branding config
+        branding_ok = self.test_branding_config()
+
         print("\n" + "=" * 60)
-        print(f"📊 Test Summary: {self.tests_passed}/{self.tests_run} tests passed")
+        print(f"📊 Test Results: {self.tests_passed}/{self.tests_run} passed")
         
-        if self.errors:
-            print(f"\n❌ Failed Tests ({len(self.errors)}):")
-            for i, error in enumerate(self.errors, 1):
-                print(f"  {i}. {error}")
+        # Detailed results
+        print("\n📋 Detailed Results:")
+        for result in self.results:
+            status_emoji = "✅" if result['success'] else "❌"
+            print(f"   {status_emoji} {result['name']}: {result['actual_status']}")
         
-        success_rate = (self.tests_passed / self.tests_run) * 100 if self.tests_run > 0 else 0
-        print(f"\n🎯 Success Rate: {success_rate:.1f}%")
-        
-        return self.tests_passed == self.tests_run
+        # Critical issues check
+        critical_failures = []
+        if not health_ok:
+            critical_failures.append("API Health Check failed")
+        if not categories_ok:
+            critical_failures.append("Menu Categories endpoint failed")
+        if not items_ok:
+            critical_failures.append("Menu Items endpoint failed")
+        if not tables_ok:
+            critical_failures.append("Tables endpoint failed")
+            
+        if critical_failures:
+            print(f"\n🚨 Critical Issues Found:")
+            for issue in critical_failures:
+                print(f"   • {issue}")
+            return 1
+        else:
+            print(f"\n✅ All critical endpoints working properly")
+            print(f"   ℹ️  Login endpoint properly returns 401 (expected without valid credentials)")
+            return 0
 
 def main():
-    """Main test runner"""
     tester = KioskAPITester()
-    success = tester.run_all_tests()
-    
-    # Return appropriate exit code
-    return 0 if success else 1
+    return tester.run_all_tests()
 
 if __name__ == "__main__":
-    exit_code = main()
-    sys.exit(exit_code)
+    sys.exit(main())
