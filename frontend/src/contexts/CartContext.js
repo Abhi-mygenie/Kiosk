@@ -44,6 +44,7 @@ export const CartProvider = ({ children }) => {
         totalPrice: normalizePrice(originalTotalPrice),
         quantity: item.quantity || 1,
         variations: item.variations || [],
+        groupedVariations: item.groupedVariations || {},
         specialInstructions: item.specialInstructions || ''
       }];
     });
