@@ -498,7 +498,7 @@ const KioskPage = () => {
       };
 
       const response = await authAxios.post(`${API}/orders`, orderData);
-      setOrderSuccess({ id: response.data.id, tableNumber, grandTotal, customerName });
+      setOrderSuccess({ id: response.data.id || response.data.pos_order_id, tableNumber, grandTotal, customerName });
       clearCart();
       setTableNumber('');
       setSelectedTableId('');
@@ -508,7 +508,9 @@ const KioskPage = () => {
       setCustomerMobile('');
     } catch (error) {
       console.error('Failed to place order:', error);
-      toast.error('Failed to place order. Please try again.');
+      // Show specific error message from API
+      const errorMessage = error.response?.data?.detail || 'Failed to place order. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setIsPlacingOrder(false);
     }
