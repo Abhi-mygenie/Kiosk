@@ -576,41 +576,51 @@ async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) 
         return {"success": False, "error": str(e)}
 
 
-@api_router.post("/orders", response_model=Order)
+@api_router.post("/orders")
 async def create_order(order_input: OrderCreate, authorization: Optional[str] = Header(None)):
     token = get_token_from_header(authorization)
     
     if not token:
         raise HTTPException(status_code=401, detail="Authorization token required")
     
-    order = Order(**order_input.model_dump())
-    
     # Send order to POS API
+    order = Order(**order_input.model_dump())
     pos_result = await send_order_to_pos(order, order_input, token)
     
     if pos_result.get("success"):
-        order.status = "confirmed"
         pos_data = pos_result.get("data", {})
+        pos_order_id = None
         if isinstance(pos_data, dict):
             pos_order_id = pos_data.get("order_id") or pos_data.get("id")
-            if pos_order_id:
-                order.pos_order_id = str(pos_order_id)
-                # Use POS order_id as the display ID
-                order.id = str(pos_order_id)
-        logger.info(f"Order {order.id} sent to POS successfully, POS Order ID: {order.pos_order_id}")
+        
+        if pos_order_id:
+            order.id = str(pos_order_id)
+            order.pos_order_id = str(pos_order_id)
+        order.status = "confirmed"
+        
+        # Save successful order to database
+        order_dict = order.model_dump()
+        order_dict['created_at'] = order_dict['created_at'].isoformat()
+        order_dict['pos_sync_result'] = pos_result
+        await db.orders.insert_one(order_dict)
+        
+        logger.info(f"Order placed successfully, POS Order ID: {order.pos_order_id or order.id}")
+        return order
     else:
-        order.status = "pending_pos_sync"
-        logger.warning(f"Order {order.id} failed to sync with POS: {pos_result.get('error')}")
-    
-    # Convert to dict for MongoDB
-    order_dict = order.model_dump()
-    order_dict['created_at'] = order_dict['created_at'].isoformat()
-    order_dict['pos_sync_result'] = pos_result
-    
-    # Save to database
-    await db.orders.insert_one(order_dict)
-    
-    return order
+        # Order failed - return error response
+        error_msg = pos_result.get("error", "Failed to place order")
+        status_code = pos_result.get("status_code", 500)
+        
+        # Parse error message for user-friendly display
+        if "Unauthorized" in str(error_msg) or status_code == 401:
+            detail = "Session expired. Please logout and login again."
+        elif "timeout" in str(error_msg).lower():
+            detail = "Server is busy. Please try again."
+        else:
+            detail = "Failed to place order. Please try again or contact staff."
+        
+        logger.error(f"Order failed: {error_msg}")
+        raise HTTPException(status_code=503, detail=detail)
 
 @api_router.get("/config/branding", response_model=BrandingConfig)
 async def get_branding():
