@@ -3,6 +3,21 @@ module.exports = {
   darkMode: ["class"],
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+      // Orientation-based breakpoints
+      'portrait': { 'raw': '(orientation: portrait)' },
+      'landscape': { 'raw': '(orientation: landscape)' },
+      // Combined breakpoints for kiosk
+      'portrait-sm': { 'raw': '(orientation: portrait) and (max-width: 768px)' },
+      'portrait-md': { 'raw': '(orientation: portrait) and (min-width: 769px)' },
+      'landscape-md': { 'raw': '(orientation: landscape) and (max-width: 1279px)' },
+      'landscape-lg': { 'raw': '(orientation: landscape) and (min-width: 1280px)' },
+    },
     extend: {
       fontFamily: {
         sans: ['var(--font-body)', 'Montserrat', 'sans-serif'],

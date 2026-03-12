@@ -133,29 +133,29 @@ const LoginPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-8 overflow-auto">
+      <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-4 portrait:p-4 landscape:p-8 overflow-auto">
         {/* Main Content */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md my-auto"
+          className="w-full max-w-md portrait:max-w-sm landscape:max-w-md my-auto"
         >
           {/* Logo */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 portrait:mb-6 landscape:mb-12">
             <img 
               src="https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png" 
               alt="Hyatt Centric Candolim Goa" 
-              className="h-20 mx-auto mb-4"
+              className="h-16 portrait:h-14 landscape:h-20 mx-auto mb-4"
             />
             <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">Self-Ordering Kiosk</p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-white rounded-sm shadow-lg p-8">
-            <h1 className="text-3xl font-heading font-semibold text-center mb-8 text-blue-dark uppercase tracking-wide">Welcome Back</h1>
+          <div className="bg-white rounded-sm shadow-lg p-6 portrait:p-5 landscape:p-8">
+            <h1 className="text-2xl portrait:text-2xl landscape:text-3xl font-heading font-semibold text-center mb-6 portrait:mb-5 landscape:mb-8 text-blue-dark uppercase tracking-wide">Welcome Back</h1>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5 portrait:space-y-4 landscape:space-y-6">
               {/* Username Field */}
               <div>
                 <label className="block text-sm font-medium mb-2 text-muted-foreground">
@@ -171,7 +171,7 @@ const LoginPage = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Enter your username"
                     data-testid="login-username"
-                    className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
+                    className="w-full pl-12 pr-4 py-4 portrait:py-3 landscape:py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
                     autoComplete="username"
                     autoFocus
                   />
@@ -193,7 +193,7 @@ const LoginPage = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     data-testid="login-password"
-                    className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
+                    className="w-full pl-12 pr-12 py-4 portrait:py-3 landscape:py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
                     autoComplete="current-password"
                   />
                   <button
@@ -215,7 +215,7 @@ const LoginPage = () => {
                 type="submit"
                 disabled={isLoading}
                 data-testid="login-submit"
-                className="w-full bg-blue-hero text-white py-4 rounded-sm text-lg font-semibold hover:bg-blue-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                className="w-full bg-blue-hero text-white py-4 portrait:py-3 landscape:py-4 rounded-sm text-lg font-semibold hover:bg-blue-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
                 {isLoading ? (
                   <>
@@ -238,12 +238,12 @@ const LoginPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.5 }}
-          className="mt-12 text-center"
+          className="mt-8 portrait:mt-6 landscape:mt-12 text-center"
         >
           <img 
             src="https://customer-assets.emergentagent.com/job_f69ca03e-7b5d-4a09-a9a8-bcdd3f3dcbc1/artifacts/c544c78k_mygenie_logo.svg" 
             alt="Powered by MyGenie" 
-            className="h-10 mx-auto"
+            className="h-8 portrait:h-6 landscape:h-10 mx-auto"
           />
         </motion.div>
       </div>
