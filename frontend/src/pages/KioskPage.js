@@ -345,11 +345,24 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
   );
 };
 
-// Category Pills Component (for Portrait mode)
+// Category Pills Component (for Portrait mode) - with ALL option
 const CategoryPills = ({ categories, activeCategory, setActiveCategory }) => {
   return (
     <div className="bg-white border-b border-border flex-shrink-0">
       <div className="flex overflow-x-auto scrollbar-hide px-4 py-3 gap-2">
+        {/* ALL pill - first option */}
+        <button
+          onClick={() => { touchSound.playTap(); setActiveCategory('all'); }}
+          data-testid="category-pill-all"
+          className={`flex-shrink-0 px-5 py-3 rounded-full text-sm font-semibold uppercase tracking-wide transition-all whitespace-nowrap ${
+            activeCategory === 'all'
+              ? 'bg-blue-hero text-white'
+              : 'bg-muted hover:bg-blue-light/20 text-muted-foreground'
+          }`}
+        >
+          All
+        </button>
+        {/* Category pills */}
         {categories.map((category) => (
           <button
             key={category.id}
@@ -582,7 +595,7 @@ const KioskPage = () => {
   const [menuItems, setMenuItems] = useState(menuData.menuItems || []);
   const [tables, setTables] = useState(menuData.tables || []);
   
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCategory, setActiveCategory] = useState('all');
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');
   const [selectedTableId, setSelectedTableId] = useState('');
@@ -598,11 +611,7 @@ const KioskPage = () => {
   const authAxios = useMemo(() => createAuthAxios(user?.token), [user?.token]);
   const [tablesLoading, setTablesLoading] = useState(false);
 
-  useEffect(() => {
-    if (categories.length > 0 && !activeCategory) {
-      setActiveCategory(categories[0].id);
-    }
-  }, [categories, activeCategory]);
+  // activeCategory defaults to 'all' - no need to set first category
 
   useEffect(() => {
     kioskLock.enable();
@@ -639,7 +648,19 @@ const KioskPage = () => {
     return { subtotal, discount, afterDiscount, cgst, sgst, grandTotal };
   }, [getTotal, appliedCoupon]);
 
-  const filteredItems = menuItems.filter(item => item.category === activeCategory);
+  // Get items based on active category (all or filtered)
+  const filteredItems = activeCategory === 'all' 
+    ? menuItems 
+    : menuItems.filter(item => item.category === activeCategory);
+  
+  // Group items by category for "ALL" view
+  const itemsByCategory = useMemo(() => {
+    const grouped = {};
+    categories.forEach(cat => {
+      grouped[cat.id] = menuItems.filter(item => item.category === cat.id);
+    });
+    return grouped;
+  }, [categories, menuItems]);
 
   const handleAddToCart = (item) => {
     const itemWithGroupedVariations = {
@@ -825,14 +846,37 @@ const KioskPage = () => {
           <div className="flex-1 overflow-y-auto scrollbar-hide">
             {/* Food Grid Section */}
             <div className="px-4 pt-3 pb-2">
-              <h2 className="text-lg font-heading font-bold uppercase text-blue-dark mb-3">
-                {categories.find(c => c.id === activeCategory)?.name || 'MENU'}
-              </h2>
-              <div className="grid grid-cols-4 gap-2">
-                {filteredItems.map((item) => (
-                  <PortraitMenuCard key={item.id} item={item} />
-                ))}
-              </div>
+              {activeCategory === 'all' ? (
+                /* ALL view - show all categories with section headers */
+                categories.map((category) => {
+                  const categoryItems = itemsByCategory[category.id] || [];
+                  if (categoryItems.length === 0) return null;
+                  return (
+                    <div key={category.id} className="mb-4">
+                      <h2 className="text-base font-heading font-bold uppercase text-blue-dark mb-2 pb-1 border-b border-border">
+                        {category.name}
+                      </h2>
+                      <div className="grid grid-cols-4 gap-2">
+                        {categoryItems.map((item) => (
+                          <PortraitMenuCard key={item.id} item={item} />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                /* Filtered view - show single category */
+                <>
+                  <h2 className="text-lg font-heading font-bold uppercase text-blue-dark mb-3">
+                    {categories.find(c => c.id === activeCategory)?.name || 'MENU'}
+                  </h2>
+                  <div className="grid grid-cols-4 gap-2">
+                    {filteredItems.map((item) => (
+                      <PortraitMenuCard key={item.id} item={item} />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Inline Cart Section */}
