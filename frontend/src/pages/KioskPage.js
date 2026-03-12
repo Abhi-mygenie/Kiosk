@@ -369,56 +369,62 @@ const CategoryPills = ({ categories, activeCategory, setActiveCategory }) => {
   );
 };
 
-// Inline Cart Item Component (for Portrait mode - based on reference image)
+// Inline Cart Item Component (for Portrait mode - Compact Design)
 const InlineCartItem = ({ item, removeFromCart, updateQuantity, setEditingInstructions }) => {
   return (
-    <div className="bg-white border border-border rounded-sm p-4 mb-2" data-testid={`cart-item-${item.cartId}`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h4 className="font-heading font-bold text-base uppercase text-blue-dark">{item.name}</h4>
-            <button
-              onClick={() => { touchSound.playTap(); setEditingInstructions(item); }}
-              data-testid={`edit-instructions-${item.cartId}`}
-              className={`p-1 rounded transition-all ${
-                item.specialInstructions 
-                  ? 'text-blue-hero bg-blue-hero/10' 
-                  : 'text-muted-foreground hover:text-blue-hero hover:bg-blue-hero/10'
-              }`}
-            >
-              <MessageSquare size={16} />
-            </button>
-          </div>
-          {item.variations?.length > 0 && (
-            <p className="text-sm text-blue-hero mt-1">{item.variations.join(', ')}</p>
-          )}
-          {item.specialInstructions && (
-            <p className="text-xs text-muted-foreground mt-1 italic">"{item.specialInstructions}"</p>
-          )}
+    <div className="bg-white border border-border rounded-sm px-3 py-2.5 mb-1.5" data-testid={`cart-item-${item.cartId}`}>
+      {/* Row 1: Name + Icon + Qty Controls (all in one row) */}
+      <div className="flex items-center justify-between gap-2">
+        {/* Left: Name + Comment Icon */}
+        <div className="flex items-center gap-1.5 flex-1 min-w-0">
+          <h4 className="font-heading font-bold text-sm uppercase text-blue-dark truncate">{item.name}</h4>
+          <button
+            onClick={() => { touchSound.playTap(); setEditingInstructions(item); }}
+            data-testid={`edit-instructions-${item.cartId}`}
+            className={`p-0.5 rounded transition-all flex-shrink-0 ${
+              item.specialInstructions 
+                ? 'text-blue-hero bg-blue-hero/10' 
+                : 'text-muted-foreground hover:text-blue-hero'
+            }`}
+          >
+            <MessageSquare size={14} />
+          </button>
+        </div>
+        
+        {/* Right: Qty Controls */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => {
+              touchSound.playClick();
+              if (item.quantity <= 1) {
+                removeFromCart(item.cartId);
+              } else {
+                updateQuantity(item.cartId, item.quantity - 1);
+              }
+            }}
+            className="w-8 h-8 bg-muted rounded flex items-center justify-center hover:bg-red-50 transition-all"
+          >
+            <Minus size={16} />
+          </button>
+          <span className="text-base font-bold w-5 text-center">{item.quantity}</span>
+          <button
+            onClick={() => { touchSound.playClick(); updateQuantity(item.cartId, item.quantity + 1); }}
+            className="w-8 h-8 bg-muted rounded flex items-center justify-center hover:bg-blue-light/30 transition-all"
+          >
+            <Plus size={16} />
+          </button>
         </div>
       </div>
-      <div className="flex items-center justify-center gap-6">
-        <button
-          onClick={() => {
-            touchSound.playClick();
-            if (item.quantity <= 1) {
-              removeFromCart(item.cartId);
-            } else {
-              updateQuantity(item.cartId, item.quantity - 1);
-            }
-          }}
-          className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-red-50 transition-all"
-        >
-          <Minus size={18} />
-        </button>
-        <span className="text-xl font-bold w-8 text-center">{item.quantity}</span>
-        <button
-          onClick={() => { touchSound.playClick(); updateQuantity(item.cartId, item.quantity + 1); }}
-          className="w-10 h-10 bg-muted rounded-sm flex items-center justify-center hover:bg-blue-light/30 transition-all"
-        >
-          <Plus size={18} />
-        </button>
-      </div>
+      
+      {/* Row 2: Variations (only if present) */}
+      {item.variations?.length > 0 && (
+        <p className="text-xs text-blue-hero mt-1 truncate">{item.variations.join(', ')}</p>
+      )}
+      
+      {/* Row 3: Special Instructions (only if present) */}
+      {item.specialInstructions && (
+        <p className="text-[11px] text-muted-foreground mt-0.5 italic truncate">"{item.specialInstructions}"</p>
+      )}
     </div>
   );
 };
@@ -830,17 +836,17 @@ const KioskPage = () => {
             </div>
 
             {/* Inline Cart Section */}
-            <div className="px-4 py-4 mt-2 border-t border-border bg-[#F9F8F6]">
-              <div className="mb-3">
-                <h2 className="text-xl font-heading font-bold uppercase text-blue-dark">Your Order</h2>
-                <p className="text-sm text-muted-foreground">{cart.length} items</p>
+            <div className="px-4 py-3 mt-2 border-t border-border bg-[#F9F8F6]">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-heading font-bold uppercase text-blue-dark">Your Order</h2>
+                <span className="text-sm text-muted-foreground">{cart.length} items</span>
               </div>
 
               {cart.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground bg-white rounded-sm border border-border">
-                  <ShoppingCart size={40} className="mx-auto mb-2 opacity-30" />
-                  <p className="font-medium">Your cart is empty</p>
-                  <p className="text-sm">Select items from the menu above</p>
+                <div className="text-center py-6 text-muted-foreground bg-white rounded-sm border border-border">
+                  <ShoppingCart size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="font-medium text-sm">Your cart is empty</p>
+                  <p className="text-xs">Select items from the menu above</p>
                 </div>
               ) : (
                 <div>
