@@ -37,8 +37,8 @@ const CartSection = ({
         {cart.length === 0 ? (
           <View style={styles.emptyCart}>
             <Text style={styles.emptyIcon}>🛒</Text>
-            <Text style={styles.emptyTitle}>Your cart is empty</Text>
-            <Text style={styles.emptySubtitle}>Select items from the menu</Text>
+            <Text style={styles.emptyTitle}>Ready to order?</Text>
+            <Text style={styles.emptySubtitle}>Select items from the menu to begin</Text>
           </View>
         ) : (
           cart.map(item => (
