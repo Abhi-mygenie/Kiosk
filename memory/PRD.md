@@ -1,50 +1,88 @@
 # Kiosk Application PRD
 
 ## Original Problem Statement
-Pull code from https://github.com/Abhi-mygenie/Kiosk and build and run application. No database used, no testing agent required.
+Pull code from https://github.com/Abhi-mygenie/Kiosk, build it, run the application, and convert it into a React Native Android app. No database is used — the app is a client for the external POS API.
 
-## Architecture
-- **Frontend**: React 19 with Tailwind CSS, Framer Motion animations
-- **Backend**: FastAPI (Python) - proxy to external POS API
-- **External API**: preprod.mygenie.online (POS system)
-- **No Local Database**: All data from POS API
+## Target Users
+- Hotel/restaurant staff managing self-ordering kiosks (Hyatt Centric)
 
-## User Personas
-1. **Hotel Staff**: Login to kiosk, manage sessions
-2. **Hotel Guests**: Self-order from breakfast buffet menu
-
-## Core Requirements (Static)
-- Staff authentication via POS credentials
-- Menu display with categories and items
-- Cart management with quantity/variations
-- Table selection before ordering
-- Order submission to POS system
-- Responsive design (portrait/landscape kiosk modes)
-
-## What's Been Implemented
-**Date: March 15, 2025**
-- ✅ Cloned repository from GitHub
-- ✅ Installed backend dependencies (FastAPI, httpx, etc.)
-- ✅ Installed frontend dependencies (React, Radix UI, etc.)
-- ✅ Started backend server (port 8001)
-- ✅ Started frontend server (port 3000)
-- ✅ Verified application loads (login page visible)
+## Core Requirements
+1. Self-ordering kiosk web app + native Android app
+2. POS API integration for authentication, menu, orders
+3. Admin settings page for menu customization (ordering, visibility)
+4. Kiosk mode (fullscreen, no back button) on Android
+5. Brand-consistent UI with Hyatt Centric theme
 
 ## Tech Stack
-- React 19.0.0
-- FastAPI 0.110.1
-- Tailwind CSS 3.4.17
-- Framer Motion 12.35.2
-- Radix UI components
-- Sonner for toasts
+### Web App
+- **Frontend**: React + Tailwind CSS + Shadcn UI
+- **Backend**: FastAPI (proxy to POS API)
+- **State**: Context API + localStorage
 
-## Prioritized Backlog
-- P0: Application deployed and running ✅
-- P1: Test with valid POS credentials
-- P2: Custom branding configuration
-- P3: Offline mode support
+### Native App
+- **Framework**: React Native
+- **Navigation**: React Navigation (Stack)
+- **State**: Context API + AsyncStorage
+- **Drag & Drop**: react-native-draggable-flatlist
+- **Build**: Gradle (Android)
 
-## Next Tasks
-1. Obtain POS credentials for testing
-2. Verify full ordering flow works
-3. Configure any custom branding if needed
+## Key API Endpoints
+- **Base URL**: `https://preprod.mygenie.online/api/v1`
+- **Auth**: `POST /auth/vendoremployee/login`
+- **Menu**: `GET /menu/categories`, `GET /menu/items`
+- **Tables**: `GET /tables`
+- **Orders**: `POST /orders`
+
+## Implemented Features (as of March 15, 2026)
+
+### Web App
+- [x] Login with POS credentials
+- [x] Remember Me (localStorage)
+- [x] Admin Settings page (drag & drop reorder + visibility toggles)
+- [x] Menu settings persist across logouts, admin page shows every login
+- [x] Reset to Default clears all saved settings
+- [x] Full kiosk ordering flow (menu, cart, customization, order placement)
+- [x] Table selector popup
+- [x] New Hyatt logo across all pages
+- [x] Watermark removed, title updated
+- [x] Git submodule fix for KioskApp directory
+
+### React Native App
+- [x] All web features ported (login, admin settings, kiosk, cart)
+- [x] Remember Me (AsyncStorage)
+- [x] Admin Settings with draggable categories + visibility toggles
+- [x] MenuSettingsContext with AsyncStorage persistence
+- [x] New logo across all screens
+- [x] Kiosk mode configured in AndroidManifest
+- [x] Custom fonts, app icon, splash screen configured
+- [x] NOT YET BUILT — requires Android SDK/JDK (not in container)
+
+## Architecture
+```
+/app/
+├── frontend/src/          # React web app
+│   ├── pages/             # LoginPage, KioskPage, AdminSettingsPage
+│   ├── contexts/          # AuthContext, CartContext, MenuSettingsContext, ThemeContext
+│   └── components/        # UI components
+├── backend/               # FastAPI server (POS API proxy)
+└── kiosk-native/KioskApp/ # React Native app
+    ├── src/
+    │   ├── pages/         # LoginScreen, KioskScreen, AdminSettingsScreen
+    │   ├── contexts/      # AuthContext, CartContext, MenuSettingsContext, ThemeContext
+    │   ├── components/    # Header, CartSection, MenuItemCard, etc.
+    │   ├── navigation/    # AppNavigator
+    │   └── theme/         # colors, typography, spacing
+    └── android/           # Native Android project
+```
+
+## Backlog / Future Tasks
+- [ ] P0: Build React Native Android APK (needs Android SDK environment)
+- [ ] P1: Debug any RN build failures
+- [ ] P2: Full functional testing of native app
+- [ ] P3: Generate signed release APK
+- [ ] P2: Refactor KioskScreen.js into smaller components
+- [ ] P3: Add "Menu Settings" access from Kiosk page (gear icon)
+
+## Test Credentials
+- Email: manager@hyattcandolim.com
+- Password: Qplazm@10
