@@ -467,8 +467,8 @@ const CartSectionLandscape = ({
         {cart.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <ShoppingCart size={48} className="mx-auto mb-3 opacity-30" />
-            <p className="text-lg mb-1 font-medium">Your cart is empty</p>
-            <p className="text-sm">Select items from the menu</p>
+            <p className="text-lg mb-1 font-medium">Ready to order?</p>
+            <p className="text-sm">Select items from the menu to begin</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -990,8 +990,8 @@ const KioskPage = () => {
               {cart.length === 0 ? (
                 <div className="text-center py-6 text-muted-foreground bg-white rounded-sm border border-border">
                   <ShoppingCart size={32} className="mx-auto mb-2 opacity-30" />
-                  <p className="font-medium text-sm">Your cart is empty</p>
-                  <p className="text-xs">Select items from the menu above</p>
+                  <p className="font-medium text-sm">Ready to order?</p>
+                  <p className="text-xs">Select items from the menu to begin</p>
                 </div>
               ) : (
                 <div>
