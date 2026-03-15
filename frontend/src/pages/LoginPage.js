@@ -34,7 +34,7 @@ const LoadingOverlay = ({ loginProgress }) => {
       >
         {/* Logo */}
         <img 
-          src="https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png" 
+          src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
           alt="Logo" 
           className="h-16 mx-auto mb-8"
         />
@@ -158,7 +158,7 @@ const LoginPage = () => {
           {/* Logo */}
           <div className="text-center mb-8 portrait:mb-6 landscape:mb-12">
             <img 
-              src="https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png" 
+              src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
               alt="Hyatt Centric Candolim Goa" 
               className="h-16 portrait:h-14 landscape:h-20 mx-auto mb-4"
             />

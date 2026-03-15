@@ -911,7 +911,7 @@ const KioskPage = () => {
           {/* Fixed Header */}
           <div className="bg-white border-b border-border px-4 py-2 flex items-center justify-between flex-shrink-0">
             <img 
-              src="https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png" 
+              src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
               alt="Hyatt Centric" 
               className="h-9 object-contain"
             />
@@ -1052,7 +1052,7 @@ const KioskPage = () => {
           <div className="w-64 bg-white border-r border-border flex flex-col flex-shrink-0">
             <div className="p-4 border-b border-border">
               <img 
-                src="https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png" 
+                src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
                 alt="Hyatt Centric" 
                 className="w-full h-auto max-h-20 object-contain"
               />
