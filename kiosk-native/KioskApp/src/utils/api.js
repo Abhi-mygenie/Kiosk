@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // API Base URL - Update this for production
-export const API_BASE_URL = 'https://android-kiosk-test.preview.emergentagent.com';
+export const API_BASE_URL = 'https://kiosk-android-dev.preview.emergentagent.com';
 export const API_URL = `${API_BASE_URL}/api`;
 
 // Create axios instance
