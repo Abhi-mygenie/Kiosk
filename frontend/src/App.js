@@ -4,13 +4,16 @@ import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { MenuSettingsProvider, useMenuSettings } from '@/contexts/MenuSettingsContext';
 import KioskPage from '@/pages/KioskPage';
 import LoginPage from '@/pages/LoginPage';
+import AdminSettingsPage from '@/pages/AdminSettingsPage';
 import '@/App.css';
 
 // Auth-aware app content
 const AppContent = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const { settingsComplete } = useMenuSettings();
 
   // Show loading state while checking auth
   if (isLoading) {
@@ -29,7 +32,12 @@ const AppContent = () => {
     return <LoginPage />;
   }
 
-  // Show kiosk page if authenticated
+  // Show admin settings if not yet completed/skipped
+  if (!settingsComplete) {
+    return <AdminSettingsPage />;
+  }
+
+  // Show kiosk page if authenticated and settings done
   return <KioskPage />;
 };
 
@@ -37,12 +45,14 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <Toaster position="top-center" richColors />
-            <AppContent />
-          </BrowserRouter>
-        </CartProvider>
+        <MenuSettingsProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <Toaster position="top-center" richColors />
+              <AppContent />
+            </BrowserRouter>
+          </CartProvider>
+        </MenuSettingsProvider>
       </ThemeProvider>
     </AuthProvider>
   );

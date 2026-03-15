@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Search, X, CheckCircle, Tag, Volume2, VolumeX, LogOut, MessageSquare, ShoppingCart, Info, AlertTriangle, Flame, Scale } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useMenuSettings } from '@/contexts/MenuSettingsContext';
 import { toast } from 'sonner';
 import touchSound from '@/utils/touchSound';
 import kioskLock from '@/utils/kioskLock';
@@ -589,10 +590,17 @@ const CartSectionLandscape = ({
 const KioskPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
   const { logout, user, menuData } = useAuth();
+  const { applySettings, clearSettings } = useMenuSettings();
   const isPortrait = useOrientation();
   
-  const [categories, setCategories] = useState(menuData.categories || []);
-  const [menuItems, setMenuItems] = useState(menuData.menuItems || []);
+  // Apply admin menu settings (order + visibility) to categories and items
+  const { categories: settingsCategories, menuItems: settingsMenuItems } = applySettings(
+    menuData.categories || [],
+    menuData.menuItems || []
+  );
+  
+  const [categories, setCategories] = useState(settingsCategories);
+  const [menuItems, setMenuItems] = useState(settingsMenuItems);
   const [tables, setTables] = useState(menuData.tables || []);
   
   const [activeCategory, setActiveCategory] = useState('all');
@@ -723,6 +731,7 @@ const KioskPage = () => {
   const handleLogout = () => {
     touchSound.playClick();
     clearCart();
+    clearSettings();
     logout();
     toast.success('Logged out successfully');
   };
