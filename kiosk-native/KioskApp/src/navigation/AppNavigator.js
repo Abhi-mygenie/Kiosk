@@ -3,16 +3,19 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../contexts/AuthContext';
+import { useMenuSettings } from '../contexts/MenuSettingsContext';
 
 // Screens
 import LoginScreen from '../pages/LoginScreen';
 import KioskScreen from '../pages/KioskScreen';
+import AdminSettingsScreen from '../pages/AdminSettingsScreen';
 import LoadingScreen from '../pages/LoadingScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const { settingsComplete } = useMenuSettings();
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -25,10 +28,12 @@ const AppNavigator = () => {
           headerShown: false,
           gestureEnabled: false,
         }}>
-        {isAuthenticated ? (
-          <Stack.Screen name="Kiosk" component={KioskScreen} />
-        ) : (
+        {!isAuthenticated ? (
           <Stack.Screen name="Login" component={LoginScreen} />
+        ) : !settingsComplete ? (
+          <Stack.Screen name="AdminSettings" component={AdminSettingsScreen} />
+        ) : (
+          <Stack.Screen name="Kiosk" component={KioskScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

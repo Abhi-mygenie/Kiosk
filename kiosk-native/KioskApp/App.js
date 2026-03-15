@@ -10,6 +10,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { CartProvider } from './src/contexts/CartContext';
 import { ThemeProvider } from './src/contexts/ThemeContext';
+import { MenuSettingsProvider } from './src/contexts/MenuSettingsContext';
 
 // Navigation
 import AppNavigator from './src/navigation/AppNavigator';
@@ -37,15 +38,17 @@ const App = () => {
       <SafeAreaProvider>
         <AuthProvider>
           <ThemeProvider>
-            <CartProvider>
-              <StatusBar
-                barStyle="dark-content"
-                backgroundColor={colors.background}
-                hidden={true}
-              />
-              <AppNavigator />
-              <Toast />
-            </CartProvider>
+            <MenuSettingsProvider>
+              <CartProvider>
+                <StatusBar
+                  barStyle="dark-content"
+                  backgroundColor={colors.background}
+                  hidden={true}
+                />
+                <AppNavigator />
+                <Toast />
+              </CartProvider>
+            </MenuSettingsProvider>
           </ThemeProvider>
         </AuthProvider>
       </SafeAreaProvider>

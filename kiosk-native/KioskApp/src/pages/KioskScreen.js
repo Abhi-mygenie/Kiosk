@@ -16,6 +16,7 @@ import Toast from 'react-native-toast-message';
 
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
+import { useMenuSettings } from '../contexts/MenuSettingsContext';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 import { normalizePrice, formatCurrencyShort } from '../utils/helpers';
@@ -39,6 +40,7 @@ const SGST_RATE = 2.5;
 const KioskScreen = () => {
   const { user, menuData, logout } = useAuth();
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart, getTotal } = useCart();
+  const { applySettings, resetComplete } = useMenuSettings();
 
   // State
   const [activeCategory, setActiveCategory] = useState('all');
@@ -50,7 +52,15 @@ const KioskScreen = () => {
   const [orderSuccess, setOrderSuccess] = useState(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const { categories, menuItems, tables } = menuData;
+  // Apply admin menu settings (order + visibility)
+  const { categories: settingsCategories, menuItems: settingsMenuItems } = applySettings(
+    menuData.categories || [],
+    menuData.menuItems || [],
+  );
+
+  const categories = settingsCategories;
+  const menuItems = settingsMenuItems;
+  const tables = menuData.tables || [];
 
   // Show table selector on mount if no table selected
   useEffect(() => {
@@ -161,6 +171,7 @@ const KioskScreen = () => {
   // Handle logout
   const handleLogout = () => {
     clearCart();
+    resetComplete();
     logout();
     Toast.show({
       type: 'success',

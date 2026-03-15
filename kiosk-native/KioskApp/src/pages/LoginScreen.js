@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
 import { colors } from '../theme/colors';
@@ -24,7 +25,24 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const { login, loginProgress } = useAuth();
+
+  // Load remembered credentials on mount
+  React.useEffect(() => {
+    const loadRemembered = async () => {
+      try {
+        const savedUser = await AsyncStorage.getItem('kiosk_remember_user');
+        const savedPass = await AsyncStorage.getItem('kiosk_remember_pass');
+        if (savedUser) {
+          setUsername(savedUser);
+          setPassword(savedPass || '');
+          setRememberMe(true);
+        }
+      } catch {}
+    };
+    loadRemembered();
+  }, []);
 
   const handleSubmit = async () => {
     if (!username.trim() || !password.trim()) {
@@ -34,6 +52,12 @@ const LoginScreen = () => {
 
     setIsLoading(true);
     try {
+      if (rememberMe) {
+        await AsyncStorage.setItem('kiosk_remember_user', username);
+        await AsyncStorage.setItem('kiosk_remember_pass', password);
+      } else {
+        await AsyncStorage.multiRemove(['kiosk_remember_user', 'kiosk_remember_pass']);
+      }
       await login(username, password);
       // Navigation happens automatically via AuthContext
     } catch (error) {
@@ -58,7 +82,7 @@ const LoginScreen = () => {
           <View style={styles.logoContainer}>
             <Image
               source={{
-                uri: 'https://customer-assets.emergentagent.com/job_660831f3-d103-4fb3-ae20-d0fe3dd0af53/artifacts/4li3nr0o_hya.png',
+                uri: 'https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png',
               }}
               style={styles.logo}
               resizeMode="contain"
@@ -109,6 +133,20 @@ const LoginScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Remember Me */}
+            <TouchableOpacity
+              style={styles.rememberRow}
+              onPress={() => setRememberMe(!rememberMe)}>
+              <View
+                style={[
+                  styles.checkbox,
+                  rememberMe && styles.checkboxChecked,
+                ]}>
+                {rememberMe && <Text style={styles.checkmark}>✓</Text>}
+              </View>
+              <Text style={styles.rememberText}>Remember me</Text>
+            </TouchableOpacity>
 
             {/* Login Button */}
             <TouchableOpacity
@@ -231,6 +269,34 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 18,
     fontWeight: '600',
+  },
+  rememberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  checkboxChecked: {
+    backgroundColor: colors.blueHero,
+    borderColor: colors.blueHero,
+  },
+  checkmark: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  rememberText: {
+    fontSize: 14,
+    color: colors.textMuted,
   },
   footer: {
     alignItems: 'center',
