@@ -162,9 +162,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('kiosk_user');
     localStorage.removeItem('kiosk_menu_data');
     localStorage.removeItem('kiosk_branding');
-    // Clear admin menu settings on logout
-    localStorage.removeItem('kiosk_menu_settings');
-    localStorage.removeItem('kiosk_settings_complete');
   };
 
   // Function to refresh menu data (manual refresh if needed)

@@ -590,7 +590,7 @@ const CartSectionLandscape = ({
 const KioskPage = () => {
   const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
   const { logout, user, menuData } = useAuth();
-  const { applySettings, clearSettings } = useMenuSettings();
+  const { applySettings } = useMenuSettings();
   const isPortrait = useOrientation();
   
   // Apply admin menu settings (order + visibility) to categories and items
@@ -731,7 +731,6 @@ const KioskPage = () => {
   const handleLogout = () => {
     touchSound.playClick();
     clearCart();
-    clearSettings();
     logout();
     toast.success('Logged out successfully');
   };

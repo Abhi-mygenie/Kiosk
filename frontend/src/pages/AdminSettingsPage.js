@@ -218,7 +218,7 @@ const SortableCategory = ({
 
 const AdminSettingsPage = () => {
   const { menuData } = useAuth();
-  const { saveSettings, skipSettings } = useMenuSettings();
+  const { saveSettings, skipSettings, clearSettings } = useMenuSettings();
 
   // Initialize state from API data
   const [categoryOrder, setCategoryOrder] = useState(
@@ -300,6 +300,7 @@ const AdminSettingsPage = () => {
     setHiddenCategories([]);
     setHiddenItems([]);
     setExpandedCategories(new Set(menuData.categories.map(c => c.id)));
+    clearSettings();
   };
 
   const handleSave = () => {
