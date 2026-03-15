@@ -99,10 +99,17 @@ const LoadingOverlay = ({ loginProgress }) => {
 };
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(() => {
+    try { return localStorage.getItem('kiosk_remember_user') || ''; } catch { return ''; }
+  });
+  const [password, setPassword] = useState(() => {
+    try { return localStorage.getItem('kiosk_remember_pass') || ''; } catch { return ''; }
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => {
+    return !!localStorage.getItem('kiosk_remember_user');
+  });
   const { login, loginProgress } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -115,6 +122,13 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
+      if (rememberMe) {
+        localStorage.setItem('kiosk_remember_user', username);
+        localStorage.setItem('kiosk_remember_pass', password);
+      } else {
+        localStorage.removeItem('kiosk_remember_user');
+        localStorage.removeItem('kiosk_remember_pass');
+      }
       await login(username, password);
       toast.success('Login successful');
     } catch (error) {
@@ -208,6 +222,32 @@ const LoginPage = () => {
                     )}
                   </button>
                 </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRememberMe(!rememberMe)}
+                  data-testid="remember-me-toggle"
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                    rememberMe
+                      ? 'bg-blue-hero border-blue-hero'
+                      : 'border-border hover:border-blue-hero'
+                  }`}
+                >
+                  {rememberMe && (
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+                <label
+                  onClick={() => setRememberMe(!rememberMe)}
+                  className="text-sm text-muted-foreground cursor-pointer select-none"
+                >
+                  Remember me
+                </label>
               </div>
 
               {/* Login Button */}
