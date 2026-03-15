@@ -162,6 +162,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('kiosk_user');
     localStorage.removeItem('kiosk_menu_data');
     localStorage.removeItem('kiosk_branding');
+    // Clear settings_complete flag so admin settings shows on next login
+    // But keep kiosk_menu_settings so saved order/visibility is pre-loaded
+    localStorage.removeItem('kiosk_settings_complete');
   };
 
   // Function to refresh menu data (manual refresh if needed)

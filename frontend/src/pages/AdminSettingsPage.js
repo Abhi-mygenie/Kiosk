@@ -218,21 +218,39 @@ const SortableCategory = ({
 
 const AdminSettingsPage = () => {
   const { menuData } = useAuth();
-  const { saveSettings, skipSettings, clearSettings } = useMenuSettings();
+  const { settings, saveSettings, skipSettings, clearSettings } = useMenuSettings();
 
-  // Initialize state from API data
-  const [categoryOrder, setCategoryOrder] = useState(
-    () => menuData.categories.map(c => c.id)
-  );
+  // Initialize state — pre-load from saved settings if they exist, otherwise use API defaults
+  const [categoryOrder, setCategoryOrder] = useState(() => {
+    if (settings?.categoryOrder?.length) return settings.categoryOrder;
+    return menuData.categories.map(c => c.id);
+  });
   const [itemsByCategory, setItemsByCategory] = useState(() => {
     const grouped = {};
     menuData.categories.forEach(cat => {
-      grouped[cat.id] = menuData.menuItems.filter(item => item.category === cat.id);
+      const items = menuData.menuItems.filter(item => item.category === cat.id);
+      // Apply saved item order if exists
+      if (settings?.itemOrder?.[cat.id]) {
+        const order = settings.itemOrder[cat.id];
+        items.sort((a, b) => {
+          const idxA = order.indexOf(a.id);
+          const idxB = order.indexOf(b.id);
+          if (idxA === -1 && idxB === -1) return 0;
+          if (idxA === -1) return 1;
+          if (idxB === -1) return -1;
+          return idxA - idxB;
+        });
+      }
+      grouped[cat.id] = items;
     });
     return grouped;
   });
-  const [hiddenCategories, setHiddenCategories] = useState([]);
-  const [hiddenItems, setHiddenItems] = useState([]);
+  const [hiddenCategories, setHiddenCategories] = useState(
+    () => settings?.hiddenCategories || []
+  );
+  const [hiddenItems, setHiddenItems] = useState(
+    () => settings?.hiddenItems || []
+  );
   const [expandedCategories, setExpandedCategories] = useState(
     () => new Set(menuData.categories.map(c => c.id))
   );
