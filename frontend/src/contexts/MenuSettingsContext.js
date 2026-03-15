@@ -39,6 +39,12 @@ export const MenuSettingsProvider = ({ children }) => {
     localStorage.removeItem('kiosk_settings_complete');
   }, []);
 
+  // Reset only the complete flag (keep saved settings data for pre-loading)
+  const resetComplete = useCallback(() => {
+    setSettingsComplete(false);
+    localStorage.removeItem('kiosk_settings_complete');
+  }, []);
+
   // Apply settings to categories and items
   const applySettings = useCallback((categories, menuItems) => {
     if (!settings) return { categories, menuItems };
@@ -90,6 +96,7 @@ export const MenuSettingsProvider = ({ children }) => {
       saveSettings,
       skipSettings,
       clearSettings,
+      resetComplete,
       applySettings
     }}>
       {children}
