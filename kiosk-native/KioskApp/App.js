@@ -1,10 +1,9 @@
 // Main App Entry Point
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StatusBar, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import SplashScreen from 'react-native-splash-screen';
 
 // Providers
 import { AuthProvider } from './src/contexts/AuthContext';
@@ -24,14 +23,6 @@ LogBox.ignoreLogs([
 ]);
 
 const App = () => {
-  useEffect(() => {
-    // Hide splash screen after app is ready
-    const timer = setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000); // 1 second delay for smooth transition
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
