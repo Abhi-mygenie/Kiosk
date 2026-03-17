@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Search, X, CheckCircle, Tag, Volume2, VolumeX, LogOut, MessageSquare, ShoppingCart, Info, AlertTriangle, Flame, Scale, Settings, Clock } from 'lucide-react';
+import { Plus, Minus, Search, X, CheckCircle, Tag, Volume2, VolumeX, LogOut, MessageSquare, ShoppingCart, Info, AlertTriangle, Flame, Scale, Settings, Clock, Lock, Unlock } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMenuSettings } from '@/contexts/MenuSettingsContext';
@@ -926,9 +926,7 @@ const KioskPage = ({ onNavigate }) => {
             <img 
               src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
               alt="Hyatt Centric" 
-              className="h-9 object-contain cursor-pointer"
-              onClick={() => setIsAdminMode(prev => !prev)}
-              data-testid="admin-toggle-portrait"
+              className="h-9 object-contain"
             />
             <div className="flex items-center gap-2">
               {/* Table indicator in header - only when restaurant has tables */}
@@ -969,6 +967,13 @@ const KioskPage = ({ onNavigate }) => {
                   </button>
                 </>
               )}
+              <button
+                onClick={() => setIsAdminMode(prev => !prev)}
+                data-testid="admin-toggle-portrait"
+                className="p-1.5 rounded-sm text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted/50 transition-all"
+              >
+                {isAdminMode ? <Unlock size={16} /> : <Lock size={16} />}
+              </button>
             </div>
           </div>
 
@@ -1087,9 +1092,7 @@ const KioskPage = ({ onNavigate }) => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
                 alt="Hyatt Centric" 
-                className="w-full h-auto max-h-20 object-contain cursor-pointer"
-                onClick={() => setIsAdminMode(prev => !prev)}
-                data-testid="admin-toggle-landscape"
+                className="w-full h-auto max-h-20 object-contain"
               />
               <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest text-center">Breakfast Buffet</p>
             </div>
@@ -1140,6 +1143,15 @@ const KioskPage = ({ onNavigate }) => {
                 </button>
               </div>
             )}
+            <div className="p-2 border-t border-border flex justify-center">
+              <button
+                onClick={() => setIsAdminMode(prev => !prev)}
+                data-testid="admin-toggle-landscape"
+                className="p-2 rounded-sm text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted/50 transition-all"
+              >
+                {isAdminMode ? <Unlock size={16} /> : <Lock size={16} />}
+              </button>
+            </div>
           </div>
 
           {/* MIDDLE: Menu Items */}
