@@ -33,10 +33,8 @@ const LoginScreen = () => {
     const loadRemembered = async () => {
       try {
         const savedUser = await AsyncStorage.getItem('kiosk_remember_user');
-        const savedPass = await AsyncStorage.getItem('kiosk_remember_pass');
         if (savedUser) {
           setUsername(savedUser);
-          setPassword(savedPass || '');
           setRememberMe(true);
         }
       } catch {}
@@ -54,7 +52,7 @@ const LoginScreen = () => {
     try {
       if (rememberMe) {
         await AsyncStorage.setItem('kiosk_remember_user', username);
-        await AsyncStorage.setItem('kiosk_remember_pass', password);
+        await AsyncStorage.removeItem('kiosk_remember_pass');
       } else {
         await AsyncStorage.multiRemove(['kiosk_remember_user', 'kiosk_remember_pass']);
       }

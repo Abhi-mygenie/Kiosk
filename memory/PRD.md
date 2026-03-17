@@ -76,16 +76,10 @@ Dead code removed:
 - Run `npx react-native run-android` from `/app/kiosk-native/KioskApp`
 - Debug any remaining build failures
 
-### P1: Security Fix - Native Password Storage
-- `LoginScreen.js` still stores plaintext password in AsyncStorage via "Remember Me"
-- Needs to only store username (matching web app fix)
-
-### P2: Styling Consistency
+### P1: Styling Consistency
 - Unify `bg-[#F9F8F6]` vs theme `bg-background` across all pages
 
 ## Future / Backlog Tasks
 - Refactor `KioskScreen.js` (Native) into smaller components
 - Live Preview panel on Admin Settings page
 - APK generation (signed release build)
-- Native "All" view: remove category headers for continuous scroll (match web)
-- Native grid: change to 5 columns in portrait (match web)

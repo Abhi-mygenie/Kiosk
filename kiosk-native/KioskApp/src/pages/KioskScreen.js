@@ -187,33 +187,10 @@ const KioskScreen = ({ navigation }) => {
     });
   };
 
-  // Render category section for ALL view
-  const renderCategorySection = ({ item: category }) => {
-    const categoryItems = itemsByCategory[category.id] || [];
-    if (categoryItems.length === 0) return null;
-
-    return (
-      <View style={styles.categorySection}>
-        <Text style={styles.categorySectionTitle}>{category.name}</Text>
-        <FlatList
-          data={categoryItems}
-          renderItem={({ item }) => (
-            <MenuItemCard
-              item={item}
-              onPress={() => setSelectedItem(item)}
-              cartQuantity={cart
-                .filter(ci => ci.id === item.id)
-                .reduce((sum, ci) => sum + ci.quantity, 0)}
-            />
-          )}
-          keyExtractor={item => item.id}
-          numColumns={4}
-          scrollEnabled={false}
-          columnWrapperStyle={styles.menuGrid}
-        />
-      </View>
-    );
-  };
+  // Render flat list of all items (no category headers) for ALL view
+  const allItems = useMemo(() => {
+    return categories.flatMap(cat => itemsByCategory[cat.id] || []);
+  }, [categories, itemsByCategory]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -242,9 +219,19 @@ const KioskScreen = ({ navigation }) => {
         <View style={styles.menuContainer}>
           {activeCategory === 'all' ? (
             <FlatList
-              data={categories}
-              renderItem={renderCategorySection}
-              keyExtractor={cat => cat.id}
+              data={allItems}
+              renderItem={({ item }) => (
+                <MenuItemCard
+                  item={item}
+                  onPress={() => setSelectedItem(item)}
+                  cartQuantity={cart
+                    .filter(ci => ci.id === item.id)
+                    .reduce((sum, ci) => sum + ci.quantity, 0)}
+                />
+              )}
+              keyExtractor={item => item.id}
+              numColumns={5}
+              columnWrapperStyle={styles.menuGrid}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.menuList}
             />
@@ -261,7 +248,7 @@ const KioskScreen = ({ navigation }) => {
                 />
               )}
               keyExtractor={item => item.id}
-              numColumns={4}
+              numColumns={5}
               columnWrapperStyle={styles.menuGrid}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.menuList}
