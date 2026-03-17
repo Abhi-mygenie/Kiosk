@@ -17,37 +17,52 @@ Convert an existing React web kiosk self-ordering application into a native Andr
 ## What's Been Implemented
 
 ### Web App (Complete & Tested)
-- Login with "Remember Me" functionality (username only — password in sessionStorage)
+- Login with "Remember Me" functionality (username only - password in sessionStorage)
 - Admin Settings page (menu reorder, show/hide categories/items via drag-and-drop)
-- **NEW: Timing Settings page** (operating hours with estimated prep time per slot, max 4 slots)
-- **NEW: Sidebar navigation links** (Menu Settings + Timing buttons above Sound/Logout)
-- **NEW: Order confirmation shows estimated prep time** based on current time matching active shift
-- **NEW: Optional Tables** — restaurants with no tables skip table selection; success screen shows token number (last 3 digits of order ID)
-- **NEW: Admin mode toggle** — tap logo to show/hide admin controls (Menu Settings, Timing, Sound, Logout). Hidden by default in kiosk mode.
-- **SECURITY: Hardcoded secrets moved to backend/.env** — POS API URLs + restaurant config
-- **SECURITY: Password no longer stored in localStorage** — sessionStorage only, legacy cleanup on login
+- Timing Settings page (operating hours with estimated prep time per slot, max 4 slots)
+- Sidebar navigation links (Menu Settings + Timing buttons above Sound/Logout)
+- Order confirmation shows estimated prep time based on current time matching active shift
+- Optional Tables - restaurants with no tables skip table selection; success screen shows token number
+- Admin mode toggle - lock icon to show/hide admin controls
+- SECURITY: Hardcoded secrets moved to backend/.env
+- SECURITY: Password no longer stored in localStorage
 - Kiosk page with full ordering flow (landscape + portrait)
 - Table selector, cart, order placement
-- Updated empty cart text: "Ready to order? / Select items from the menu to begin"
+
+### KioskPage.js Refactor (Complete - Mar 17, 2026)
+**Reduced from 1356 lines to 404 lines (70% reduction)**
+
+Extracted 10 components + 1 hook + 1 utility module:
+- `/app/frontend/src/components/kiosk/CustomizationModal.js` - Item customization with variations, qty, instructions
+- `/app/frontend/src/components/kiosk/SuccessOverlay.js` - Order confirmation with countdown
+- `/app/frontend/src/components/kiosk/CategoryPills.js` - Horizontal category pills (portrait mode)
+- `/app/frontend/src/components/kiosk/InlineCartItem.js` - Compact cart item (portrait mode)
+- `/app/frontend/src/components/kiosk/CartSectionLandscape.js` - Full cart panel (landscape mode)
+- `/app/frontend/src/components/kiosk/PortraitMenuCard.js` - Menu item card (portrait mode)
+- `/app/frontend/src/components/kiosk/LandscapeMenuCard.js` - Menu item card (landscape mode)
+- `/app/frontend/src/components/kiosk/TableSelector.js` - Table selection modal
+- `/app/frontend/src/components/kiosk/LogoutConfirmModal.js` - Logout confirmation dialog
+- `/app/frontend/src/components/kiosk/EditInstructionsModal.js` - Edit cooking instructions modal
+- `/app/frontend/src/hooks/useOrientation.js` - Portrait/landscape detection hook
+- `/app/frontend/src/utils/kioskHelpers.js` - Shared utilities (normalizePrice, createAuthAxios)
+
+Dead code removed:
+- `/app/frontend/src/components/layout/SidebarNav.js` (deleted)
+- `/app/frontend/src/components/menu/CustomizationModal.js` (deleted)
+- `/app/frontend/src/components/menu/MenuItemCard.js` (deleted)
 
 ### React Native App (Ported, Not Built)
 - All web features ported to native equivalents
-- **NEW: TimingSettingsContext.js** - AsyncStorage-based timing persistence
-- **NEW: TimingSettingsScreen.js** - Operating hours config UI
-- **NEW: Header updated** with Menu Settings + Timing buttons
-- **NEW: AppNavigator updated** with MenuSettings + TimingSettings screens
-- **NEW: SuccessOverlay updated** with prep time display
-- **FIX: Removed react-native-splash-screen** (incompatible with RN 0.84 New Architecture)
-- **FIX: Removed react-native-sound** (unused, incompatible)
-- **FIX: Removed react-native-vector-icons** (unused)
-- **FIX: super.onCreate(null)** in MainActivity.kt for react-native-screens compatibility
+- TimingSettingsContext.js, TimingSettingsScreen.js
+- Header, SuccessOverlay, AppNavigator updated
+- Removed incompatible packages (splash-screen, sound, vector-icons)
 
-### Key localStorage Keys
-- `kiosk_menu_settings` - Menu reorder/visibility settings
-- `kiosk_timing_settings` - Operating hours with prep times
-- `kiosk_settings_complete` - Whether settings have been saved/skipped
-- `kiosk_remember_user` / `kiosk_remember_pass` - Remember Me credentials
-- `kiosk_user` - Auth token/user data
+## Key API Endpoints
+- `POST /api/auth/login` - Authentication
+- `GET /api/menu/categories` - Fetch menu categories
+- `GET /api/menu/items` - Fetch menu items
+- `GET /api/tables` - Fetch table config
+- `POST /api/orders` - Place order
 
 ## Pending / Upcoming Tasks
 
@@ -56,46 +71,12 @@ Convert an existing React web kiosk self-ordering application into a native Andr
 - Run `npx react-native run-android` from `/app/kiosk-native/KioskApp`
 - Debug any remaining build failures
 
-### P1: Full Functional Testing (Native App)
-- Test login, admin settings, timing settings, kiosk ordering flow on device
+### P1: Refactor KioskScreen.js (Native)
+- Mirror the web app refactor for the native equivalent
 
-### P2: APK Generation
-- Create signed release APK
-
-## Completed Security Fixes (Feb 2026)
-- **Password Storage**: Removed plaintext password from `localStorage`. Username remembered via `localStorage`, password stored in `sessionStorage` (cleared on browser close). Legacy `kiosk_remember_pass` key actively cleaned up on login.
-- **Hardcoded Secrets**: Moved POS API URLs (`POS_API_BASE_URL`, `POS_API_V2_URL`) and restaurant config (`POS_RESTAURANT_ID`, `POS_RESTAURANT_NAME`) from `server.py` to `backend/.env`.
-- **Native App Fix**: Ported item ordering fix to React Native `MenuSettingsContext.js`.
+### P2: Styling Consistency
+- Unify `bg-[#F9F8F6]` vs theme `bg-background` across all pages
 
 ## Future / Backlog Tasks
-- **Refactor KioskPage.js**: Break down the 1286-line component into smaller children
-- **Refactor KioskScreen.js (Native)**: Break down the large native screen component
-- **Dead Code Cleanup**: Remove unused CustomizationModal.js, MenuItemCard.js, SidebarNav.js from web components
-- **Styling Consistency**: Unify `bg-[#F9F8F6]` vs theme `bg-background`
-- **Live Preview**: Add preview panel on Admin Settings to show how menu will look
-
-## Key API Endpoints
-- `POST /api/auth/login` - Authentication
-- `GET /api/menu/categories` - Fetch menu categories
-- `GET /api/menu/items` - Fetch menu items
-- `GET /api/tables` - Fetch table config (calls POS v2 endpoint)
-- `POST /api/orders` - Place order
-
-## File References
-### Web App
-- `/app/frontend/src/pages/TimingSettingsPage.js` - NEW
-- `/app/frontend/src/contexts/TimingSettingsContext.js` - NEW
-- `/app/frontend/src/pages/AdminSettingsPage.js` - Updated (onBack prop)
-- `/app/frontend/src/pages/KioskPage.js` - Updated (sidebar buttons, prep time)
-- `/app/frontend/src/App.js` - Updated (navigation state, TimingSettingsProvider)
-
-### React Native App
-- `/app/kiosk-native/KioskApp/src/pages/TimingSettingsScreen.js` - NEW
-- `/app/kiosk-native/KioskApp/src/contexts/TimingSettingsContext.js` - NEW
-- `/app/kiosk-native/KioskApp/src/components/Header.js` - Updated
-- `/app/kiosk-native/KioskApp/src/components/SuccessOverlay.js` - Updated
-- `/app/kiosk-native/KioskApp/src/pages/KioskScreen.js` - Updated
-- `/app/kiosk-native/KioskApp/src/pages/AdminSettingsScreen.js` - Updated
-- `/app/kiosk-native/KioskApp/src/navigation/AppNavigator.js` - Updated
-- `/app/kiosk-native/KioskApp/App.js` - Updated
-- `/app/kiosk-native/KioskApp/android/app/src/main/java/com/kioskapp/MainActivity.kt` - Fixed
+- Live Preview panel on Admin Settings page
+- APK generation (signed release build)
