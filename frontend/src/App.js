@@ -60,7 +60,16 @@ function App() {
           <TimingSettingsProvider>
             <CartProvider>
               <BrowserRouter>
-                <Toaster position="top-center" richColors />
+                <Toaster position="top-center" toastOptions={{
+                  style: {
+                    background: '#EBF6FD',
+                    border: '1px solid #62B5E5',
+                    color: '#06293F',
+                  },
+                  classNames: {
+                    success: 'sonner-brand',
+                  },
+                }} />
                 <AppContent />
               </BrowserRouter>
             </CartProvider>
