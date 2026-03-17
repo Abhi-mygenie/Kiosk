@@ -86,17 +86,23 @@ export const MenuSettingsProvider = ({ children }) => {
 
     // Reorder items within each category
     if (itemOrder) {
-      filteredItems.sort((a, b) => {
-        if (a.category !== b.category) return 0;
-        const catOrder = itemOrder[a.category];
-        if (!catOrder) return 0;
-        const idxA = catOrder.indexOf(a.id);
-        const idxB = catOrder.indexOf(b.id);
-        if (idxA === -1 && idxB === -1) return 0;
-        if (idxA === -1) return 1;
-        if (idxB === -1) return -1;
-        return idxA - idxB;
+      const sortedItems = [];
+      filteredCategories.forEach(cat => {
+        const catItems = filteredItems.filter(i => i.category === cat.id);
+        const catOrder = itemOrder[cat.id];
+        if (catOrder) {
+          catItems.sort((a, b) => {
+            const idxA = catOrder.indexOf(a.id);
+            const idxB = catOrder.indexOf(b.id);
+            if (idxA === -1 && idxB === -1) return 0;
+            if (idxA === -1) return 1;
+            if (idxB === -1) return -1;
+            return idxA - idxB;
+          });
+        }
+        sortedItems.push(...catItems);
       });
+      filteredItems = sortedItems;
     }
 
     return { categories: filteredCategories, menuItems: filteredItems };
