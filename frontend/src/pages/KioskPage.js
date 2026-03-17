@@ -985,23 +985,12 @@ const KioskPage = ({ onNavigate }) => {
             {/* Food Grid Section */}
             <div className="px-4 pt-3 pb-2">
               {activeCategory === 'all' ? (
-                /* ALL view - show all categories with section headers */
-                categories.map((category) => {
-                  const categoryItems = itemsByCategory[category.id] || [];
-                  if (categoryItems.length === 0) return null;
-                  return (
-                    <div key={category.id} className="mb-4">
-                      <h2 className="text-base font-heading font-bold uppercase text-blue-dark mb-2 pb-1 border-b border-border">
-                        {category.name}
-                      </h2>
-                      <div className="grid grid-cols-5 gap-2">
-                        {categoryItems.map((item) => (
-                          <PortraitMenuCard key={item.id} item={item} />
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })
+                /* ALL view - continuous flow of all items */
+                <div className="grid grid-cols-5 gap-2">
+                  {categories.flatMap((category) => itemsByCategory[category.id] || []).map((item) => (
+                    <PortraitMenuCard key={item.id} item={item} />
+                  ))}
+                </div>
               ) : (
                 /* Filtered view - show single category */
                 <>
