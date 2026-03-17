@@ -330,7 +330,7 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
               <span className="text-blue-hero font-heading font-bold uppercase">~{prepTime} minutes</span>
             </p>
           )}
-          <p className="text-muted-foreground mt-2">Please proceed to Table {tableNumber}</p>
+          <p className="text-muted-foreground mt-2">Please proceed to <span className="text-blue-hero font-heading font-bold uppercase">Table {tableNumber}</span></p>
         </div>
         
         <div className="mb-8">
