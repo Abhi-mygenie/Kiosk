@@ -359,12 +359,12 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
 const CategoryPills = ({ categories, activeCategory, setActiveCategory }) => {
   return (
     <div className="bg-white border-b border-border flex-shrink-0">
-      <div className="flex overflow-x-auto scrollbar-hide px-4 py-3 gap-2">
+      <div className="flex overflow-x-auto scrollbar-hide px-6 py-5 gap-3">
         {/* ALL pill - first option */}
         <button
           onClick={() => { touchSound.playTap(); setActiveCategory('all'); }}
           data-testid="category-pill-all"
-          className={`flex-shrink-0 px-5 py-3 rounded-full text-sm font-semibold uppercase tracking-wide transition-all whitespace-nowrap ${
+          className={`flex-shrink-0 px-7 py-5 rounded-full text-base font-semibold uppercase tracking-wide transition-all whitespace-nowrap ${
             activeCategory === 'all'
               ? 'bg-blue-hero text-white'
               : 'bg-muted hover:bg-blue-light/20 text-muted-foreground'
@@ -378,7 +378,7 @@ const CategoryPills = ({ categories, activeCategory, setActiveCategory }) => {
             key={category.id}
             onClick={() => { touchSound.playTap(); setActiveCategory(category.id); }}
             data-testid={`category-pill-${category.id}`}
-            className={`flex-shrink-0 px-5 py-3 rounded-full text-sm font-semibold uppercase tracking-wide transition-all whitespace-nowrap ${
+            className={`flex-shrink-0 px-7 py-5 rounded-full text-base font-semibold uppercase tracking-wide transition-all whitespace-nowrap ${
               activeCategory === category.id
                 ? 'bg-blue-hero text-white'
                 : 'bg-muted hover:bg-blue-light/20 text-muted-foreground'
