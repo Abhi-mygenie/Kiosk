@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // API Base URL - Update this for production
-export const API_BASE_URL = 'https://admin-hub-212.preview.emergentagent.com';
+export const API_BASE_URL = 'https://restaurant-kiosk-app.preview.emergentagent.com';
 export const API_URL = `${API_BASE_URL}/api`;
 
 // Create axios instance
