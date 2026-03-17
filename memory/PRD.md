@@ -82,6 +82,16 @@ Extracted 3 new components:
 - Replaced all 9 hardcoded `bg-[#F9F8F6]` instances across App.js, KioskPage, LoginPage, AdminSettingsPage, TimingSettingsPage with `bg-background`
 - Single source of truth: all background colors now controlled via `--background` CSS variable
 
+### Android Build Setup (Mar 17, 2026)
+Created 3 build options for producing the Android APK:
+1. **GitHub Actions** — `.github/workflows/build-android.yml` auto-builds on push to main
+2. **Local Build Script** — `build.sh` with auto-detection of JDK, Android SDK, and dependency installation
+3. **EAS Build** — `eas.json` + `app.json` for remote cloud builds via Expo
+
+Build guide: `/app/kiosk-native/KioskApp/BUILD_GUIDE.md`
+
+Note: The Emergent preview container runs arm64 which cannot execute x86_64 NDK toolchains. All 3 build options target x86_64 environments (GitHub runners, local machines, Expo cloud).
+
 ## Pending / Upcoming Tasks
 
 ### P0: Build React Native Android App
