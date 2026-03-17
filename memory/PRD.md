@@ -11,17 +11,20 @@ Convert an existing React web kiosk self-ordering application into a native Andr
 - **External API**: POS API for auth, menu, tables, orders
 
 ## Test Credentials
-- Email: manager@hyattcandolim.com
-- Password: Qplazm@10
+- **Hyatt (has tables)**: manager@hyattcandolim.com / Qplazm@10
+- **Kunafa Mahal (no tables)**: owner@kunafamahal.com / Qplazm@10
 
 ## What's Been Implemented
 
 ### Web App (Complete & Tested)
-- Login with "Remember Me" functionality
+- Login with "Remember Me" functionality (username only — password in sessionStorage)
 - Admin Settings page (menu reorder, show/hide categories/items via drag-and-drop)
 - **NEW: Timing Settings page** (operating hours with estimated prep time per slot, max 4 slots)
 - **NEW: Sidebar navigation links** (Menu Settings + Timing buttons above Sound/Logout)
 - **NEW: Order confirmation shows estimated prep time** based on current time matching active shift
+- **NEW: Optional Tables** — restaurants with no tables skip table selection; success screen shows token number (last 3 digits of order ID)
+- **SECURITY: Password no longer stored in localStorage** — sessionStorage only, legacy cleanup on login
+- **SECURITY: Hardcoded secrets moved to backend/.env** — POS API URLs + restaurant config
 - Admin Settings supports re-entry from sidebar with Back/Cancel buttons
 - Kiosk page with full ordering flow (landscape + portrait)
 - Table selector, cart, order placement
