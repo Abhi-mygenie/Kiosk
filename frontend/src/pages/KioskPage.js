@@ -144,7 +144,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-start portrait:items-start landscape:items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 flex items-center portrait:items-center landscape:items-center justify-center z-50"
       onClick={onClose}
     >
       <motion.div
@@ -153,7 +153,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
         exit={{ scale: isPortrait ? 1 : 0.9, y: isPortrait ? '-100%' : 0, opacity: isPortrait ? 1 : 0 }}
         className={`bg-white overflow-hidden flex flex-col ${
           isPortrait 
-            ? 'w-full max-h-[90vh] mt-16 rounded-b-2xl' 
+            ? 'w-full max-h-[85vh] rounded-2xl mx-4' 
             : 'rounded-sm max-w-lg w-full max-h-[85vh] mx-4'
         }`}
         onClick={e => e.stopPropagation()}
