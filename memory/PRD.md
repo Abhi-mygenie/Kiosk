@@ -69,6 +69,14 @@ Dead code removed:
 - `GET /api/tables` - Fetch table config
 - `POST /api/orders` - Place order
 
+### React Native KioskScreen.js Refactor (Mar 17, 2026)
+**Reduced from 530 lines to 229 lines (57% reduction)**
+
+Extracted 3 new components:
+- `/kiosk-native/.../components/LogoutConfirmModal.js` - Logout confirmation dialog
+- `/kiosk-native/.../components/EditInstructionsModal.js` - Bottom-sheet cooking instructions editor
+- `/kiosk-native/.../components/MenuGrid.js` - FlatList wrapper for menu items (5-column grid)
+
 ## Pending / Upcoming Tasks
 
 ### P0: Build React Native Android App
