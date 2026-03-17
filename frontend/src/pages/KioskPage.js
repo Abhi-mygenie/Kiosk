@@ -58,6 +58,22 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
   const [groupSelections, setGroupSelections] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [specialInstructions, setSpecialInstructions] = useState('');
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [visibleHeight, setVisibleHeight] = useState(null);
+
+  // Detect keyboard open/close via visualViewport API
+  useEffect(() => {
+    if (!isPortrait || !window.visualViewport) return;
+    const vv = window.visualViewport;
+    const handleResize = () => {
+      const isKb = vv.height < window.innerHeight * 0.75;
+      setKeyboardVisible(isKb);
+      if (isKb) setVisibleHeight(vv.height);
+      else setVisibleHeight(null);
+    };
+    vv.addEventListener('resize', handleResize);
+    return () => vv.removeEventListener('resize', handleResize);
+  }, [isPortrait]);
 
   const handleVariationSelect = (group, option) => {
     touchSound.playTap();
@@ -144,7 +160,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center portrait:items-center landscape:items-center justify-center z-50"
+      className={`fixed inset-0 bg-black/50 flex ${keyboardVisible ? 'items-start pt-4' : 'items-center'} justify-center z-50`}
       onClick={onClose}
     >
       <motion.div
@@ -153,9 +169,10 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
         exit={{ scale: isPortrait ? 1 : 0.9, y: isPortrait ? '-100%' : 0, opacity: isPortrait ? 1 : 0 }}
         className={`bg-white overflow-hidden flex flex-col ${
           isPortrait 
-            ? 'w-full max-h-[85vh] rounded-2xl mx-4' 
+            ? 'w-full rounded-2xl mx-4' 
             : 'rounded-sm max-w-lg w-full max-h-[85vh] mx-4'
         }`}
+        style={isPortrait ? { maxHeight: visibleHeight ? `${visibleHeight - 32}px` : '85vh' } : undefined}
         onClick={e => e.stopPropagation()}
       >
         
@@ -225,6 +242,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
             <textarea
               value={specialInstructions}
               onChange={(e) => setSpecialInstructions(e.target.value)}
+              onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300)}
               placeholder="E.g., Less spicy, No onions, Extra crispy..."
               data-testid="special-instructions"
               className="w-full bg-muted border border-border p-3 rounded-sm text-sm focus:outline-none focus:border-blue-hero resize-none h-20"
