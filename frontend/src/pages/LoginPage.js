@@ -103,7 +103,7 @@ const LoginPage = () => {
     try { return localStorage.getItem('kiosk_remember_user') || ''; } catch { return ''; }
   });
   const [password, setPassword] = useState(() => {
-    try { return localStorage.getItem('kiosk_remember_pass') || ''; } catch { return ''; }
+    try { return sessionStorage.getItem('kiosk_session_pass') || ''; } catch { return ''; }
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -122,13 +122,15 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
+      // Always store password in sessionStorage (cleared on browser close, never persisted)
+      sessionStorage.setItem('kiosk_session_pass', password);
       if (rememberMe) {
         localStorage.setItem('kiosk_remember_user', username);
-        localStorage.setItem('kiosk_remember_pass', password);
       } else {
         localStorage.removeItem('kiosk_remember_user');
-        localStorage.removeItem('kiosk_remember_pass');
       }
+      // Clean up any legacy plaintext password from localStorage
+      localStorage.removeItem('kiosk_remember_pass');
       await login(username, password);
       toast.success('Login successful');
     } catch (error) {

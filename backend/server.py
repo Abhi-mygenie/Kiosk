@@ -22,9 +22,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# POS API Configuration
-POS_API_BASE_URL = "https://preprod.mygenie.online/api/v1"
-POS_API_V2_URL = "https://preprod.mygenie.online/api/v2"
+# POS API Configuration (from environment)
+POS_API_BASE_URL = os.environ.get('POS_API_BASE_URL')
+POS_API_V2_URL = os.environ.get('POS_API_V2_URL')
 
 # Cache for menu data (token comes from user now)
 menu_cache = {"data": None, "expires": None, "token": None}
@@ -469,9 +469,9 @@ async def get_tables(authorization: Optional[str] = Header(None)):
     return {"tables": tables, "source": "pos"}
 
 
-# POS restaurant config - Hyatt Candolim
-POS_RESTAURANT_ID = "401"
-POS_RESTAURANT_NAME = "Hyatt"
+# POS restaurant config (from environment)
+POS_RESTAURANT_ID = os.environ.get('POS_RESTAURANT_ID')
+POS_RESTAURANT_NAME = os.environ.get('POS_RESTAURANT_NAME')
 
 
 async def send_order_to_pos(order: Order, order_input: OrderCreate, token: str) -> dict:
