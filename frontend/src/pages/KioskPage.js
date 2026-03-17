@@ -320,9 +320,7 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
           <CheckCircle size={100} className="portrait:w-20 portrait:h-20 landscape:w-[120px] landscape:h-[120px] text-blue-medium mx-auto mb-6" />
         </motion.div>
         
-        <h1 className="text-3xl portrait:text-3xl landscape:text-5xl font-heading font-bold mb-4 text-blue-dark uppercase tracking-wide">Order Confirmed!</h1>
-        <p className="text-lg portrait:text-lg landscape:text-xl text-muted-foreground mb-2">Table Number: {tableNumber}</p>
-        <p className="text-base portrait:text-base landscape:text-lg text-muted-foreground mb-8">Order ID: {orderId?.slice(0, 8).toUpperCase()}</p>
+        <h1 className="text-3xl portrait:text-3xl landscape:text-5xl font-heading font-bold mb-8 text-blue-dark uppercase tracking-wide">Order Confirmed!</h1>
         
         <div className="bg-blue-light/20 p-4 portrait:p-4 landscape:p-6 rounded-sm mb-8 max-w-md mx-auto border border-blue-hero/30">
           <p className="text-base portrait:text-base landscape:text-lg font-medium">Your order has been sent to the kitchen</p>
