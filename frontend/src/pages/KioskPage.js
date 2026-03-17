@@ -144,25 +144,20 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-end portrait:items-end landscape:items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 flex items-start portrait:items-start landscape:items-center justify-center z-50"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: isPortrait ? 1 : 0.9, y: isPortrait ? '100%' : 0, opacity: isPortrait ? 1 : 0 }}
+        initial={{ scale: isPortrait ? 1 : 0.9, y: isPortrait ? '-100%' : 0, opacity: isPortrait ? 1 : 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
-        exit={{ scale: isPortrait ? 1 : 0.9, y: isPortrait ? '100%' : 0, opacity: isPortrait ? 1 : 0 }}
+        exit={{ scale: isPortrait ? 1 : 0.9, y: isPortrait ? '-100%' : 0, opacity: isPortrait ? 1 : 0 }}
         className={`bg-white overflow-hidden flex flex-col ${
           isPortrait 
-            ? 'w-full max-h-[90vh] rounded-t-2xl' 
+            ? 'w-full max-h-[90vh] mt-16 rounded-b-2xl' 
             : 'rounded-sm max-w-lg w-full max-h-[85vh] mx-4'
         }`}
         onClick={e => e.stopPropagation()}
       >
-        {isPortrait && (
-          <div className="flex justify-center py-2">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
-          </div>
-        )}
         
         <div className={`p-4 portrait:p-4 landscape:p-6 border-b border-border flex justify-between items-start`}>
           <div>
