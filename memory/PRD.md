@@ -23,9 +23,9 @@ Convert an existing React web kiosk self-ordering application into a native Andr
 - **NEW: Sidebar navigation links** (Menu Settings + Timing buttons above Sound/Logout)
 - **NEW: Order confirmation shows estimated prep time** based on current time matching active shift
 - **NEW: Optional Tables** — restaurants with no tables skip table selection; success screen shows token number (last 3 digits of order ID)
-- **SECURITY: Password no longer stored in localStorage** — sessionStorage only, legacy cleanup on login
+- **NEW: Admin mode toggle** — tap logo to show/hide admin controls (Menu Settings, Timing, Sound, Logout). Hidden by default in kiosk mode.
 - **SECURITY: Hardcoded secrets moved to backend/.env** — POS API URLs + restaurant config
-- Admin Settings supports re-entry from sidebar with Back/Cancel buttons
+- **SECURITY: Password no longer stored in localStorage** — sessionStorage only, legacy cleanup on login
 - Kiosk page with full ordering flow (landscape + portrait)
 - Table selector, cart, order placement
 - Updated empty cart text: "Ready to order? / Select items from the menu to begin"

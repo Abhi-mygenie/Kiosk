@@ -624,6 +624,7 @@ const KioskPage = ({ onNavigate }) => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [editingInstructions, setEditingInstructions] = useState(null);
+  const [isAdminMode, setIsAdminMode] = useState(false);
 
   const authAxios = useMemo(() => createAuthAxios(user?.token), [user?.token]);
   const [tablesLoading, setTablesLoading] = useState(false);
@@ -925,7 +926,9 @@ const KioskPage = ({ onNavigate }) => {
             <img 
               src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
               alt="Hyatt Centric" 
-              className="h-9 object-contain"
+              className="h-9 object-contain cursor-pointer"
+              onClick={() => setIsAdminMode(prev => !prev)}
+              data-testid="admin-toggle-portrait"
             />
             <div className="flex items-center gap-2">
               {/* Table indicator in header - only when restaurant has tables */}
@@ -939,29 +942,33 @@ const KioskPage = ({ onNavigate }) => {
                   <span className="text-sm font-bold">{tableNumber}</span>
                 </button>
               )}
-              <button
-                onClick={() => { touchSound.playClick(); onNavigate?.('menuSettings'); }}
-                data-testid="portrait-menu-settings"
-                className="p-2 rounded-sm bg-muted hover:bg-muted/80"
-              >
-                <Settings size={18} />
-              </button>
-              <button
-                onClick={() => { touchSound.playClick(); onNavigate?.('timingSettings'); }}
-                data-testid="portrait-timing-settings"
-                className="p-2 rounded-sm bg-muted hover:bg-muted/80"
-              >
-                <Clock size={18} />
-              </button>
-              <button onClick={toggleSound} className="p-2 rounded-sm bg-muted hover:bg-muted/80">
-                {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-              </button>
-              <button
-                onClick={() => { touchSound.playClick(); setShowLogoutConfirm(true); }}
-                className="p-2 rounded-sm bg-red-50 text-red-600 hover:bg-red-100"
-              >
-                <LogOut size={18} />
-              </button>
+              {isAdminMode && (
+                <>
+                  <button
+                    onClick={() => { touchSound.playClick(); onNavigate?.('menuSettings'); }}
+                    data-testid="portrait-menu-settings"
+                    className="p-2 rounded-sm bg-muted hover:bg-muted/80"
+                  >
+                    <Settings size={18} />
+                  </button>
+                  <button
+                    onClick={() => { touchSound.playClick(); onNavigate?.('timingSettings'); }}
+                    data-testid="portrait-timing-settings"
+                    className="p-2 rounded-sm bg-muted hover:bg-muted/80"
+                  >
+                    <Clock size={18} />
+                  </button>
+                  <button onClick={toggleSound} className="p-2 rounded-sm bg-muted hover:bg-muted/80">
+                    {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+                  </button>
+                  <button
+                    onClick={() => { touchSound.playClick(); setShowLogoutConfirm(true); }}
+                    className="p-2 rounded-sm bg-red-50 text-red-600 hover:bg-red-100"
+                  >
+                    <LogOut size={18} />
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -1080,7 +1087,9 @@ const KioskPage = ({ onNavigate }) => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
                 alt="Hyatt Centric" 
-                className="w-full h-auto max-h-20 object-contain"
+                className="w-full h-auto max-h-20 object-contain cursor-pointer"
+                onClick={() => setIsAdminMode(prev => !prev)}
+                data-testid="admin-toggle-landscape"
               />
               <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest text-center">Breakfast Buffet</p>
             </div>
@@ -1100,35 +1109,37 @@ const KioskPage = ({ onNavigate }) => {
                 </button>
               ))}
             </nav>
-            <div className="p-4 border-t border-border space-y-2">
-              <button
-                onClick={() => { touchSound.playClick(); onNavigate?.('menuSettings'); }}
-                data-testid="sidebar-menu-settings"
-                className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80"
-              >
-                <Settings size={20} />
-                <span className="text-sm">Menu Settings</span>
-              </button>
-              <button
-                onClick={() => { touchSound.playClick(); onNavigate?.('timingSettings'); }}
-                data-testid="sidebar-timing-settings"
-                className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80"
-              >
-                <Clock size={20} />
-                <span className="text-sm">Timing</span>
-              </button>
-              <button onClick={toggleSound} className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80">
-                {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
-                <span className="text-sm">{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
-              </button>
-              <button
-                onClick={() => { touchSound.playClick(); setShowLogoutConfirm(true); }}
-                className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-red-50 text-red-600 hover:bg-red-100"
-              >
-                <LogOut size={20} />
-                <span className="text-sm font-medium">Logout</span>
-              </button>
-            </div>
+            {isAdminMode && (
+              <div className="p-4 border-t border-border space-y-2">
+                <button
+                  onClick={() => { touchSound.playClick(); onNavigate?.('menuSettings'); }}
+                  data-testid="sidebar-menu-settings"
+                  className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80"
+                >
+                  <Settings size={20} />
+                  <span className="text-sm">Menu Settings</span>
+                </button>
+                <button
+                  onClick={() => { touchSound.playClick(); onNavigate?.('timingSettings'); }}
+                  data-testid="sidebar-timing-settings"
+                  className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80"
+                >
+                  <Clock size={20} />
+                  <span className="text-sm">Timing</span>
+                </button>
+                <button onClick={toggleSound} className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80">
+                  {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+                  <span className="text-sm">{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
+                </button>
+                <button
+                  onClick={() => { touchSound.playClick(); setShowLogoutConfirm(true); }}
+                  className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-red-50 text-red-600 hover:bg-red-100"
+                >
+                  <LogOut size={20} />
+                  <span className="text-sm font-medium">Logout</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* MIDDLE: Menu Items */}
