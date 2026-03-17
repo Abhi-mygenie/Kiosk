@@ -91,7 +91,7 @@ Change in `android/app/build.gradle`
 
 Use your POS credentials to login. The app connects to:
 ```
-https://kiosk-android-dev.preview.emergentagent.com/api
+https://admin-hub-212.preview.emergentagent.com/api
 ```
 
 ## Building for Production
