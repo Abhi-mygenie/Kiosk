@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 
-const Header = ({ tableNumber, onTablePress, onLogoutPress }) => {
+const Header = ({ tableNumber, onTablePress, onLogoutPress, onMenuSettingsPress, onTimingPress }) => {
   return (
     <View style={styles.header}>
       <Image
@@ -23,8 +23,16 @@ const Header = ({ tableNumber, onTablePress, onLogoutPress }) => {
           </TouchableOpacity>
         )}
 
+        <TouchableOpacity style={styles.settingsButton} onPress={onMenuSettingsPress}>
+          <Text style={styles.settingsIcon}>&#9881;</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingsButton} onPress={onTimingPress}>
+          <Text style={styles.settingsIcon}>&#128339;</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.logoutButton} onPress={onLogoutPress}>
-          <Text style={styles.logoutText}>←</Text>
+          <Text style={styles.logoutText}>&#8592;</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -83,6 +91,17 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: 18,
     color: colors.error,
+  },
+  settingsButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingsIcon: {
+    fontSize: 16,
   },
 });
 

@@ -10,6 +10,7 @@ import { AuthProvider } from './src/contexts/AuthContext';
 import { CartProvider } from './src/contexts/CartContext';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { MenuSettingsProvider } from './src/contexts/MenuSettingsContext';
+import { TimingSettingsProvider } from './src/contexts/TimingSettingsContext';
 
 // Navigation
 import AppNavigator from './src/navigation/AppNavigator';
@@ -30,15 +31,17 @@ const App = () => {
         <AuthProvider>
           <ThemeProvider>
             <MenuSettingsProvider>
-              <CartProvider>
-                <StatusBar
-                  barStyle="dark-content"
-                  backgroundColor={colors.background}
-                  hidden={true}
-                />
-                <AppNavigator />
-                <Toast />
-              </CartProvider>
+              <TimingSettingsProvider>
+                <CartProvider>
+                  <StatusBar
+                    barStyle="dark-content"
+                    backgroundColor={colors.background}
+                    hidden={true}
+                  />
+                  <AppNavigator />
+                  <Toast />
+                </CartProvider>
+              </TimingSettingsProvider>
             </MenuSettingsProvider>
           </ThemeProvider>
         </AuthProvider>

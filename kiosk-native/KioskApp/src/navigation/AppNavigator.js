@@ -9,6 +9,7 @@ import { useMenuSettings } from '../contexts/MenuSettingsContext';
 import LoginScreen from '../pages/LoginScreen';
 import KioskScreen from '../pages/KioskScreen';
 import AdminSettingsScreen from '../pages/AdminSettingsScreen';
+import TimingSettingsScreen from '../pages/TimingSettingsScreen';
 import LoadingScreen from '../pages/LoadingScreen';
 
 const Stack = createStackNavigator();
@@ -33,7 +34,11 @@ const AppNavigator = () => {
         ) : !settingsComplete ? (
           <Stack.Screen name="AdminSettings" component={AdminSettingsScreen} />
         ) : (
-          <Stack.Screen name="Kiosk" component={KioskScreen} />
+          <>
+            <Stack.Screen name="Kiosk" component={KioskScreen} />
+            <Stack.Screen name="MenuSettings" component={AdminSettingsScreen} />
+            <Stack.Screen name="TimingSettings" component={TimingSettingsScreen} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Eye, EyeOff, ChevronDown, ChevronUp, SkipForward, Save, RotateCcw } from 'lucide-react';
+import { GripVertical, Eye, EyeOff, ChevronDown, ChevronUp, SkipForward, Save, RotateCcw, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMenuSettings } from '@/contexts/MenuSettingsContext';
 
@@ -216,7 +216,7 @@ const SortableCategory = ({
   );
 };
 
-const AdminSettingsPage = () => {
+const AdminSettingsPage = ({ onBack }) => {
   const { menuData } = useAuth();
   const { settings, saveSettings, skipSettings, clearSettings } = useMenuSettings();
 
@@ -338,6 +338,15 @@ const AdminSettingsPage = () => {
       {/* Header */}
       <div className="bg-white border-b border-border px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
+          {onBack && (
+            <button
+              onClick={onBack}
+              data-testid="admin-back-btn"
+              className="p-2 rounded-sm hover:bg-muted transition-all text-muted-foreground"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          )}
           <img
             src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png"
             alt="Logo"
@@ -351,16 +360,26 @@ const AdminSettingsPage = () => {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {onBack ? (
+            <button
+              onClick={onBack}
+              data-testid="admin-cancel-btn"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-sm border border-border text-muted-foreground hover:bg-muted transition-all font-semibold text-sm"
+            >
+              Cancel
+            </button>
+          ) : (
+            <button
+              onClick={handleSkip}
+              data-testid="skip-settings-btn"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-sm border border-border text-muted-foreground hover:bg-muted transition-all font-semibold text-sm"
+            >
+              <SkipForward size={16} />
+              Skip
+            </button>
+          )}
           <button
-            onClick={handleSkip}
-            data-testid="skip-settings-btn"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-sm border border-border text-muted-foreground hover:bg-muted transition-all font-semibold text-sm"
-          >
-            <SkipForward size={16} />
-            Skip
-          </button>
-          <button
-            onClick={handleSave}
+            onClick={() => { handleSave(); if (onBack) onBack(); }}
             data-testid="save-settings-btn"
             className="flex items-center gap-2 px-5 py-2.5 rounded-sm bg-blue-hero text-white hover:bg-blue-medium transition-all font-semibold text-sm"
           >

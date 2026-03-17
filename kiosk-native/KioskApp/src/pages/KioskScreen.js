@@ -21,6 +21,7 @@ import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 import { normalizePrice, formatCurrencyShort } from '../utils/helpers';
 import { createAuthClient, API_URL } from '../utils/api';
+import { useTimingSettings } from '../contexts/TimingSettingsContext';
 
 // Components
 import MenuItemCard from '../components/MenuItemCard';
@@ -37,10 +38,11 @@ const isLandscape = SCREEN_WIDTH > SCREEN_HEIGHT;
 const CGST_RATE = 2.5;
 const SGST_RATE = 2.5;
 
-const KioskScreen = () => {
+const KioskScreen = ({ navigation }) => {
   const { user, menuData, logout } = useAuth();
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart, getTotal } = useCart();
   const { applySettings, resetComplete } = useMenuSettings();
+  const { getCurrentPrepTime } = useTimingSettings();
 
   // State
   const [activeCategory, setActiveCategory] = useState('all');
@@ -214,6 +216,8 @@ const KioskScreen = () => {
         tableNumber={tableNumber}
         onTablePress={() => setShowTableSelector(true)}
         onLogoutPress={() => setShowLogoutConfirm(true)}
+        onMenuSettingsPress={() => navigation.navigate('MenuSettings', { fromSidebar: true })}
+        onTimingPress={() => navigation.navigate('TimingSettings', { fromSidebar: true })}
       />
 
       {/* Category Pills */}
@@ -295,6 +299,7 @@ const KioskScreen = () => {
           orderId={orderSuccess.id}
           tableNumber={orderSuccess.tableNumber}
           onNewOrder={() => setOrderSuccess(null)}
+          prepTime={getCurrentPrepTime()}
         />
       )}
 

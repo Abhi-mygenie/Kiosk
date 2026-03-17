@@ -120,7 +120,8 @@ const CategoryBlock = ({
   );
 };
 
-const AdminSettingsScreen = () => {
+const AdminSettingsScreen = ({ navigation, route }) => {
+  const fromSidebar = route?.params?.fromSidebar;
   const { menuData } = useAuth();
   const { settings, saveSettings, skipSettings, clearSettings } = useMenuSettings();
 
@@ -257,6 +258,11 @@ const AdminSettingsScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
+          {fromSidebar && (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.skipBtn}>
+              <Text style={styles.skipBtnText}>{'<'}</Text>
+            </TouchableOpacity>
+          )}
           <Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" />
           <View>
             <Text style={styles.headerTitle}>MENU SETTINGS</Text>
@@ -266,10 +272,16 @@ const AdminSettingsScreen = () => {
           </View>
         </View>
         <View style={styles.headerRight}>
-          <TouchableOpacity onPress={handleSkip} style={styles.skipBtn}>
-            <Text style={styles.skipBtnText}>Skip</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
+          {fromSidebar ? (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.skipBtn}>
+              <Text style={styles.skipBtnText}>Cancel</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={handleSkip} style={styles.skipBtn}>
+              <Text style={styles.skipBtnText}>Skip</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity onPress={() => { handleSave(); if (fromSidebar) navigation.goBack(); }} style={styles.saveBtn}>
             <Text style={styles.saveBtnText}>Save & Continue</Text>
           </TouchableOpacity>
         </View>

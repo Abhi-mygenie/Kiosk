@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Minus, Search, X, CheckCircle, Tag, Volume2, VolumeX, LogOut, MessageSquare, ShoppingCart, Info, AlertTriangle, Flame, Scale } from 'lucide-react';
+import { Plus, Minus, Search, X, CheckCircle, Tag, Volume2, VolumeX, LogOut, MessageSquare, ShoppingCart, Info, AlertTriangle, Flame, Scale, Settings, Clock } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMenuSettings } from '@/contexts/MenuSettingsContext';
+import { useTimingSettings } from '@/contexts/TimingSettingsContext';
 import { toast } from 'sonner';
 import touchSound from '@/utils/touchSound';
 import kioskLock from '@/utils/kioskLock';
@@ -281,7 +282,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
 };
 
 // Success Overlay Component
-const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
+const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
   const [countdown, setCountdown] = useState(15);
 
   useEffect(() => {
@@ -325,6 +326,11 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
         
         <div className="bg-blue-light/20 p-4 portrait:p-4 landscape:p-6 rounded-sm mb-8 max-w-md mx-auto border border-blue-hero/30">
           <p className="text-base portrait:text-base landscape:text-lg font-medium">Your order has been sent to the kitchen</p>
+          {prepTime && (
+            <p className="text-blue-hero font-bold mt-2 text-lg portrait:text-lg landscape:text-xl">
+              Estimated prep time: ~{prepTime} minutes
+            </p>
+          )}
           <p className="text-muted-foreground mt-2">Please proceed to Table {tableNumber}</p>
         </div>
         
@@ -587,10 +593,11 @@ const CartSectionLandscape = ({
   );
 };
 
-const KioskPage = () => {
+const KioskPage = ({ onNavigate }) => {
   const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, getTotal, clearCart } = useCart();
   const { logout, user, menuData } = useAuth();
   const { applySettings, resetComplete } = useMenuSettings();
+  const { getCurrentPrepTime } = useTimingSettings();
   const isPortrait = useOrientation();
   
   // Apply admin menu settings (order + visibility) to categories and items
@@ -928,6 +935,20 @@ const KioskPage = () => {
                   <span className="text-sm font-bold">{tableNumber}</span>
                 </button>
               )}
+              <button
+                onClick={() => { touchSound.playClick(); onNavigate?.('menuSettings'); }}
+                data-testid="portrait-menu-settings"
+                className="p-2 rounded-sm bg-muted hover:bg-muted/80"
+              >
+                <Settings size={18} />
+              </button>
+              <button
+                onClick={() => { touchSound.playClick(); onNavigate?.('timingSettings'); }}
+                data-testid="portrait-timing-settings"
+                className="p-2 rounded-sm bg-muted hover:bg-muted/80"
+              >
+                <Clock size={18} />
+              </button>
               <button onClick={toggleSound} className="p-2 rounded-sm bg-muted hover:bg-muted/80">
                 {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
               </button>
@@ -1076,6 +1097,22 @@ const KioskPage = () => {
               ))}
             </nav>
             <div className="p-4 border-t border-border space-y-2">
+              <button
+                onClick={() => { touchSound.playClick(); onNavigate?.('menuSettings'); }}
+                data-testid="sidebar-menu-settings"
+                className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80"
+              >
+                <Settings size={20} />
+                <span className="text-sm">Menu Settings</span>
+              </button>
+              <button
+                onClick={() => { touchSound.playClick(); onNavigate?.('timingSettings'); }}
+                data-testid="sidebar-timing-settings"
+                className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80"
+              >
+                <Clock size={20} />
+                <span className="text-sm">Timing</span>
+              </button>
               <button onClick={toggleSound} className="w-full flex items-center justify-center space-x-2 p-3 rounded-sm bg-muted hover:bg-muted/80">
                 {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
                 <span className="text-sm">{soundEnabled ? 'Sound On' : 'Sound Off'}</span>
@@ -1223,7 +1260,7 @@ const KioskPage = () => {
 
       {/* Success Overlay */}
       <AnimatePresence>
-        {orderSuccess && <SuccessOverlay orderId={orderSuccess.id} tableNumber={orderSuccess.tableNumber} onNewOrder={() => setOrderSuccess(null)} />}
+        {orderSuccess && <SuccessOverlay orderId={orderSuccess.id} tableNumber={orderSuccess.tableNumber} onNewOrder={() => setOrderSuccess(null)} prepTime={getCurrentPrepTime()} />}
       </AnimatePresence>
 
       {/* Logout Confirmation */}

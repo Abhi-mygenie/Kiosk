@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 
-const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
+const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
   const [countdown, setCountdown] = useState(15);
 
   useEffect(() => {
@@ -40,6 +40,9 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder }) => {
           {/* Info Box */}
           <View style={styles.infoBox}>
             <Text style={styles.infoTitle}>Your order has been sent to the kitchen</Text>
+            {prepTime && (
+              <Text style={styles.prepTimeText}>Estimated prep time: ~{prepTime} minutes</Text>
+            )}
             <Text style={styles.infoSubtitle}>Please proceed to Table {tableNumber}</Text>
           </View>
 
@@ -118,6 +121,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.textPrimary,
     textAlign: 'center',
+  },
+  prepTimeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.accent,
+    textAlign: 'center',
+    marginTop: spacing.xs,
   },
   infoSubtitle: {
     fontSize: 14,

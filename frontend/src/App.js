@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { MenuSettingsProvider, useMenuSettings } from '@/contexts/MenuSettingsContext';
+import { TimingSettingsProvider } from '@/contexts/TimingSettingsContext';
 import KioskPage from '@/pages/KioskPage';
 import LoginPage from '@/pages/LoginPage';
 import AdminSettingsPage from '@/pages/AdminSettingsPage';
+import TimingSettingsPage from '@/pages/TimingSettingsPage';
 import '@/App.css';
 
 // Auth-aware app content
 const AppContent = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const { settingsComplete } = useMenuSettings();
+  const [activeView, setActiveView] = useState(null);
 
   // Show loading state while checking auth
   if (isLoading) {
@@ -32,13 +35,21 @@ const AppContent = () => {
     return <LoginPage />;
   }
 
-  // Show admin settings if not yet completed/skipped
+  // Manual navigation from sidebar
+  if (activeView === 'menuSettings') {
+    return <AdminSettingsPage onBack={() => setActiveView(null)} />;
+  }
+  if (activeView === 'timingSettings') {
+    return <TimingSettingsPage onBack={() => setActiveView(null)} />;
+  }
+
+  // Show admin settings if not yet completed/skipped (post-login flow)
   if (!settingsComplete) {
     return <AdminSettingsPage />;
   }
 
   // Show kiosk page if authenticated and settings done
-  return <KioskPage />;
+  return <KioskPage onNavigate={setActiveView} />;
 };
 
 function App() {
@@ -46,12 +57,14 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <MenuSettingsProvider>
-          <CartProvider>
-            <BrowserRouter>
-              <Toaster position="top-center" richColors />
-              <AppContent />
-            </BrowserRouter>
-          </CartProvider>
+          <TimingSettingsProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <Toaster position="top-center" richColors />
+                <AppContent />
+              </BrowserRouter>
+            </CartProvider>
+          </TimingSettingsProvider>
         </MenuSettingsProvider>
       </ThemeProvider>
     </AuthProvider>

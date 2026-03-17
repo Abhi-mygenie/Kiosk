@@ -1,88 +1,93 @@
-# Kiosk Application PRD
+# Kiosk Self-Ordering App - PRD
 
 ## Original Problem Statement
-Pull code from https://github.com/Abhi-mygenie/Kiosk, build it, run the application, and convert it into a React Native Android app. No database is used — the app is a client for the external POS API.
-
-## Target Users
-- Hotel/restaurant staff managing self-ordering kiosks (Hyatt Centric)
-
-## Core Requirements
-1. Self-ordering kiosk web app + native Android app
-2. POS API integration for authentication, menu, orders
-3. Admin settings page for menu customization (ordering, visibility)
-4. Kiosk mode (fullscreen, no back button) on Android
-5. Brand-consistent UI with Hyatt Centric theme
-
-## Tech Stack
-### Web App
-- **Frontend**: React + Tailwind CSS + Shadcn UI
-- **Backend**: FastAPI (proxy to POS API)
-- **State**: Context API + localStorage
-
-### Native App
-- **Framework**: React Native
-- **Navigation**: React Navigation (Stack)
-- **State**: Context API + AsyncStorage
-- **Drag & Drop**: react-native-draggable-flatlist
-- **Build**: Gradle (Android)
-
-## Key API Endpoints
-- **Base URL**: `https://preprod.mygenie.online/api/v1`
-- **Auth**: `POST /auth/vendoremployee/login`
-- **Menu**: `GET /menu/categories`, `GET /menu/items`
-- **Tables**: `GET /tables`
-- **Orders**: `POST /orders`
-
-## Implemented Features (as of March 15, 2026)
-
-### Web App
-- [x] Login with POS credentials
-- [x] Remember Me (localStorage)
-- [x] Admin Settings page (drag & drop reorder + visibility toggles)
-- [x] Menu settings persist across logouts, admin page shows every login
-- [x] Reset to Default clears all saved settings
-- [x] Full kiosk ordering flow (menu, cart, customization, order placement)
-- [x] Table selector popup
-- [x] New Hyatt logo across all pages
-- [x] Watermark removed, title updated
-- [x] Git submodule fix for KioskApp directory
-
-### React Native App
-- [x] All web features ported (login, admin settings, kiosk, cart)
-- [x] Remember Me (AsyncStorage)
-- [x] Admin Settings with draggable categories + visibility toggles
-- [x] MenuSettingsContext with AsyncStorage persistence
-- [x] New logo across all screens
-- [x] Kiosk mode configured in AndroidManifest
-- [x] Custom fonts, app icon, splash screen configured
-- [x] NOT YET BUILT — requires Android SDK/JDK (not in container)
+Convert an existing React web kiosk self-ordering application into a native Android app using React Native, while adding admin features for menu management and operating hours configuration.
 
 ## Architecture
-```
-/app/
-├── frontend/src/          # React web app
-│   ├── pages/             # LoginPage, KioskPage, AdminSettingsPage
-│   ├── contexts/          # AuthContext, CartContext, MenuSettingsContext, ThemeContext
-│   └── components/        # UI components
-├── backend/               # FastAPI server (POS API proxy)
-└── kiosk-native/KioskApp/ # React Native app
-    ├── src/
-    │   ├── pages/         # LoginScreen, KioskScreen, AdminSettingsScreen
-    │   ├── contexts/      # AuthContext, CartContext, MenuSettingsContext, ThemeContext
-    │   ├── components/    # Header, CartSection, MenuItemCard, etc.
-    │   ├── navigation/    # AppNavigator
-    │   └── theme/         # colors, typography, spacing
-    └── android/           # Native Android project
-```
-
-## Backlog / Future Tasks
-- [ ] P0: Build React Native Android APK (needs Android SDK environment)
-- [ ] P1: Debug any RN build failures
-- [ ] P2: Full functional testing of native app
-- [ ] P3: Generate signed release APK
-- [ ] P2: Refactor KioskScreen.js into smaller components
-- [ ] P3: Add "Menu Settings" access from Kiosk page (gear icon)
+- **Web App**: React (`/app/frontend`) - fully functional
+- **Native App**: React Native (`/app/kiosk-native/KioskApp`) - ported, unbuilt
+- **Backend**: FastAPI proxy to POS API (`https://preprod.mygenie.online/api/v1` and `/api/v2`)
+- **Storage**: No database. Client-side persistence via `localStorage` (web) / `AsyncStorage` (native)
+- **External API**: POS API for auth, menu, tables, orders
 
 ## Test Credentials
 - Email: manager@hyattcandolim.com
 - Password: Qplazm@10
+
+## What's Been Implemented
+
+### Web App (Complete & Tested)
+- Login with "Remember Me" functionality
+- Admin Settings page (menu reorder, show/hide categories/items via drag-and-drop)
+- **NEW: Timing Settings page** (operating hours with estimated prep time per slot, max 4 slots)
+- **NEW: Sidebar navigation links** (Menu Settings + Timing buttons above Sound/Logout)
+- **NEW: Order confirmation shows estimated prep time** based on current time matching active shift
+- Admin Settings supports re-entry from sidebar with Back/Cancel buttons
+- Kiosk page with full ordering flow (landscape + portrait)
+- Table selector, cart, order placement
+- Updated empty cart text: "Ready to order? / Select items from the menu to begin"
+
+### React Native App (Ported, Not Built)
+- All web features ported to native equivalents
+- **NEW: TimingSettingsContext.js** - AsyncStorage-based timing persistence
+- **NEW: TimingSettingsScreen.js** - Operating hours config UI
+- **NEW: Header updated** with Menu Settings + Timing buttons
+- **NEW: AppNavigator updated** with MenuSettings + TimingSettings screens
+- **NEW: SuccessOverlay updated** with prep time display
+- **FIX: Removed react-native-splash-screen** (incompatible with RN 0.84 New Architecture)
+- **FIX: Removed react-native-sound** (unused, incompatible)
+- **FIX: Removed react-native-vector-icons** (unused)
+- **FIX: super.onCreate(null)** in MainActivity.kt for react-native-screens compatibility
+
+### Key localStorage Keys
+- `kiosk_menu_settings` - Menu reorder/visibility settings
+- `kiosk_timing_settings` - Operating hours with prep times
+- `kiosk_settings_complete` - Whether settings have been saved/skipped
+- `kiosk_remember_user` / `kiosk_remember_pass` - Remember Me credentials
+- `kiosk_user` - Auth token/user data
+
+## Pending / Upcoming Tasks
+
+### P0: Build React Native Android App
+- Environment needs JDK 17, Android SDK
+- Run `npx react-native run-android` from `/app/kiosk-native/KioskApp`
+- Debug any remaining build failures
+
+### P1: Full Functional Testing (Native App)
+- Test login, admin settings, timing settings, kiosk ordering flow on device
+
+### P2: APK Generation
+- Create signed release APK
+
+## Future / Backlog Tasks
+- **Live Preview**: Add preview panel on Admin Settings to show how menu will look
+- **Refactor KioskScreen**: Break down the 1286-line component into smaller children
+- **Security**: Move password from localStorage to sessionStorage or remove Remember Password
+- **Hardcoding Cleanup**: Move POS API URLs and Restaurant ID/Name to .env
+- **Dead Code Cleanup**: Remove unused CustomizationModal.js, MenuItemCard.js, SidebarNav.js from web components
+
+## Key API Endpoints
+- `POST /api/auth/login` - Authentication
+- `GET /api/menu/categories` - Fetch menu categories
+- `GET /api/menu/items` - Fetch menu items
+- `GET /api/tables` - Fetch table config (calls POS v2 endpoint)
+- `POST /api/orders` - Place order
+
+## File References
+### Web App
+- `/app/frontend/src/pages/TimingSettingsPage.js` - NEW
+- `/app/frontend/src/contexts/TimingSettingsContext.js` - NEW
+- `/app/frontend/src/pages/AdminSettingsPage.js` - Updated (onBack prop)
+- `/app/frontend/src/pages/KioskPage.js` - Updated (sidebar buttons, prep time)
+- `/app/frontend/src/App.js` - Updated (navigation state, TimingSettingsProvider)
+
+### React Native App
+- `/app/kiosk-native/KioskApp/src/pages/TimingSettingsScreen.js` - NEW
+- `/app/kiosk-native/KioskApp/src/contexts/TimingSettingsContext.js` - NEW
+- `/app/kiosk-native/KioskApp/src/components/Header.js` - Updated
+- `/app/kiosk-native/KioskApp/src/components/SuccessOverlay.js` - Updated
+- `/app/kiosk-native/KioskApp/src/pages/KioskScreen.js` - Updated
+- `/app/kiosk-native/KioskApp/src/pages/AdminSettingsScreen.js` - Updated
+- `/app/kiosk-native/KioskApp/src/navigation/AppNavigator.js` - Updated
+- `/app/kiosk-native/KioskApp/App.js` - Updated
+- `/app/kiosk-native/KioskApp/android/app/src/main/java/com/kioskapp/MainActivity.kt` - Fixed
