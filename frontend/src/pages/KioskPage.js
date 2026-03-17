@@ -980,8 +980,8 @@ const KioskPage = ({ onNavigate }) => {
           {/* Sticky Category Pills */}
           <CategoryPills categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
 
-          {/* Scrollable Content: Food Grid + Inline Cart */}
-          <div className="flex-1 overflow-y-auto scrollbar-hide pb-32">
+          {/* Scrollable Content: Food Grid only */}
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
             {/* Food Grid Section */}
             <div className="px-4 pt-3 pb-2">
               {activeCategory === 'all' ? (
@@ -1016,22 +1016,25 @@ const KioskPage = ({ onNavigate }) => {
                 </>
               )}
             </div>
+          </div>
 
-            {/* Inline Cart Section */}
-            <div className="px-4 py-3 mt-2 border-t border-border bg-[#F9F8F6]">
+          {/* Bottom Section: Cart + Place Order (always visible, grows upward) */}
+          <div className="flex-shrink-0 border-t border-border bg-[#F9F8F6]">
+            {/* Cart Section */}
+            <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-lg font-heading font-bold uppercase text-blue-dark">Your Order</h2>
                 <span className="text-sm text-muted-foreground">{cart.length} items</span>
               </div>
 
               {cart.length === 0 ? (
-                <div className="text-center py-6 text-muted-foreground bg-white rounded-sm border border-border">
-                  <ShoppingCart size={32} className="mx-auto mb-2 opacity-30" />
+                <div className="text-center py-4 text-muted-foreground bg-white rounded-sm border border-border">
+                  <ShoppingCart size={28} className="mx-auto mb-1.5 opacity-30" />
                   <p className="font-medium text-sm">Ready to order?</p>
                   <p className="text-xs">Select items from the menu to begin</p>
                 </div>
               ) : (
-                <div>
+                <div className="max-h-[30vh] overflow-y-auto scrollbar-hide">
                   {cart.map((item) => (
                     <InlineCartItem
                       key={item.cartId}
@@ -1043,44 +1046,43 @@ const KioskPage = ({ onNavigate }) => {
                   ))}
                 </div>
               )}
-
             </div>
-          </div>
 
-          {/* Sticky Place Order Button */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 z-40">
-            {/* Show table indicator above button if selected */}
-            {tables.length > 0 && tableNumber && (
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <span className="text-sm text-muted-foreground">Ordering for</span>
-                <span className="text-sm font-bold text-blue-hero">Table {tableNumber}</span>
-                <button
-                  onClick={() => { touchSound.playClick(); setShowTableSelector(true); }}
-                  className="text-xs text-blue-hero underline"
-                >
-                  Change
-                </button>
-              </div>
-            )}
-            <button
-              onClick={() => {
-                if (tables.length > 0 && !tableNumber) {
-                  touchSound.playClick();
-                  setShowTableSelector(true);
-                } else if (cart.length > 0) {
-                  handlePlaceOrder();
-                }
-              }}
-              disabled={cart.length === 0 || isPlacingOrder}
-              data-testid="place-order-button"
-              className={`w-full py-4 rounded-sm text-lg font-semibold transition-all ${
-                cart.length > 0 && !isPlacingOrder
-                  ? 'bg-blue-hero text-white hover:bg-blue-medium'
-                  : 'bg-muted text-muted-foreground cursor-not-allowed'
-              }`}
-            >
-              {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : (tables.length > 0 && !tableNumber) ? 'Select Table to Order' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
-            </button>
+            {/* Place Order Button */}
+            <div className="bg-white border-t border-border p-4">
+              {/* Show table indicator above button if selected */}
+              {tables.length > 0 && tableNumber && (
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-sm text-muted-foreground">Ordering for</span>
+                  <span className="text-sm font-bold text-blue-hero">Table {tableNumber}</span>
+                  <button
+                    onClick={() => { touchSound.playClick(); setShowTableSelector(true); }}
+                    className="text-xs text-blue-hero underline"
+                  >
+                    Change
+                  </button>
+                </div>
+              )}
+              <button
+                onClick={() => {
+                  if (tables.length > 0 && !tableNumber) {
+                    touchSound.playClick();
+                    setShowTableSelector(true);
+                  } else if (cart.length > 0) {
+                    handlePlaceOrder();
+                  }
+                }}
+                disabled={cart.length === 0 || isPlacingOrder}
+                data-testid="place-order-button"
+                className={`w-full py-4 rounded-sm text-lg font-semibold transition-all ${
+                  cart.length > 0 && !isPlacingOrder
+                    ? 'bg-blue-hero text-white hover:bg-blue-medium'
+                    : 'bg-muted text-muted-foreground cursor-not-allowed'
+                }`}
+              >
+                {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : (tables.length > 0 && !tableNumber) ? 'Select Table to Order' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
+              </button>
+            </div>
           </div>
         </>
       ) : (
