@@ -172,7 +172,7 @@ const KioskPage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[#F9F8F6]">
+    <div className="h-screen flex flex-col overflow-hidden bg-background">
       {/* ==================== PORTRAIT LAYOUT ==================== */}
       {isPortrait ? (
         <>
@@ -243,7 +243,7 @@ const KioskPage = ({ onNavigate }) => {
           </div>
 
           {/* Bottom: Cart + Place Order */}
-          <div className="flex-shrink-0 border-t border-border bg-[#F9F8F6]">
+          <div className="flex-shrink-0 border-t border-border bg-background">
             <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-lg font-heading font-bold uppercase text-blue-dark">Your Order</h2>

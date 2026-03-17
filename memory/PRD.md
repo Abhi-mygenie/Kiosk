@@ -77,6 +77,11 @@ Extracted 3 new components:
 - `/kiosk-native/.../components/EditInstructionsModal.js` - Bottom-sheet cooking instructions editor
 - `/kiosk-native/.../components/MenuGrid.js` - FlatList wrapper for menu items (5-column grid)
 
+### Styling Consistency Fix (Mar 17, 2026)
+- Updated CSS variable `--background` from `0 0% 98%` (#FAFAFA) to `40 20% 97%` (#F9F8F6) to match the warm off-white used throughout
+- Replaced all 9 hardcoded `bg-[#F9F8F6]` instances across App.js, KioskPage, LoginPage, AdminSettingsPage, TimingSettingsPage with `bg-background`
+- Single source of truth: all background colors now controlled via `--background` CSS variable
+
 ## Pending / Upcoming Tasks
 
 ### P0: Build React Native Android App

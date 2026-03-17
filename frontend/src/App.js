@@ -21,7 +21,7 @@ const AppContent = () => {
   // Show loading state while checking auth
   if (isLoading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#F9F8F6]">
+      <div className="h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-accent/30 border-t-accent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-lg font-serif text-muted-foreground">Loading...</p>

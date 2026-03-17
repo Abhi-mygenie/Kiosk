@@ -25,7 +25,7 @@ const LoadingOverlay = ({ loginProgress }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-[#F9F8F6] z-50 flex flex-col items-center justify-center"
+      className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center"
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
@@ -149,7 +149,7 @@ const LoginPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-[#F9F8F6] flex flex-col items-center justify-center p-4 portrait:p-4 landscape:p-8 overflow-auto">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 portrait:p-4 landscape:p-8 overflow-auto">
         {/* Main Content */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

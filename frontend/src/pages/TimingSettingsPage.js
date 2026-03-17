@@ -46,7 +46,7 @@ const TimingSettingsPage = ({ onBack }) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#F9F8F6]" data-testid="timing-settings-page">
+    <div className="h-screen flex flex-col bg-background" data-testid="timing-settings-page">
       {/* Header */}
       <div className="bg-white border-b border-border px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
@@ -130,7 +130,7 @@ const TimingSettingsPage = ({ onBack }) => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="grid grid-cols-[80px_1fr_1fr_120px_40px] gap-3 items-center bg-[#F9F8F6] rounded-sm p-3 border border-border"
+                  className="grid grid-cols-[80px_1fr_1fr_120px_40px] gap-3 items-center bg-background rounded-sm p-3 border border-border"
                   data-testid={`timing-slot-${index}`}
                 >
                   <span className="text-sm font-heading font-bold text-blue-dark">Slot {index + 1}</span>

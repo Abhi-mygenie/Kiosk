@@ -187,7 +187,7 @@ const SortableCategory = ({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-3 py-2 bg-[#F9F8F6]">
+            <div className="px-3 py-2 bg-background">
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -332,7 +332,7 @@ const AdminSettingsPage = ({ onBack }) => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#F9F8F6]" data-testid="admin-settings-page">
+    <div className="h-screen flex flex-col bg-background" data-testid="admin-settings-page">
       {/* Header */}
       <div className="bg-white border-b border-border px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
