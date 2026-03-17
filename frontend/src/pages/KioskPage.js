@@ -994,7 +994,7 @@ const KioskPage = ({ onNavigate }) => {
                       <h2 className="text-base font-heading font-bold uppercase text-blue-dark mb-2 pb-1 border-b border-border">
                         {category.name}
                       </h2>
-                      <div className="grid grid-cols-4 gap-2">
+                      <div className="grid grid-cols-5 gap-2">
                         {categoryItems.map((item) => (
                           <PortraitMenuCard key={item.id} item={item} />
                         ))}
@@ -1008,7 +1008,7 @@ const KioskPage = ({ onNavigate }) => {
                   <h2 className="text-lg font-heading font-bold uppercase text-blue-dark mb-3">
                     {categories.find(c => c.id === activeCategory)?.name || 'MENU'}
                   </h2>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-5 gap-2">
                     {filteredItems.map((item) => (
                       <PortraitMenuCard key={item.id} item={item} />
                     ))}
