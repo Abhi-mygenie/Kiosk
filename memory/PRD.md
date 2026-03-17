@@ -59,12 +59,17 @@ Convert an existing React web kiosk self-ordering application into a native Andr
 ### P2: APK Generation
 - Create signed release APK
 
+## Completed Security Fixes (Feb 2026)
+- **Password Storage**: Removed plaintext password from `localStorage`. Username remembered via `localStorage`, password stored in `sessionStorage` (cleared on browser close). Legacy `kiosk_remember_pass` key actively cleaned up on login.
+- **Hardcoded Secrets**: Moved POS API URLs (`POS_API_BASE_URL`, `POS_API_V2_URL`) and restaurant config (`POS_RESTAURANT_ID`, `POS_RESTAURANT_NAME`) from `server.py` to `backend/.env`.
+- **Native App Fix**: Ported item ordering fix to React Native `MenuSettingsContext.js`.
+
 ## Future / Backlog Tasks
-- **Live Preview**: Add preview panel on Admin Settings to show how menu will look
-- **Refactor KioskScreen**: Break down the 1286-line component into smaller children
-- **Security**: Move password from localStorage to sessionStorage or remove Remember Password
-- **Hardcoding Cleanup**: Move POS API URLs and Restaurant ID/Name to .env
+- **Refactor KioskPage.js**: Break down the 1286-line component into smaller children
+- **Refactor KioskScreen.js (Native)**: Break down the large native screen component
 - **Dead Code Cleanup**: Remove unused CustomizationModal.js, MenuItemCard.js, SidebarNav.js from web components
+- **Styling Consistency**: Unify `bg-[#F9F8F6]` vs theme `bg-background`
+- **Live Preview**: Add preview panel on Admin Settings to show how menu will look
 
 ## Key API Endpoints
 - `POST /api/auth/login` - Authentication
