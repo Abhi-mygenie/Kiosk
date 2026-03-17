@@ -252,7 +252,7 @@ const AdminSettingsPage = ({ onBack }) => {
     () => settings?.hiddenItems || []
   );
   const [expandedCategories, setExpandedCategories] = useState(
-    () => new Set(menuData.categories.map(c => c.id))
+    () => new Set()
   );
 
   const categoriesMap = useMemo(() => {
@@ -297,10 +297,8 @@ const AdminSettingsPage = ({ onBack }) => {
 
   const toggleExpand = (catId) => {
     setExpandedCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(catId)) next.delete(catId);
-      else next.add(catId);
-      return next;
+      if (prev.has(catId)) return new Set();
+      return new Set([catId]);
     });
   };
 
