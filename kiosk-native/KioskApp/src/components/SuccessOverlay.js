@@ -6,6 +6,7 @@ import { spacing } from '../theme/spacing';
 
 const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
   const [countdown, setCountdown] = useState(15);
+  const tokenNumber = orderId ? String(orderId).slice(-3) : '---';
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,18 +33,24 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
           </View>
 
           <Text style={styles.title}>ORDER CONFIRMED!</Text>
-          <Text style={styles.tableText}>Table Number: {tableNumber}</Text>
-          <Text style={styles.orderIdText}>
-            Order ID: {orderId?.slice(0, 8).toUpperCase()}
-          </Text>
 
           {/* Info Box */}
           <View style={styles.infoBox}>
-            <Text style={styles.infoTitle}>Your order has been sent to the kitchen</Text>
+            <Text style={styles.infoTitle}>
+              We are <Text style={styles.preparingText}>Preparing</Text> your order
+            </Text>
             {prepTime && (
               <Text style={styles.prepTimeText}>Estimated prep time: ~{prepTime} minutes</Text>
             )}
-            <Text style={styles.infoSubtitle}>Please proceed to Table {tableNumber}</Text>
+            {tableNumber ? (
+              <Text style={styles.infoSubtitle}>
+                Please proceed to <Text style={styles.highlightText}>Table {tableNumber}</Text>
+              </Text>
+            ) : (
+              <Text style={styles.infoSubtitle} testID="token-number">
+                Your token number: <Text style={styles.tokenText}>{tokenNumber}</Text>
+              </Text>
+            )}
           </View>
 
           {/* Countdown */}
@@ -94,16 +101,6 @@ const styles = StyleSheet.create({
     color: colors.blueDark,
     textTransform: 'uppercase',
     letterSpacing: 2,
-    marginBottom: spacing.base,
-  },
-  tableText: {
-    fontSize: 18,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  orderIdText: {
-    fontSize: 16,
-    color: colors.textMuted,
     marginBottom: spacing.xl,
   },
   infoBox: {
@@ -122,18 +119,33 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     textAlign: 'center',
   },
+  preparingText: {
+    color: colors.blueHero,
+    fontWeight: 'bold',
+  },
   prepTimeText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: colors.accent,
+    color: colors.blueHero,
     textAlign: 'center',
     marginTop: spacing.xs,
   },
   infoSubtitle: {
     fontSize: 14,
-    color: colors.textMuted,
+    color: colors.textPrimary,
     marginTop: spacing.xs,
     textAlign: 'center',
+    fontWeight: '500',
+  },
+  highlightText: {
+    color: colors.blueHero,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  tokenText: {
+    color: colors.blueHero,
+    fontWeight: 'bold',
+    fontSize: 24,
   },
   countdownContainer: {
     marginBottom: spacing.xl,

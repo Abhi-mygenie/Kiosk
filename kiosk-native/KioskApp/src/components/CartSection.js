@@ -17,10 +17,12 @@ const CartSection = ({
   totals,
   tableNumber,
   isPlacingOrder,
+  hasTables,
   onRemoveItem,
   onUpdateQuantity,
   onPlaceOrder,
   onSelectTable,
+  onEditInstructions,
 }) => {
   const { subtotal, cgst, sgst, grandTotal } = totals;
 
@@ -44,14 +46,28 @@ const CartSection = ({
           cart.map(item => (
             <View key={item.cartId} style={styles.cartItem}>
               <View style={styles.itemInfo}>
-                <Text style={styles.itemName} numberOfLines={1}>
-                  {item.name}
-                </Text>
+                <View style={styles.itemNameRow}>
+                  <Text style={styles.itemName} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <TouchableOpacity
+                    style={[styles.instructionsIcon, item.specialInstructions && styles.instructionsIconActive]}
+                    onPress={() => onEditInstructions?.(item)}
+                    testID={`edit-instructions-${item.cartId}`}
+                  >
+                    <Text style={[styles.instructionsIconText, item.specialInstructions && styles.instructionsIconTextActive]}>💬</Text>
+                  </TouchableOpacity>
+                </View>
                 {item.variations?.length > 0 && (
                   <Text style={styles.itemVariations} numberOfLines={1}>
                     {item.variations.join(', ')}
                   </Text>
                 )}
+                {item.specialInstructions ? (
+                  <Text style={styles.itemInstructions} numberOfLines={1}>
+                    "{item.specialInstructions}"
+                  </Text>
+                ) : null}
               </View>
 
               <View style={styles.quantityControls}>
@@ -90,8 +106,8 @@ const CartSection = ({
 
       {/* Footer */}
       <View style={styles.footer}>
-        {/* Table indicator */}
-        {tableNumber && (
+        {/* Table indicator - only when restaurant has tables */}
+        {hasTables && tableNumber ? (
           <View style={styles.tableRow}>
             <View style={styles.tableInfo}>
               <Text style={styles.tableLabel}>Table:</Text>
@@ -101,7 +117,7 @@ const CartSection = ({
               <Text style={styles.changeText}>Change</Text>
             </TouchableOpacity>
           </View>
-        )}
+        ) : null}
 
         {/* Totals */}
         {cart.length > 0 && grandTotal > 0 && (
@@ -132,7 +148,7 @@ const CartSection = ({
             (cart.length === 0 || isPlacingOrder) && styles.placeOrderButtonDisabled,
           ]}
           onPress={() => {
-            if (!tableNumber && cart.length > 0) {
+            if (hasTables && !tableNumber && cart.length > 0) {
               onSelectTable();
             } else {
               onPlaceOrder();
@@ -146,7 +162,7 @@ const CartSection = ({
             <Text style={styles.placeOrderText}>
               {cart.length === 0
                 ? 'Add items'
-                : !tableNumber
+                : hasTables && !tableNumber
                 ? 'Select Table'
                 : grandTotal > 0
                 ? `Place Order • ${formatCurrencyShort(grandTotal)}`
@@ -219,14 +235,40 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: spacing.sm,
   },
+  itemNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   itemName: {
     fontSize: 13,
     fontWeight: '600',
     color: colors.blueDark,
+    flex: 1,
+  },
+  instructionsIcon: {
+    padding: 2,
+    borderRadius: 4,
+  },
+  instructionsIconActive: {
+    backgroundColor: `${colors.blueHero}15`,
+  },
+  instructionsIconText: {
+    fontSize: 12,
+    opacity: 0.4,
+  },
+  instructionsIconTextActive: {
+    opacity: 1,
   },
   itemVariations: {
     fontSize: 11,
     color: colors.blueMedium,
+    marginTop: 2,
+  },
+  itemInstructions: {
+    fontSize: 10,
+    color: colors.textMuted,
+    fontStyle: 'italic',
     marginTop: 2,
   },
   quantityControls: {

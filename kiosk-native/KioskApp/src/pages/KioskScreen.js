@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  TextInput,
+  Modal,
   Dimensions,
   Alert,
 } from 'react-native';
@@ -40,7 +42,7 @@ const SGST_RATE = 2.5;
 
 const KioskScreen = ({ navigation }) => {
   const { user, menuData, logout } = useAuth();
-  const { cart, addToCart, removeFromCart, updateQuantity, clearCart, getTotal } = useCart();
+  const { cart, addToCart, removeFromCart, updateQuantity, updateInstructions, clearCart, getTotal } = useCart();
   const { applySettings, resetComplete } = useMenuSettings();
   const { getCurrentPrepTime } = useTimingSettings();
 
@@ -53,6 +55,8 @@ const KioskScreen = ({ navigation }) => {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [editingInstructions, setEditingInstructions] = useState(null);
 
   // Apply admin menu settings (order + visibility)
   const { categories: settingsCategories, menuItems: settingsMenuItems } = applySettings(
@@ -123,7 +127,9 @@ const KioskScreen = ({ navigation }) => {
 
   // Handle place order
   const handlePlaceOrder = async () => {
-    if (!tableNumber || cart.length === 0) return;
+    if (cart.length === 0) return;
+    // If tables exist but none selected, don't proceed
+    if (tables.length > 0 && !tableNumber) return;
 
     setIsPlacingOrder(true);
     try {
@@ -131,7 +137,7 @@ const KioskScreen = ({ navigation }) => {
       const authAxios = createAuthClient(user.token);
 
       const orderData = {
-        table_number: tableNumber,
+        table_number: tableNumber || '',
         table_id: selectedTableId || null,
         items: cart.map(item => ({
           item_id: item.id,
@@ -214,6 +220,9 @@ const KioskScreen = ({ navigation }) => {
       {/* Header */}
       <Header
         tableNumber={tableNumber}
+        hasTables={tables.length > 0}
+        isAdminMode={isAdminMode}
+        onAdminToggle={() => setIsAdminMode(prev => !prev)}
         onTablePress={() => setShowTableSelector(true)}
         onLogoutPress={() => setShowLogoutConfirm(true)}
         onMenuSettingsPress={() => navigation.navigate('MenuSettings', { fromSidebar: true })}
@@ -266,10 +275,12 @@ const KioskScreen = ({ navigation }) => {
           totals={calculateTotals}
           tableNumber={tableNumber}
           isPlacingOrder={isPlacingOrder}
+          hasTables={tables.length > 0}
           onRemoveItem={removeFromCart}
           onUpdateQuantity={updateQuantity}
           onPlaceOrder={handlePlaceOrder}
           onSelectTable={() => setShowTableSelector(true)}
+          onEditInstructions={setEditingInstructions}
         />
       </View>
 
@@ -321,6 +332,45 @@ const KioskScreen = ({ navigation }) => {
             </View>
           </View>
         </View>
+      )}
+
+      {/* Edit Instructions Modal */}
+      {editingInstructions && (
+        <Modal visible={true} transparent animationType="slide">
+          <TouchableOpacity
+            style={[styles.modalOverlay, { justifyContent: 'flex-end' }]}
+            activeOpacity={1}
+            onPress={() => setEditingInstructions(null)}>
+            <TouchableOpacity activeOpacity={1} style={styles.instructionsModal}>
+              <View style={styles.instructionsHandle} />
+              <View style={styles.instructionsHeader}>
+                <View>
+                  <Text style={styles.instructionsTitle}>COOKING INSTRUCTIONS</Text>
+                  <Text style={styles.instructionsItemName}>{editingInstructions.name}</Text>
+                </View>
+                <TouchableOpacity onPress={() => setEditingInstructions(null)} style={styles.instructionsClose}>
+                  <Text style={styles.instructionsCloseText}>×</Text>
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.instructionsInput}
+                placeholder="E.g., Less spicy, No onions..."
+                placeholderTextColor={colors.textMuted}
+                value={editingInstructions.specialInstructions || ''}
+                onChangeText={(val) => {
+                  updateInstructions(editingInstructions.cartId, val);
+                  setEditingInstructions({ ...editingInstructions, specialInstructions: val });
+                }}
+                multiline
+                maxLength={200}
+              />
+              <Text style={styles.instructionsCount}>{(editingInstructions.specialInstructions || '').length}/200</Text>
+              <TouchableOpacity style={styles.instructionsDone} onPress={() => setEditingInstructions(null)}>
+                <Text style={styles.instructionsDoneText}>Done</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </Modal>
       )}
     </SafeAreaView>
   );
@@ -411,6 +461,79 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     fontSize: 14,
+    fontWeight: '600',
+    color: colors.white,
+  },
+  instructionsModal: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: spacing.lg,
+    width: '100%',
+  },
+  instructionsHandle: {
+    width: 48,
+    height: 6,
+    backgroundColor: colors.border,
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginBottom: spacing.sm,
+  },
+  instructionsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: spacing.base,
+  },
+  instructionsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.blueDark,
+    textTransform: 'uppercase',
+  },
+  instructionsItemName: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  instructionsClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: colors.muted,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  instructionsCloseText: {
+    fontSize: 20,
+    color: colors.textPrimary,
+  },
+  instructionsInput: {
+    backgroundColor: colors.muted,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.md,
+    minHeight: 96,
+    textAlignVertical: 'top',
+    fontSize: 14,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  instructionsCount: {
+    fontSize: 11,
+    color: colors.textMuted,
+    textAlign: 'right',
+    marginBottom: spacing.base,
+  },
+  instructionsDone: {
+    backgroundColor: colors.blueHero,
+    borderRadius: 8,
+    paddingVertical: spacing.base,
+    alignItems: 'center',
+  },
+  instructionsDoneText: {
+    fontSize: 16,
     fontWeight: '600',
     color: colors.white,
   },

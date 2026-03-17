@@ -42,7 +42,7 @@ Extracted 10 components + 1 hook + 1 utility module:
 - `/app/frontend/src/components/kiosk/LandscapeMenuCard.js` - Menu item card (landscape mode)
 - `/app/frontend/src/components/kiosk/TableSelector.js` - Table selection modal
 - `/app/frontend/src/components/kiosk/LogoutConfirmModal.js` - Logout confirmation dialog
-- `/app/frontend/src/components/kiosk/EditInstructionsModal.js` - Edit cooking instructions modal
+- `/app/frontend/src/components/kiosk/EditInstructionsModal.js` - Edit cooking instructions modal (with visualViewport keyboard fix)
 - `/app/frontend/src/hooks/useOrientation.js` - Portrait/landscape detection hook
 - `/app/frontend/src/utils/kioskHelpers.js` - Shared utilities (normalizePrice, createAuthAxios)
 
@@ -50,6 +50,11 @@ Dead code removed:
 - `/app/frontend/src/components/layout/SidebarNav.js` (deleted)
 - `/app/frontend/src/components/menu/CustomizationModal.js` (deleted)
 - `/app/frontend/src/components/menu/MenuItemCard.js` (deleted)
+
+### React Native Parity - 3 Critical Gaps Fixed (Mar 17, 2026)
+1. **No-Tables Flow**: KioskScreen, SuccessOverlay, CartSection now handle restaurants without tables (shows token number instead of table)
+2. **Admin Toggle**: Header.js now has lock/unlock icon to show/hide admin controls (Menu Settings, Timing, Logout)
+3. **Edit Cooking Instructions**: CartSection has edit icon on each cart item; KioskScreen has new modal for editing instructions
 
 ### React Native App (Ported, Not Built)
 - All web features ported to native equivalents
@@ -71,12 +76,16 @@ Dead code removed:
 - Run `npx react-native run-android` from `/app/kiosk-native/KioskApp`
 - Debug any remaining build failures
 
-### P1: Refactor KioskScreen.js (Native)
-- Mirror the web app refactor for the native equivalent
+### P1: Security Fix - Native Password Storage
+- `LoginScreen.js` still stores plaintext password in AsyncStorage via "Remember Me"
+- Needs to only store username (matching web app fix)
 
 ### P2: Styling Consistency
 - Unify `bg-[#F9F8F6]` vs theme `bg-background` across all pages
 
 ## Future / Backlog Tasks
+- Refactor `KioskScreen.js` (Native) into smaller components
 - Live Preview panel on Admin Settings page
 - APK generation (signed release build)
+- Native "All" view: remove category headers for continuous scroll (match web)
+- Native grid: change to 5 columns in portrait (match web)

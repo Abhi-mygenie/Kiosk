@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 
-const Header = ({ tableNumber, onTablePress, onLogoutPress, onMenuSettingsPress, onTimingPress }) => {
+const Header = ({ tableNumber, hasTables, isAdminMode, onAdminToggle, onTablePress, onLogoutPress, onMenuSettingsPress, onTimingPress }) => {
   return (
     <View style={styles.header}>
       <Image
@@ -16,23 +16,31 @@ const Header = ({ tableNumber, onTablePress, onLogoutPress, onMenuSettingsPress,
       />
 
       <View style={styles.rightSection}>
-        {tableNumber && (
-          <TouchableOpacity style={styles.tableIndicator} onPress={onTablePress}>
+        {hasTables && tableNumber ? (
+          <TouchableOpacity style={styles.tableIndicator} onPress={onTablePress} testID="header-table-indicator">
             <Text style={styles.tableLabel}>Table</Text>
             <Text style={styles.tableNumber}>{tableNumber}</Text>
           </TouchableOpacity>
+        ) : null}
+
+        {isAdminMode && (
+          <>
+            <TouchableOpacity style={styles.settingsButton} onPress={onMenuSettingsPress} testID="header-menu-settings">
+              <Text style={styles.settingsIcon}>&#9881;</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.settingsButton} onPress={onTimingPress} testID="header-timing-settings">
+              <Text style={styles.settingsIcon}>&#128339;</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.logoutButton} onPress={onLogoutPress} testID="header-logout">
+              <Text style={styles.logoutText}>&#8592;</Text>
+            </TouchableOpacity>
+          </>
         )}
 
-        <TouchableOpacity style={styles.settingsButton} onPress={onMenuSettingsPress}>
-          <Text style={styles.settingsIcon}>&#9881;</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingsButton} onPress={onTimingPress}>
-          <Text style={styles.settingsIcon}>&#128339;</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={onLogoutPress}>
-          <Text style={styles.logoutText}>&#8592;</Text>
+        <TouchableOpacity style={styles.adminToggle} onPress={onAdminToggle} testID="admin-toggle">
+          <Text style={styles.adminToggleIcon}>{isAdminMode ? '\u{1F513}' : '\u{1F512}'}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -102,6 +110,17 @@ const styles = StyleSheet.create({
   },
   settingsIcon: {
     fontSize: 16,
+  },
+  adminToggle: {
+    width: 30,
+    height: 30,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.4,
+  },
+  adminToggleIcon: {
+    fontSize: 14,
   },
 });
 
