@@ -420,7 +420,7 @@ async def fetch_pos_tables(token: str):
                 tables_cache["token"] = token
                 
                 logger.info(f"Fetched {len(tables)} tables from POS")
-                return tables
+                return tables  # Returns [] when no tables configured
             elif response.status_code == 401:
                 logger.warning("POS token expired or invalid for tables")
                 return None
@@ -450,8 +450,12 @@ async def get_tables(authorization: Optional[str] = Header(None)):
     
     pos_tables = await fetch_pos_tables(token)
     
-    if not pos_tables:
+    if pos_tables is None:
         raise HTTPException(status_code=503, detail="Unable to fetch tables from POS")
+    
+    # If POS returned 0 tables, return empty list (restaurant has no table service)
+    if not pos_tables:
+        return {"tables": [], "source": "pos"}
     
     # Transform to simplified format - only include Tables (rtype = "TB"), not Rooms (RM)
     tables = []

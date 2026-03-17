@@ -284,6 +284,7 @@ const CustomizationModal = ({ item, onClose, onAddToCart, isPortrait }) => {
 // Success Overlay Component
 const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
   const [countdown, setCountdown] = useState(15);
+  const tokenNumber = orderId ? String(orderId).slice(-3) : '---';
 
   useEffect(() => {
     touchSound.playSuccess();
@@ -329,7 +330,11 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
               Estimated prep time: <span className="text-blue-hero font-heading font-bold uppercase">~{prepTime} minutes</span>
             </p>
           )}
-          <p className="mt-2 text-sm portrait:text-sm landscape:text-base font-medium">Please proceed to <span className="text-blue-hero font-heading font-bold uppercase">Table {tableNumber}</span></p>
+          {tableNumber ? (
+            <p className="mt-2 text-sm portrait:text-sm landscape:text-base font-medium">Please proceed to <span className="text-blue-hero font-heading font-bold uppercase">Table {tableNumber}</span></p>
+          ) : (
+            <p className="mt-2 text-sm portrait:text-sm landscape:text-base font-medium" data-testid="token-number">Your token number: <span className="text-blue-hero font-heading font-bold uppercase text-2xl">{tokenNumber}</span></p>
+          )}
         </div>
         
         <div className="mb-8">
@@ -458,7 +463,8 @@ const CartSectionLandscape = ({
   handlePlaceOrder, 
   isPlacingOrder,
   appliedCoupon,
-  setEditingInstructions
+  setEditingInstructions,
+  hasTables
 }) => {
   return (
     <div className="bg-white border-l border-border flex flex-col h-full">
@@ -531,7 +537,7 @@ const CartSectionLandscape = ({
       </div>
 
       <div className="p-4 border-t border-border bg-white">
-        {tableNumber && (
+        {hasTables && tableNumber && (
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Table:</span>
@@ -569,7 +575,7 @@ const CartSectionLandscape = ({
 
         <button
           onClick={() => {
-            if (!tableNumber && cart.length > 0) {
+            if (hasTables && !tableNumber && cart.length > 0) {
               touchSound.playClick();
               setShowTableSelector(true);
             } else {
@@ -584,7 +590,7 @@ const CartSectionLandscape = ({
               : 'bg-muted text-muted-foreground cursor-not-allowed'
           }`}
         >
-          {isPlacingOrder ? 'Placing...' : cart.length === 0 ? 'Add items' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
+          {isPlacingOrder ? 'Placing...' : cart.length === 0 ? 'Add items' : hasTables && !tableNumber ? 'Select Table' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
         </button>
       </div>
     </div>
@@ -625,7 +631,7 @@ const KioskPage = ({ onNavigate }) => {
   // activeCategory defaults to 'all' - no need to set first category
 
   // Show table selector on mount if no table selected (table-first flow)
-  // Also re-triggers after order placement when tableNumber is cleared
+  // Skip entirely when restaurant has no tables configured
   useEffect(() => {
     if (!tableNumber && tables.length > 0 && !orderSuccess) {
       setShowTableSelector(true);
@@ -698,13 +704,15 @@ const KioskPage = ({ onNavigate }) => {
   };
 
   const handlePlaceOrder = async () => {
-    if (!tableNumber || cart.length === 0) return;
+    if (cart.length === 0) return;
+    // If tables exist but none selected, prompt selection
+    if (tables.length > 0 && !tableNumber) return;
     
     setIsPlacingOrder(true);
     try {
       const { subtotal, discount, cgst, sgst, grandTotal } = calculateTotals;
       const orderData = {
-        table_number: tableNumber,
+        table_number: tableNumber || '',
         table_id: selectedTableId || null,
         items: cart.map(item => ({
           item_id: item.id,
@@ -920,8 +928,8 @@ const KioskPage = ({ onNavigate }) => {
               className="h-9 object-contain"
             />
             <div className="flex items-center gap-2">
-              {/* Table indicator in header */}
-              {tableNumber && (
+              {/* Table indicator in header - only when restaurant has tables */}
+              {tables.length > 0 && tableNumber && (
                 <button
                   onClick={() => { touchSound.playClick(); setShowTableSelector(true); }}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-blue-hero/10 text-blue-hero border border-blue-hero/30"
@@ -1030,7 +1038,7 @@ const KioskPage = ({ onNavigate }) => {
           {/* Sticky Place Order Button */}
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 z-40">
             {/* Show table indicator above button if selected */}
-            {tableNumber && (
+            {tables.length > 0 && tableNumber && (
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="text-sm text-muted-foreground">Ordering for</span>
                 <span className="text-sm font-bold text-blue-hero">Table {tableNumber}</span>
@@ -1044,7 +1052,7 @@ const KioskPage = ({ onNavigate }) => {
             )}
             <button
               onClick={() => {
-                if (!tableNumber) {
+                if (tables.length > 0 && !tableNumber) {
                   touchSound.playClick();
                   setShowTableSelector(true);
                 } else if (cart.length > 0) {
@@ -1059,7 +1067,7 @@ const KioskPage = ({ onNavigate }) => {
                   : 'bg-muted text-muted-foreground cursor-not-allowed'
               }`}
             >
-              {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : !tableNumber ? 'Select Table to Order' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
+              {isPlacingOrder ? 'Placing Order...' : cart.length === 0 ? 'Add items to order' : (tables.length > 0 && !tableNumber) ? 'Select Table to Order' : calculateTotals.grandTotal > 0 ? `Place Order • ₹${calculateTotals.grandTotal.toFixed(0)}` : 'Place Order'}
             </button>
           </div>
         </>
@@ -1153,6 +1161,7 @@ const KioskPage = ({ onNavigate }) => {
               isPlacingOrder={isPlacingOrder}
               appliedCoupon={appliedCoupon}
               setEditingInstructions={setEditingInstructions}
+              hasTables={tables.length > 0}
             />
           </div>
         </div>
