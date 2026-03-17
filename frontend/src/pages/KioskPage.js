@@ -599,13 +599,11 @@ const KioskPage = ({ onNavigate }) => {
   const isPortrait = useOrientation();
   
   // Apply admin menu settings (order + visibility) to categories and items
-  const { categories: settingsCategories, menuItems: settingsMenuItems } = applySettings(
-    menuData.categories || [],
-    menuData.menuItems || []
+  const { categories, menuItems } = useMemo(
+    () => applySettings(menuData.categories || [], menuData.menuItems || []),
+    [applySettings, menuData.categories, menuData.menuItems]
   );
   
-  const [categories, setCategories] = useState(settingsCategories);
-  const [menuItems, setMenuItems] = useState(settingsMenuItems);
   const [tables, setTables] = useState(menuData.tables || []);
   
   const [activeCategory, setActiveCategory] = useState('all');
