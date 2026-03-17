@@ -323,14 +323,13 @@ const SuccessOverlay = ({ orderId, tableNumber, onNewOrder, prepTime }) => {
         <h1 className="text-3xl portrait:text-3xl landscape:text-5xl font-heading font-bold mb-8 text-blue-dark uppercase tracking-wide">Order Confirmed!</h1>
         
         <div className="bg-blue-light/20 p-4 portrait:p-4 landscape:p-6 rounded-sm mb-8 max-w-md mx-auto border border-blue-hero/30">
-          <p className="text-base portrait:text-base landscape:text-lg font-medium">Your order has been sent to the kitchen</p>
+          <p className="text-sm portrait:text-sm landscape:text-base font-medium">Your order has been sent to the kitchen</p>
           {prepTime && (
-            <p className="mt-2 text-lg portrait:text-lg landscape:text-xl">
-              <span className="font-medium">Estimated prep time: </span>
-              <span className="text-blue-hero font-heading font-bold uppercase">~{prepTime} minutes</span>
+            <p className="mt-2 text-sm portrait:text-sm landscape:text-base font-medium">
+              Estimated prep time: <span className="text-blue-hero font-heading font-bold uppercase">~{prepTime} minutes</span>
             </p>
           )}
-          <p className="text-muted-foreground mt-2">Please proceed to <span className="text-blue-hero font-heading font-bold uppercase">Table {tableNumber}</span></p>
+          <p className="mt-2 text-sm portrait:text-sm landscape:text-base font-medium">Please proceed to <span className="text-blue-hero font-heading font-bold uppercase">Table {tableNumber}</span></p>
         </div>
         
         <div className="mb-8">
