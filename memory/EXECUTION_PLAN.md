@@ -438,26 +438,26 @@ Make future bugs detectable and diagnoseable.
 
 ---
 
-## Cross-cutting tracking table
+## Cross-cutting tracking table — SINGLE SOURCE OF TRUTH
 
-Use this as the single tracker:
+Status values: `☐ Not started` · `🔵 Entry Gate pending` · `🟡 In progress` · `🟠 Testing` · `🔴 Failed Exit Gate — rework` · `✅ Merged & verified` · `↩️ Rolled back`
 
-| Phase | Status | PR # | Started | Merged | Tested by | Test report |
-|---|---|---|---|---|---|---|
-| P1 | ☐ | – | – | – | testing_agent_v3 | `/app/test_reports/iteration_X.json` |
-| P2 | ☐ | – | – | – | testing_agent_v3 | – |
-| P3 | ☐ | – | – | – | E1 manual + deployment_agent | – |
-| P4 | ☐ | – | – | – | testing_agent_v3 | – |
-| P5 | ☐ | – | – | – | GitHub Actions | – |
-| P6 | ☐ | – | – | – | testing_agent_v3 | – |
-| P7 | ☐ | – | – | – | testing_agent_v3 | – |
-| P8 | ☐ | – | – | – | testing_agent_v3 | – |
-| P9a | ☐ | – | – | – | testing_agent_v3 | – |
-| P9b | ☐ | – | – | – | testing_agent_v3 | – |
-| P9c | ☐ | – | – | – | testing_agent_v3 | – |
-| P9d | ☐ | – | – | – | testing_agent_v3 | – |
-| P9e | ☐ | – | – | – | testing_agent_v3 | – |
-| P10 | ☐ | – | – | – | testing_agent_v3 | – |
+| Phase | Status | Branch | PR # | Entry Gate | Exit Gate | Tested by | Test report |
+|---|---|---|---|---|---|---|---|
+| P1 | 🔵 Entry Gate pending | `cr/phase-1-safety` | – | ☐ awaiting user "go" | ☐ | testing_agent_v3 | – |
+| P2 | ☐ Not started | `cr/phase-2-backend-hardening` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P3 | ☐ Not started | `cr/phase-3-native-config` | – | ☐ | ☐ | E1 manual + deployment_agent | – |
+| P4 | ☐ Not started | `cr/phase-4-security` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P5 | ☐ Not started | `cr/phase-5-cicd` | – | ☐ | ☐ | GitHub Actions | – |
+| P6 | ☐ Not started | `cr/phase-6-ux-polish` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P7 | ☐ Not started | `cr/phase-7-backend-modules` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P8 | ☐ Not started | `cr/phase-8-web-dedup` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P9a | ☐ Not started | `cr/phase-9a-monorepo` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P9b | ☐ Not started | `cr/phase-9b-pure-fns` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P9c | ☐ Not started | `cr/phase-9c-schemas` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P9d | ☐ Not started | `cr/phase-9d-hooks` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P9e | ☐ Not started | `cr/phase-9e-migrate` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P10 | ☐ Not started | `cr/phase-10-tests-monitoring` | – | ☐ | ☐ | testing_agent_v3 | – |
 
 ---
 
