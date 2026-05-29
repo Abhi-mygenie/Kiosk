@@ -1,14 +1,18 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { readString, safeMenuSettings } from '@/utils/safeRead';
 
 const MenuSettingsContext = createContext();
 
 const STORAGE_KEY = 'kiosk_menu_settings';
 
 export const MenuSettingsProvider = ({ children }) => {
+  // safeMenuSettings returns either null OR a fully-shaped object with all 4
+  // fields validated as the correct type. Downstream applySettings can rely
+  // on this and no longer needs per-field defensive coding.
   const [settings, setSettings] = useState(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? safeMenuSettings(JSON.parse(raw)) : null;
     } catch {
       return null;
     }
@@ -16,7 +20,7 @@ export const MenuSettingsProvider = ({ children }) => {
 
   // Whether the user has completed/skipped the settings step
   const [settingsComplete, setSettingsComplete] = useState(() => {
-    return localStorage.getItem('kiosk_settings_complete') === 'true';
+    return readString('kiosk_settings_complete') === 'true';
   });
 
   const saveSettings = useCallback((categoryOrder, itemOrder, hiddenCategories, hiddenItems) => {
@@ -45,14 +49,20 @@ export const MenuSettingsProvider = ({ children }) => {
     localStorage.removeItem('kiosk_settings_complete');
   }, []);
 
-  // Apply settings to categories and items
+  // Apply settings to categories and items.
+  // Defensive: if upstream ever passes a non-array (shouldn't happen now that
+  // AuthContext.safeMenuData guards it, but the kiosk crashed once because
+  // of exactly this) we coerce to [] rather than throw.
   const applySettings = useCallback((categories, menuItems) => {
-    if (!settings) return { categories, menuItems };
+    const cats = Array.isArray(categories) ? categories : [];
+    const items = Array.isArray(menuItems) ? menuItems : [];
+
+    if (!settings) return { categories: cats, menuItems: items };
 
     const { categoryOrder, itemOrder, hiddenCategories, hiddenItems } = settings;
 
     // Filter hidden categories
-    let filteredCategories = categories.filter(c => !hiddenCategories?.includes(c.id));
+    let filteredCategories = cats.filter(c => !hiddenCategories?.includes(c.id));
 
     // Reorder categories
     if (categoryOrder?.length) {
@@ -67,7 +77,7 @@ export const MenuSettingsProvider = ({ children }) => {
     }
 
     // Filter hidden items
-    let filteredItems = menuItems.filter(i => !hiddenItems?.includes(i.id));
+    let filteredItems = items.filter(i => !hiddenItems?.includes(i.id));
     // Also filter items from hidden categories
     filteredItems = filteredItems.filter(i => !hiddenCategories?.includes(i.category));
 
@@ -77,7 +87,7 @@ export const MenuSettingsProvider = ({ children }) => {
       filteredCategories.forEach(cat => {
         const catItems = filteredItems.filter(i => i.category === cat.id);
         const catOrder = itemOrder[cat.id];
-        if (catOrder) {
+        if (Array.isArray(catOrder)) {
           catItems.sort((a, b) => {
             const idxA = catOrder.indexOf(a.id);
             const idxB = catOrder.indexOf(b.id);

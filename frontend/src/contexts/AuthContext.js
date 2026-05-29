@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { readObject, safeMenuData } from '@/utils/safeRead';
+import { createAuthAxios, publicAxios } from '@/utils/kioskHelpers';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -27,32 +28,31 @@ export const AuthProvider = ({ children }) => {
     steps: []
   });
 
-  // Check for existing session on mount
+  // Check for existing session on mount.
+  // Uses safeRead helpers so a poisoned localStorage value never crashes
+  // the boot — at worst the kiosk falls back to a logged-out empty state.
   useEffect(() => {
-    const storedUser = localStorage.getItem('kiosk_user');
-    const storedMenuData = localStorage.getItem('kiosk_menu_data');
-    const storedBranding = localStorage.getItem('kiosk_branding');
-    
-    if (storedUser) {
-      try {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-        setIsAuthenticated(true);
-        
-        // Restore cached menu data
-        if (storedMenuData) {
-          setMenuData(JSON.parse(storedMenuData));
-        }
-        
-        // Restore cached branding
-        if (storedBranding) {
-          setBranding(JSON.parse(storedBranding));
-        }
-      } catch (e) {
-        localStorage.removeItem('kiosk_user');
-        localStorage.removeItem('kiosk_menu_data');
-        localStorage.removeItem('kiosk_branding');
+    const storedUser = readObject('kiosk_user');
+    const storedMenuData = readObject('kiosk_menu_data');
+    const storedBranding = readObject('kiosk_branding');
+
+    if (storedUser && typeof storedUser.token === 'string') {
+      setUser(storedUser);
+      setIsAuthenticated(true);
+
+      // safeMenuData guarantees categories/menuItems/tables are arrays.
+      // If the stored shape is garbage, this returns the empty shape rather
+      // than crashing any downstream .map / .filter.
+      setMenuData(safeMenuData(storedMenuData));
+
+      if (storedBranding) {
+        setBranding(storedBranding);
       }
+    } else if (storedUser) {
+      // Token shape invalid — purge so next launch is clean
+      localStorage.removeItem('kiosk_user');
+      localStorage.removeItem('kiosk_menu_data');
+      localStorage.removeItem('kiosk_branding');
     }
     setIsLoading(false);
   }, []);
@@ -70,15 +70,18 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoginProgress({ isLoggingIn: true, currentStep: 'Authenticating...', steps: [] });
       
-      // Step 1: Authenticate
+      // Step 1: Authenticate (publicAxios enforces JSON content-type)
       updateProgress('Authenticating', 'loading');
-      const response = await axios.post(`${API_URL}/api/auth/login`, {
+      const response = await publicAxios.post(`${API_URL}/api/auth/login`, {
         email,
         password
       });
       updateProgress('Authenticating', 'done');
 
       const data = response.data;
+      if (!data || typeof data.token !== 'string' || !data.token) {
+        throw new Error('Login succeeded but response is missing a valid token');
+      }
       const userData = {
         email,
         token: data.token,
@@ -87,15 +90,14 @@ export const AuthProvider = ({ children }) => {
         loginTime: new Date().toISOString()
       };
 
-      const authAxios = axios.create({
-        headers: { Authorization: `Bearer ${data.token}` }
-      });
+      // Authenticated axios with both Bearer header AND JSON-only response guard.
+      const authAxios = createAuthAxios(data.token);
 
-      // Step 2: Fetch branding
+      // Step 2: Fetch branding (optional — fallback to null on any failure)
       updateProgress('Loading Theme', 'loading');
       let fetchedBranding = null;
       try {
-        const brandingRes = await axios.get(`${API_URL}/api/config/branding`);
+        const brandingRes = await publicAxios.get(`${API_URL}/api/config/branding`);
         fetchedBranding = brandingRes.data;
       } catch (e) {
         console.warn('Failed to fetch branding, using defaults');
@@ -117,11 +119,15 @@ export const AuthProvider = ({ children }) => {
       const tablesRes = await authAxios.get(`${API_URL}/api/tables`);
       updateProgress('Loading Tables', 'done');
 
-      const fetchedMenuData = {
+      // Shape-validate everything before committing to state.
+      // safeMenuData guarantees three arrays; the JSON interceptor already
+      // rejected anything that isn't application/json — so any wrong shape
+      // here is a backend schema bug, not a transport bug.
+      const fetchedMenuData = safeMenuData({
         categories: catRes.data,
         menuItems: itemsRes.data,
-        tables: tablesRes.data.tables || []
-      };
+        tables: tablesRes.data?.tables,
+      });
 
       // Step 6: Store everything
       updateProgress('Finalizing', 'loading');
@@ -144,12 +150,15 @@ export const AuthProvider = ({ children }) => {
       return userData;
     } catch (error) {
       setLoginProgress({ isLoggingIn: false, currentStep: '', steps: [] });
+      if (error.isNonJsonApiResponse) {
+        throw new Error('Backend returned an unexpected response. Please contact support.');
+      }
       if (error.response?.status === 401) {
         throw new Error('Invalid email or password');
       } else if (error.response?.status === 503) {
         throw new Error('Unable to connect to server. Please try again.');
       } else {
-        throw new Error(error.response?.data?.detail || 'Login failed. Please try again.');
+        throw new Error(error.response?.data?.detail || error.message || 'Login failed. Please try again.');
       }
     }
   };
@@ -167,24 +176,27 @@ export const AuthProvider = ({ children }) => {
   // Function to refresh menu data (manual refresh if needed)
   const refreshMenuData = async () => {
     if (!user?.token) return;
-    const authAxios = axios.create({
-      headers: { Authorization: `Bearer ${user.token}` }
-    });
-    
-    const [catRes, itemsRes, tablesRes] = await Promise.all([
-      authAxios.get(`${API_URL}/api/menu/categories`),
-      authAxios.get(`${API_URL}/api/menu/items`),
-      authAxios.get(`${API_URL}/api/tables`)
-    ]);
-    
-    const fetchedMenuData = {
-      categories: catRes.data,
-      menuItems: itemsRes.data,
-      tables: tablesRes.data.tables || []
-    };
-    
-    setMenuData(fetchedMenuData);
-    localStorage.setItem('kiosk_menu_data', JSON.stringify(fetchedMenuData));
+    const authAxios = createAuthAxios(user.token);
+
+    try {
+      const [catRes, itemsRes, tablesRes] = await Promise.all([
+        authAxios.get(`${API_URL}/api/menu/categories`),
+        authAxios.get(`${API_URL}/api/menu/items`),
+        authAxios.get(`${API_URL}/api/tables`)
+      ]);
+
+      const fetchedMenuData = safeMenuData({
+        categories: catRes.data,
+        menuItems: itemsRes.data,
+        tables: tablesRes.data?.tables,
+      });
+
+      setMenuData(fetchedMenuData);
+      localStorage.setItem('kiosk_menu_data', JSON.stringify(fetchedMenuData));
+    } catch (e) {
+      // Leave previous menuData in place — better stale than empty mid-shift
+      console.warn('refreshMenuData failed:', e?.message || e);
+    }
   };
 
   return (

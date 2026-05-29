@@ -32,12 +32,19 @@ const KioskPage = ({ onNavigate }) => {
   const { getCurrentPrepTime } = useTimingSettings();
   const isPortrait = useOrientation();
   
+  // Defensive: AuthContext.safeMenuData already guarantees arrays, but
+  // `|| []` won't catch a non-array truthy value (string, object). The
+  // Array.isArray check ensures we never feed garbage into applySettings,
+  // which previously crashed AdminSettingsPage on render.
   const { categories, menuItems } = useMemo(
-    () => applySettings(menuData.categories || [], menuData.menuItems || []),
-    [applySettings, menuData.categories, menuData.menuItems]
+    () => applySettings(
+      Array.isArray(menuData?.categories) ? menuData.categories : [],
+      Array.isArray(menuData?.menuItems) ? menuData.menuItems : []
+    ),
+    [applySettings, menuData?.categories, menuData?.menuItems]
   );
-  
-  const [tables] = useState(menuData.tables || []);
+
+  const [tables] = useState(Array.isArray(menuData?.tables) ? menuData.tables : []);
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedItem, setSelectedItem] = useState(null);
   const [tableNumber, setTableNumber] = useState('');

@@ -220,21 +220,29 @@ const AdminSettingsPage = ({ onBack }) => {
   const { menuData } = useAuth();
   const { settings, saveSettings, skipSettings, clearSettings } = useMenuSettings();
 
+  // Defensive: AuthContext.safeMenuData guarantees these are arrays at the
+  // source, but defense in depth — a future refactor that bypasses safeMenuData
+  // shouldn't be able to brick this page.
+  const safeCategories = Array.isArray(menuData?.categories) ? menuData.categories : [];
+  const safeMenuItems = Array.isArray(menuData?.menuItems) ? menuData.menuItems : [];
+
   // Initialize state — pre-load from saved settings if they exist, otherwise use API defaults
   const [categoryOrder, setCategoryOrder] = useState(() => {
-    if (settings?.categoryOrder?.length) return settings.categoryOrder;
-    return menuData.categories.map(c => c.id);
+    if (Array.isArray(settings?.categoryOrder) && settings.categoryOrder.length) {
+      return settings.categoryOrder;
+    }
+    return safeCategories.map(c => c.id);
   });
   const [itemsByCategory, setItemsByCategory] = useState(() => {
     const grouped = {};
-    menuData.categories.forEach(cat => {
-      const items = menuData.menuItems.filter(item => item.category === cat.id);
+    safeCategories.forEach(cat => {
+      const items = safeMenuItems.filter(item => item.category === cat.id);
       // Apply saved item order if exists
-      if (settings?.itemOrder?.[cat.id]) {
-        const order = settings.itemOrder[cat.id];
+      const savedOrder = settings?.itemOrder?.[cat.id];
+      if (Array.isArray(savedOrder)) {
         items.sort((a, b) => {
-          const idxA = order.indexOf(a.id);
-          const idxB = order.indexOf(b.id);
+          const idxA = savedOrder.indexOf(a.id);
+          const idxB = savedOrder.indexOf(b.id);
           if (idxA === -1 && idxB === -1) return 0;
           if (idxA === -1) return 1;
           if (idxB === -1) return -1;
@@ -246,10 +254,10 @@ const AdminSettingsPage = ({ onBack }) => {
     return grouped;
   });
   const [hiddenCategories, setHiddenCategories] = useState(
-    () => settings?.hiddenCategories || []
+    () => (Array.isArray(settings?.hiddenCategories) ? settings.hiddenCategories : [])
   );
   const [hiddenItems, setHiddenItems] = useState(
-    () => settings?.hiddenItems || []
+    () => (Array.isArray(settings?.hiddenItems) ? settings.hiddenItems : [])
   );
   const [expandedCategories, setExpandedCategories] = useState(
     () => new Set()
@@ -257,9 +265,9 @@ const AdminSettingsPage = ({ onBack }) => {
 
   const categoriesMap = useMemo(() => {
     const map = {};
-    menuData.categories.forEach(c => { map[c.id] = c; });
+    safeCategories.forEach(c => { map[c.id] = c; });
     return map;
-  }, [menuData.categories]);
+  }, [safeCategories]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -267,9 +275,9 @@ const AdminSettingsPage = ({ onBack }) => {
   );
 
   // Stats
-  const totalItems = menuData.menuItems.length;
+  const totalItems = safeMenuItems.length;
   const visibleItems = totalItems - hiddenItems.length -
-    menuData.menuItems.filter(i => hiddenCategories.includes(i.category) && !hiddenItems.includes(i.id)).length;
+    safeMenuItems.filter(i => hiddenCategories.includes(i.category) && !hiddenItems.includes(i.id)).length;
 
   // Handlers
   const handleCategoryDragEnd = (event) => {
@@ -307,15 +315,15 @@ const AdminSettingsPage = ({ onBack }) => {
   };
 
   const handleReset = () => {
-    setCategoryOrder(menuData.categories.map(c => c.id));
+    setCategoryOrder(safeCategories.map(c => c.id));
     const grouped = {};
-    menuData.categories.forEach(cat => {
-      grouped[cat.id] = menuData.menuItems.filter(item => item.category === cat.id);
+    safeCategories.forEach(cat => {
+      grouped[cat.id] = safeMenuItems.filter(item => item.category === cat.id);
     });
     setItemsByCategory(grouped);
     setHiddenCategories([]);
     setHiddenItems([]);
-    setExpandedCategories(new Set(menuData.categories.map(c => c.id)));
+    setExpandedCategories(new Set(safeCategories.map(c => c.id)));
     clearSettings();
   };
 
