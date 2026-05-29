@@ -1,0 +1,61 @@
+{
+  "summary": "Phase 1 (Kiosk CR) safety-net frontend testing complete. All 7 contract tests executed against https://kiosk-branch.preview.emergentagent.com. ALL 7 PASS. The ErrorBoundary, safeRead helpers, JSON-only axios interceptor, and Array.isArray guards collectively prevent the 'white-screen / kiosk-bricking' class of bugs as designed.",
+  "phase_1_contract_results": {
+    "T1_poisoned_localStorage": {
+      "priority": "CRITICAL",
+      "pass": true,
+      "evidence": "Set kiosk_menu_data='<html>oops</html>' and kiosk_user={token:'fake-token-12345',...} pre-login, reloaded. No ErrorBoundary fallback, no white screen. App rendered (because fake token made AuthContext think isAuthenticated; safeMenuData returned empty arrays). Body contained valid UI markup. No uncaught errors."
+    },
+    "T2_non_json_categories_response": {
+      "priority": "CRITICAL",
+      "pass": true,
+      "evidence": "Playwright route() returned text/html for /api/menu/categories during login. Toast 'Backend returned an unexpected response. Please contact support.' displayed (confirmed via screenshot + DOM query of [data-sonner-toast]). localStorage.kiosk_user === null after failed login. Login screen remained visible. No fallback triggered."
+    },
+    "T3_malformed_timing_settings": {
+      "priority": "HIGH",
+      "pass": true,
+      "evidence": "Set kiosk_timing_settings='\"banana\"' (quoted string, not array) pre-login. Logged in as Hyatt, browsed kiosk, placed order successfully. SuccessOverlay rendered (closed via 'Continue with Table 1' button). No crash, no fallback. 0 console errors during full flow. Note: localStorage key still contained '\"banana\"' after the flow — safeShifts returns safe defaults at read time but does not rewrite the key. This is acceptable per contract (the design is read-side validation)."
+    },
+    "T4_force_crash_error_boundary": {
+      "priority": "CRITICAL",
+      "pass": true,
+      "evidence": "Navigated to /?force-crash=1. ErrorBoundary fallback rendered with data-testid='error-boundary-fallback'. Both buttons present: data-testid='error-boundary-reset-btn' labeled 'Reset Kiosk', data-testid='error-boundary-logout-btn' labeled 'Log out and reload'. Set localStorage.kiosk_probe='hello' and a stub kiosk_user. Clicked Reset Kiosk. After reload: kiosk_probe===null, kiosk_user===null, login screen visible at '/'. Recovery did NOT require admin unlock — the fallback is reachable from the URL alone."
+    },
+    "T5_happy_path_regression": {
+      "priority": "HIGH",
+      "pass": true,
+      "evidence": "Fresh login as Hyatt. 53 menu items + 102 tables loaded. Added 2 items (no customization modal appeared). Selected Table 1. Place order succeeded — success overlay shown with 'Continue with Table 1' confirmation button. 0 console errors collected during full happy-path flow."
+    },
+    "T6_admin_settings_renders": {
+      "priority": "HIGH",
+      "pass": true,
+      "evidence": "AdminSettingsPage rendered without crash. Observed twice: (a) immediately after first-time login (the 'Skip / Save & Continue' settings page) — categories/items list shown, Skip button worked; (b) after T7 reload with mutated localStorage. NOTE: The 5-tap top-left admin entry from the kiosk menu screen is NOT implemented in current KioskPage.js — admin entry is via the lock-icon button (data-testid='admin-toggle-landscape' / 'admin-toggle-portrait'). This does not affect P1 contract since P1 only required that the admin page itself does not crash on poisoned data, which is verified."
+    },
+    "T7_non_array_tables": {
+      "priority": "HIGH",
+      "pass": true,
+      "evidence": "After login, mutated localStorage.kiosk_menu_data.tables to {} (object, not array) and reloaded. Kiosk loaded normally, no fallback, no white screen. Table selector showed 0 tables ([data-testid^=\"table-\"] returned []) — graceful degradation as required."
+    }
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "critical_code_review_comments": [
+    "MINOR (informational, not blocking P1): localStorage.kiosk_timing_settings is read-validated via safeShifts but never re-serialized back to a clean shape. After T3, the poisoned value '\"banana\"' still sits in storage. This is intentional per the design (read-side defense in depth), but a future Phase could opportunistically rewrite to canonical shape on first successful read.",
+    "MINOR: The contract mentions a '5-tap top-left ~80x80px area within 2 seconds' admin entry, but KioskPage.js currently uses a visible lock-icon toggle (data-testid='admin-toggle-landscape'/'portrait') instead. If the 5-tap was supposed to be implemented as part of P1, this is a missing feature. If it was descriptive of a future phase, ignore. P1 contract whitelist does not include any 5-tap handler, so likely the contract description was aspirational.",
+    "POSITIVE: enforceJsonForApi interceptor in kioskHelpers.js is well-scoped (only /api/* URLs, allows missing content-type to pass through). The err.isNonJsonApiResponse flag is correctly propagated and consumed by AuthContext to surface the right user-facing message.",
+    "POSITIVE: ErrorBoundary correctly clears ALL kiosk_* prefixed keys, not just known ones — defends against future key additions."
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only review)", "frontend": "100% (7/7 Phase-1 contract tests pass)"},
+  "test_credentials": "Hyatt manager@hyattcandolim.com / Qplazm@10 (verified working).",
+  "seed_data_creation": "None — used real Hyatt preprod menu/tables. Test artifacts (kiosk_probe, kiosk_user fake-token, kiosk_menu_data 'oops', kiosk_timing_settings 'banana', kiosk_menu_data.tables={}) are session-scoped localStorage mutations cleared by subsequent test steps.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Phase 1 fully validated. The four primitives (ErrorBoundary, safeRead helpers, JSON-only axios interceptor, Array.isArray guards) work end-to-end. If a P2 lands that touches AuthContext, KioskPage, AdminSettingsPage, or any of the *Context files, rerun T1/T2/T4 at minimum as regression. The dev-only ?force-crash=1 probe is invaluable for spot-checking ErrorBoundary — keep it. If the 5-tap admin entry is added later, also re-verify T6 via the tap gesture."
+}
