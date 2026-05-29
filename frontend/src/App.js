@@ -1,55 +1,82 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { HOME } from "@/constants/testIds";
+import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { CartProvider } from '@/contexts/CartContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { MenuSettingsProvider, useMenuSettings } from '@/contexts/MenuSettingsContext';
+import { TimingSettingsProvider } from '@/contexts/TimingSettingsContext';
+import KioskPage from '@/pages/KioskPage';
+import LoginPage from '@/pages/LoginPage';
+import AdminSettingsPage from '@/pages/AdminSettingsPage';
+import TimingSettingsPage from '@/pages/TimingSettingsPage';
+import '@/App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Auth-aware app content
+const AppContent = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+  const { settingsComplete } = useMenuSettings();
+  const [activeView, setActiveView] = useState(null);
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-accent/30 border-t-accent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-lg font-serif text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          data-testid={HOME.emergentLink}
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+  // Manual navigation from sidebar
+  if (activeView === 'menuSettings') {
+    return <AdminSettingsPage onBack={() => setActiveView(null)} />;
+  }
+  if (activeView === 'timingSettings') {
+    return <TimingSettingsPage onBack={() => setActiveView(null)} />;
+  }
+
+  // Show admin settings if not yet completed/skipped (post-login flow)
+  if (!settingsComplete) {
+    return <AdminSettingsPage />;
+  }
+
+  // Show kiosk page if authenticated and settings done
+  return <KioskPage onNavigate={setActiveView} />;
 };
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <AuthProvider>
+      <ThemeProvider>
+        <MenuSettingsProvider>
+          <TimingSettingsProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <Toaster position="top-center" toastOptions={{
+                  style: {
+                    background: '#EBF6FD',
+                    border: '1px solid #62B5E5',
+                    color: '#06293F',
+                  },
+                  classNames: {
+                    success: 'sonner-brand',
+                  },
+                }} />
+                <AppContent />
+              </BrowserRouter>
+            </CartProvider>
+          </TimingSettingsProvider>
+        </MenuSettingsProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

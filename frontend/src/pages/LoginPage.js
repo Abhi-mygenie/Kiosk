@@ -1,0 +1,296 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Lock, Eye, EyeOff, LogIn, Check, Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+
+// Loading Overlay Component
+const LoadingOverlay = ({ loginProgress }) => {
+  const steps = [
+    { key: 'Authenticating', label: 'Authenticating' },
+    { key: 'Loading Theme', label: 'Loading Theme' },
+    { key: 'Loading Categories', label: 'Loading Categories' },
+    { key: 'Loading Menu Items', label: 'Loading Menu Items' },
+    { key: 'Loading Tables', label: 'Loading Tables' },
+    { key: 'Finalizing', label: 'Finalizing Setup' }
+  ];
+
+  const getStepStatus = (stepKey) => {
+    const step = loginProgress.steps.find(s => s.step === stepKey);
+    return step?.status || 'pending';
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center"
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="text-center"
+      >
+        {/* Logo */}
+        <img 
+          src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
+          alt="Logo" 
+          className="h-16 mx-auto mb-8"
+        />
+        
+        {/* Progress Steps */}
+        <div className="bg-white rounded-sm shadow-lg p-8 min-w-[320px]">
+          <h2 className="text-xl font-heading font-semibold text-blue-dark uppercase tracking-wide mb-6">
+            Setting Up Kiosk
+          </h2>
+          
+          <div className="space-y-4">
+            {steps.map((step, index) => {
+              const status = getStepStatus(step.key);
+              const isActive = loginProgress.currentStep === step.key || status === 'loading';
+              const isDone = status === 'done';
+              
+              return (
+                <motion.div
+                  key={step.key}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className={`flex items-center gap-3 ${
+                    isDone ? 'text-blue-hero' : isActive ? 'text-blue-dark' : 'text-muted-foreground'
+                  }`}
+                >
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    {isDone ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="w-5 h-5 bg-blue-hero rounded-full flex items-center justify-center"
+                      >
+                        <Check size={12} className="text-white" />
+                      </motion.div>
+                    ) : isActive ? (
+                      <Loader2 size={20} className="animate-spin text-blue-hero" />
+                    ) : (
+                      <div className="w-2 h-2 rounded-full bg-gray-300" />
+                    )}
+                  </div>
+                  <span className={`text-sm ${isDone || isActive ? 'font-medium' : ''}`}>
+                    {step.label}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Powered by */}
+        <div className="mt-8">
+          <img 
+            src="https://customer-assets.emergentagent.com/job_f69ca03e-7b5d-4a09-a9a8-bcdd3f3dcbc1/artifacts/c544c78k_mygenie_logo.svg" 
+            alt="Powered by MyGenie" 
+            className="h-8 mx-auto opacity-50"
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const LoginPage = () => {
+  const [username, setUsername] = useState(() => {
+    try { return localStorage.getItem('kiosk_remember_user') || ''; } catch { return ''; }
+  });
+  const [password, setPassword] = useState(() => {
+    try { return sessionStorage.getItem('kiosk_session_pass') || ''; } catch { return ''; }
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => {
+    return !!localStorage.getItem('kiosk_remember_user');
+  });
+  const { login, loginProgress } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!username.trim() || !password.trim()) {
+      toast.error('Please enter both username and password');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Always store password in sessionStorage (cleared on browser close, never persisted)
+      sessionStorage.setItem('kiosk_session_pass', password);
+      if (rememberMe) {
+        localStorage.setItem('kiosk_remember_user', username);
+      } else {
+        localStorage.removeItem('kiosk_remember_user');
+      }
+      // Clean up any legacy plaintext password from localStorage
+      localStorage.removeItem('kiosk_remember_pass');
+      await login(username, password);
+      toast.success('Login successful');
+    } catch (error) {
+      toast.error(error.message || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Loading Overlay */}
+      <AnimatePresence>
+        {loginProgress.isLoggingIn && (
+          <LoadingOverlay loginProgress={loginProgress} />
+        )}
+      </AnimatePresence>
+
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 portrait:p-4 landscape:p-8 overflow-auto">
+        {/* Main Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md portrait:max-w-sm landscape:max-w-md my-auto"
+        >
+          {/* Logo */}
+          <div className="text-center mb-8 portrait:mb-6 landscape:mb-12">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_aba4da0b-91ee-4a40-b348-36daa43480a8/artifacts/zyial4es_piyush_hyatt_logo_1.png" 
+              alt="Hyatt Centric Candolim Goa" 
+              className="h-16 portrait:h-14 landscape:h-20 mx-auto mb-4"
+            />
+            <p className="text-sm text-muted-foreground uppercase tracking-widest font-medium">Self-Ordering Kiosk</p>
+          </div>
+
+          {/* Login Card */}
+          <div className="bg-white rounded-sm shadow-lg p-6 portrait:p-5 landscape:p-8">
+            <h1 className="text-2xl portrait:text-2xl landscape:text-3xl font-heading font-semibold text-center mb-6 portrait:mb-5 landscape:mb-8 text-blue-dark uppercase tracking-wide">Welcome Back</h1>
+            
+            <form onSubmit={handleSubmit} className="space-y-5 portrait:space-y-4 landscape:space-y-6">
+              {/* Username Field */}
+              <div>
+                <label className="block text-sm font-medium mb-2 text-muted-foreground">
+                  Username
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <User size={20} className="text-muted-foreground" />
+                  </div>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your username"
+                    data-testid="login-username"
+                    className="w-full pl-12 pr-4 py-4 portrait:py-3 landscape:py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
+                    autoComplete="username"
+                    autoFocus
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <label className="block text-sm font-medium mb-2 text-muted-foreground">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock size={20} className="text-muted-foreground" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    data-testid="login-password"
+                    className="w-full pl-12 pr-12 py-4 portrait:py-3 landscape:py-4 bg-muted border border-border rounded-sm text-base focus:outline-none focus:border-blue-hero focus:ring-1 focus:ring-blue-hero transition-all"
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                  >
+                    {showPassword ? (
+                      <EyeOff size={20} className="text-muted-foreground hover:text-foreground transition-colors" />
+                    ) : (
+                      <Eye size={20} className="text-muted-foreground hover:text-foreground transition-colors" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRememberMe(!rememberMe)}
+                  data-testid="remember-me-toggle"
+                  className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                    rememberMe
+                      ? 'bg-blue-hero border-blue-hero'
+                      : 'border-border hover:border-blue-hero'
+                  }`}
+                >
+                  {rememberMe && (
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+                <label
+                  onClick={() => setRememberMe(!rememberMe)}
+                  className="text-sm text-muted-foreground cursor-pointer select-none"
+                >
+                  Remember me
+                </label>
+              </div>
+
+              {/* Login Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                data-testid="login-submit"
+                className="w-full bg-blue-hero text-white py-4 portrait:py-3 landscape:py-4 rounded-sm text-lg font-semibold hover:bg-blue-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={22} />
+                    Sign In
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </motion.div>
+
+        {/* Footer - Powered by My Geneie */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.5 }}
+          className="mt-8 portrait:mt-6 landscape:mt-12 text-center"
+        >
+          <img 
+            src="https://customer-assets.emergentagent.com/job_f69ca03e-7b5d-4a09-a9a8-bcdd3f3dcbc1/artifacts/c544c78k_mygenie_logo.svg" 
+            alt="Powered by MyGenie" 
+            className="h-8 portrait:h-6 landscape:h-10 mx-auto"
+          />
+        </motion.div>
+      </div>
+    </>
+  );
+};
+
+export default LoginPage;

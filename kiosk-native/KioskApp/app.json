@@ -1,0 +1,14 @@
+{
+  "name": "KioskApp",
+  "displayName": "KioskApp",
+  "expo": {
+    "name": "KioskApp",
+    "slug": "kiosk-app",
+    "version": "1.0.0",
+    "platforms": ["android"],
+    "android": {
+      "package": "com.hyatt.kioskapp",
+      "versionCode": 1
+    }
+  }
+}
