@@ -22,15 +22,15 @@ Next: Phase 1 contract drafted at `/app/memory/phases/P1_contract.md` → awaiti
 
 ---
 
-## Phase P1 — Stop the bleeding   ✅ Tests passed, awaiting user Exit Gate approval
+## Phase P1 — Stop the bleeding   ✅ APPROVED & MERGED
 
 **Branch:** `cr/phase-1-safety`
 **Commit:** `b82815b` — `[P1] Stop the bleeding: ErrorBoundary + safeRead + axios JSON guard`
 **Started:** 2026-05-30
 **Implementation complete:** 2026-05-30
 **Tests run:** 2026-05-30
-**Approver:** ⏳ awaiting user
-**Duration:** ~1 hour wall-clock implementation + ~10 min testing
+**Approved by user:** 2026-05-30 ("Phase 1 approved")
+**Duration:** ~1 hour wall-clock implementation + ~10 min testing + user verification
 
 ### Audit findings closed (8 × 🔴 P0)
 - ✅ FE-1 — No ErrorBoundary anywhere → wrapped `<AppContent>` in custom class boundary

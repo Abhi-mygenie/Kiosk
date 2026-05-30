@@ -114,9 +114,9 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 - [x] Change Note CN-P1-001 filed for `test_reports/iteration_5.json` outside literal whitelist
 
 ### Sign-off
-- [ ] **User typed "Phase 1 approved" (or equivalent explicit yes)** ← awaiting
+- [x] **User typed "Phase 1 approved" — 2026-05-30** ✅
 
-**GATE STATUS:** 🟠 PENDING USER SIGN-OFF (all other criteria ✅)
+**GATE STATUS:** ✅ PASSED — Phase 1 closed, ready to start P2.
 
 ---
 

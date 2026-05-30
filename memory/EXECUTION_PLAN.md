@@ -444,8 +444,8 @@ Status values: `☐ Not started` · `🔵 Entry Gate pending` · `🟡 In progre
 
 | Phase | Status | Branch | PR # | Entry Gate | Exit Gate | Tested by | Test report |
 |---|---|---|---|---|---|---|---|
-| P1 | 🟠 Exit Gate pending (user approval) | `cr/phase-1-safety` | b82815b | ✅ passed | 🟡 tests passed 7/7, awaiting user sign-off | testing_agent_v3 | `/app/test_reports/iteration_5.json` |
-| P2 | ☐ Not started | `cr/phase-2-backend-hardening` | – | ☐ | ☐ | testing_agent_v3 | – |
+| P1 | ✅ Merged & verified | `cr/phase-1-safety` | b82815b | ✅ passed | ✅ approved 2026-05-30 | testing_agent_v3 | `/app/test_reports/iteration_5.json` |
+| P2 | 🔵 Entry Gate pending | `cr/phase-2-backend-hardening` | – | ☐ awaiting user "go" | ☐ | testing_agent_v3 | – |
 | P3 | ☐ Not started | `cr/phase-3-native-config` | – | ☐ | ☐ | E1 manual + deployment_agent | – |
 | P4 | ☐ Not started | `cr/phase-4-security` | – | ☐ | ☐ | testing_agent_v3 | – |
 | P5 | ☐ Not started | `cr/phase-5-cicd` | – | ☐ | ☐ | GitHub Actions | – |
