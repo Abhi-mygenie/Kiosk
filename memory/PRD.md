@@ -129,3 +129,12 @@ Note: The Emergent preview container runs arm64 which cannot execute x86_64 NDK 
 
 ### Remaining phases (per `/app/memory/EXECUTION_PLAN.md`)
 P2 Backend hardening · P3 Native APK URL · P4 Security cleanup · P5 CI/CD · P6 UX polish · P7 Backend modularize · P8 Web dedup · P9 kiosk-core shared package · P10 Test pyramid + monitoring
+
+---
+
+## Session closure — 2026-05-30
+
+P1 complete & approved. Session closing per playbook. CR paused mid-execution.
+
+**Resume point:** `/app/memory/SESSION_CLOSE.md` (single read for next session)
+**Next action item:** User answers 4 Entry Gate decisions in `/app/memory/phases/P2_contract.md` §10, then types "All defaults, start Phase 2" to kick off P2.

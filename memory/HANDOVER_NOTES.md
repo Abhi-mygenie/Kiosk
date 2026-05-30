@@ -3,8 +3,23 @@
 **Prepared for:** Next deployment / dev agent
 **Source repo:** https://github.com/Abhi-mygenie/Kiosk.git
 **Branch pulled:** `14march` (latest commit `b667ab5` @ 2026-03-17 19:13 UTC)
-**Date of handover:** 2026-05-29
+**Date of initial handover:** 2026-05-29
+**Last updated:** 2026-05-30 (CR Phase 1 closed)
 **Environment:** Emergent preview pod (Kubernetes container, FastAPI + React + MongoDB base image)
+
+> ⚠️ **An active multi-phase refactor CR is in progress.** Before doing anything else, read `/app/memory/SESSION_CLOSE.md` for current state, then `/app/memory/EXECUTION_PLAN.md` for the master plan.
+
+---
+
+## 0. Where the CR stands today (2026-05-30)
+
+| Phase | Status |
+|---|---|
+| **P1** Stop the bleeding (ErrorBoundary + safeRead + axios guard) | ✅ Merged & verified — commit `b82815b` |
+| **P2** Backend hardening | 🔵 Contract drafted, awaiting user "go" |
+| P3–P10 | ☐ Planned, not started |
+
+**Active branch:** `cr/phase-1-safety` (do not return to `main` until ready to ship P1)
 
 ---
 
