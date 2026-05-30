@@ -106,3 +106,26 @@ Note: The Emergent preview container runs arm64 which cannot execute x86_64 NDK 
 - Refactor `KioskScreen.js` (Native) into smaller components
 - Live Preview panel on Admin Settings page
 - APK generation (signed release build)
+
+---
+
+## Kiosk Stability+Refactor CR (started 2026-05-30)
+
+### Phase 1 — Stop the bleeding (in progress)
+**Status:** ✅ Implemented + tested 7/7 PASS, awaiting user Exit Gate approval
+**Branch/Commit:** `cr/phase-1-safety` @ `b82815b`
+**What was implemented:**
+- Custom React ErrorBoundary at App root with "Reset Kiosk" and "Log out and reload" recovery buttons. Visible without admin unlock.
+- Dev-only `?force-crash=1` probe for verifying boundary (gated on NODE_ENV !== 'production').
+- `safeRead.js` helpers (readArray, readObject, safeMenuData, safeMenuSettings, safeShifts, clearKioskStorage) — all `localStorage` reads now type-check before use.
+- Axios response interceptor (`enforceJsonForApi`) rejects any /api/* response whose Content-Type is not application/json — closes the nginx-misroute class of bugs that caused the original kiosk-bricking incident.
+- AuthContext refactored: boots from safeRead, validates menuData shape, uses guarded `publicAxios` + `createAuthAxios`, surfaces clean error "Backend returned an unexpected response" on non-JSON.
+- MenuSettingsContext/TimingSettingsContext sanitise stored values.
+- AdminSettingsPage + KioskPage have `Array.isArray` guards on every menuData access.
+
+**Audit findings closed:** FE-1, FE-2, FE-3, FE-4, FE-5, FE-6, FE-7, FE-U-1 (8 × P0)
+**Test report:** `/app/test_reports/iteration_5.json`
+**Files governed by:** `/app/memory/phases/P1_contract.md`, change notes at `P1_change_notes.md`
+
+### Remaining phases (per `/app/memory/EXECUTION_PLAN.md`)
+P2 Backend hardening · P3 Native APK URL · P4 Security cleanup · P5 CI/CD · P6 UX polish · P7 Backend modularize · P8 Web dedup · P9 kiosk-core shared package · P10 Test pyramid + monitoring
