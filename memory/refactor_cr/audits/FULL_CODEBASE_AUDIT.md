@@ -399,4 +399,4 @@ Estimated total fix effort:
 
 **End of audit.** Recommended next step: triage Phase 1 — that alone takes the system from "one bad payload bricks the kiosk and no one can recover without DevTools" to "self-heals in one tap." Everything else can land progressively.
 
-Saved at `/app/memory/FULL_CODEBASE_AUDIT.md`.
+Saved at `/app/memory/refactor_cr/audits/FULL_CODEBASE_AUDIT.md`.

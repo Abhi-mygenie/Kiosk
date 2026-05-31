@@ -1,6 +1,10 @@
-# 🚦 CR STATUS — Read me first
+# 🚦 KIOSK REFACTOR CR — STATUS
 
-> **For the next agent (or future me) picking up this work.**
+> **Scope notice:** This document and everything under `/app/memory/refactor_cr/` is **specific to one multi-phase refactor effort** on the kiosk app. It does NOT govern any other CR, feature work, or bug fix. The control layer (OP-1 to OP-8) is binding ONLY for the phases plan defined here.
+>
+> If the user is asking about anything other than continuing the refactor work, **do not apply these rules** — proceed per normal Emergent platform conventions.
+
+> **For the next agent (or future me) picking up REFACTOR CR work.**
 > This file is the ONE place that's always current. Read this, then act.
 
 ---
@@ -12,7 +16,7 @@
 | **Active CR** | Kiosk stability + refactor (10 phases) |
 | **Current phase** | **P1 ✅ Done.  P2 🔵 Awaiting Entry Gate** |
 | **Active branch** | `cr/phase-1-safety` @ commit `14f6e7e` |
-| **Blocked on** | User must answer 4 decisions in `phases/P2_contract.md` §10 → reply `"All defaults, start Phase 2"` (or specify overrides) |
+| **Blocked on** | User must answer 4 decisions in `refactor_cr/phases/P2_contract.md` §10 → reply `"All defaults, start Phase 2"` (or specify overrides) |
 | **Last test report** | `/app/test_reports/iteration_5.json` (P1 — 7/7 PASS) |
 | **Last update** | 2026-05-30 |
 
@@ -20,12 +24,12 @@
 
 ## 🛑 STOP — Binding rules before you write any code
 
-This CR runs under a control layer. **User has explicitly accepted OP-1 through OP-8 as binding** (see `CONTROL_LAYER.md`). The short version:
+This CR runs under a control layer. **User has explicitly accepted OP-1 through OP-8 as binding** (see `refactor_cr/CONTROL_LAYER.md`). The short version:
 
 1. **One phase at a time.** Don't touch P2 work until P1 Exit Gate is closed (it is ✅).
 2. **Every change traces to an audit finding** (FE-X / BE-X / RN-X / R-X). If it doesn't map → it doesn't land in this CR.
 3. **testing_agent_v3 runs before every phase closure.** No exceptions, no "I tested manually."
-4. **Written Change Note** for every mid-phase deviation → `phases/PXX_change_notes.md`.
+4. **Written Change Note** for every mid-phase deviation → `refactor_cr/phases/PXX_change_notes.md`.
 5. **Rollback path** documented *before* merge, not after.
 6. **User explicit approval** before phase closure — wait for "Phase X approved," don't infer.
 7. **No business-logic changes inside refactor phases (P7–P9).** Refactor = behavior identical.
@@ -40,14 +44,14 @@ If the user asks for something *outside* this CR, defer: _"Filed for separate CR
 Read these files in this exact order. Do not skip.
 
 ```
-1. /app/memory/CR_STATUS.md             ← you are here
-2. /app/memory/CONTROL_LAYER.md          ← the rules above, in detail
-3. /app/memory/EXECUTION_PLAN.md         ← 10-phase plan + status tracker
-4. /app/memory/PHASE_LOG.md              ← what was actually done, per phase
-5. /app/memory/phases/P2_contract.md     ← what's pending next (or next active contract)
+1. /app/memory/refactor_cr/STATUS.md             ← you are here
+2. /app/memory/refactor_cr/CONTROL_LAYER.md          ← the rules above, in detail
+3. /app/memory/refactor_cr/EXECUTION_PLAN.md         ← 10-phase plan + status tracker
+4. /app/memory/refactor_cr/PHASE_LOG.md              ← what was actually done, per phase
+5. /app/memory/refactor_cr/phases/P2_contract.md     ← what's pending next (or next active contract)
 ```
 
-After those 5 files, you know everything. The 3 audit docs (`CRASH_AUDIT.md`, `FULL_CODEBASE_AUDIT.md`, `REFACTOR_AUDIT.md`) are reference — open them only when you need the exact wording of a finding (FE-1, BE-3, etc.).
+After those 5 files, you know everything. The 3 audit docs (`refactor_cr/audits/CRASH_AUDIT.md`, `refactor_cr/audits/FULL_CODEBASE_AUDIT.md`, `refactor_cr/audits/REFACTOR_AUDIT.md`) are reference — open them only when you need the exact wording of a finding (FE-1, BE-3, etc.).
 
 ---
 
@@ -65,13 +69,13 @@ Whoever picks this up next:
    cd /app && git branch --show-current   # should print: cr/phase-1-safety
    git log --oneline -5                    # should show 14f6e7e at HEAD
    ```
-3. **Re-post P2 Entry Gate questions to user.** Open `phases/P2_contract.md` §10 — there are 4 decisions. Defaults are bolded; recommend defaults to user.
+3. **Re-post P2 Entry Gate questions to user.** Open `refactor_cr/phases/P2_contract.md` §10 — there are 4 decisions. Defaults are bolded; recommend defaults to user.
 4. **Wait for user "go"** in one of these forms:
    - `"All defaults, start Phase 2"` → proceed with defaults
    - `"Go with [edits]"` → apply edits, then proceed
    - `"Hold — discussing X"` → answer questions, don't code yet
-5. **On "go": create branch + implement P2** per `phases/P2_contract.md` §1 deliverables.
-6. **Use `/app/scripts/verify_whitelist.sh P2`** before committing — confirms file changes are scoped.
+5. **On "go": create branch + implement P2** per `refactor_cr/phases/P2_contract.md` §1 deliverables.
+6. **Use `/app/scripts/refactor_cr_verify_whitelist.sh P2`** before committing — confirms file changes are scoped.
 7. **Invoke `testing_agent_v3`** with §6 test plan.
 8. **Update PHASE_LOG, EXECUTION_PLAN tracker, PRD, P2 Exit Gate, CR_STATUS (this file).**
 9. **Wait for user "Phase 2 approved" → then draft P3 contract**, repeat.
@@ -93,14 +97,14 @@ Whoever picks this up next:
 | P9 kiosk-core shared package | ☐ Not started | – | – | – |
 | P10 Test pyramid + monitoring | ☐ Not started | – | – | – |
 
-> Same table also in `EXECUTION_PLAN.md` (with more columns). This one is the abbreviated dashboard. **Keep both in sync** — update both whenever a phase closes.
+> Same table also in `refactor_cr/EXECUTION_PLAN.md` (with more columns). This one is the abbreviated dashboard. **Keep both in sync** — update both whenever a phase closes.
 
 ---
 
 ## 🧯 Emergency procedures
 
 ### If something is broken right now
-1. Run `/app/scripts/cr_status.sh` (it dumps current state)
+1. Run `/app/scripts/refactor_cr_status.sh` (it dumps current state)
 2. Check `tail -100 /var/log/supervisor/{backend,frontend}.*.log`
 3. Branch `cr/phase-1-safety` is independently revertable: `git revert 14f6e7e b82815b 7a784b9 --no-edit`
 4. If stuck >2 attempts → invoke `troubleshoot_agent` with logs
@@ -121,19 +125,19 @@ cd /app && git checkout main && sudo supervisorctl restart frontend backend
 
 | File | Type | When to update |
 |---|---|---|
-| **`CR_STATUS.md`** (this file) | Dashboard | Every phase boundary |
-| `EXECUTION_PLAN.md` | Plan + full tracker | Every phase boundary |
-| `PHASE_LOG.md` | Audit trail (append-only) | At phase closure |
-| `CONTROL_LAYER.md` | Process rules | Only on user decision |
+| **`refactor_cr/STATUS.md`** (this file) | Dashboard | Every phase boundary |
+| `refactor_cr/EXECUTION_PLAN.md` | Plan + full tracker | Every phase boundary |
+| `refactor_cr/PHASE_LOG.md` | Audit trail (append-only) | At phase closure |
+| `refactor_cr/CONTROL_LAYER.md` | Process rules | Only on user decision |
 | `PRD.md` | Product requirements + per-phase outcomes | At phase closure |
 | `HANDOVER_NOTES.md` | Original pod context (pre-CR) | Stable — historical |
-| `SESSION_CLOSE.md` | End-of-session snapshot | Each session end |
-| `CRASH_AUDIT.md` | Reference (33 findings) | Stable |
-| `FULL_CODEBASE_AUDIT.md` | Reference (67 findings) | Stable |
-| `REFACTOR_AUDIT.md` | Reference (57 findings) | Stable |
+| `refactor_cr/SESSION_CLOSE.md` | End-of-session snapshot | Each session end |
+| `refactor_cr/audits/CRASH_AUDIT.md` | Reference (33 findings) | Stable |
+| `refactor_cr/audits/FULL_CODEBASE_AUDIT.md` | Reference (67 findings) | Stable |
+| `refactor_cr/audits/REFACTOR_AUDIT.md` | Reference (57 findings) | Stable |
 | `SECURITY_AUDIT.md` | Pre-CR internal doc | Stable |
-| `phases/PXX_contract.md` | Per-phase scope + gates | Per-phase |
-| `phases/PXX_change_notes.md` | Per-phase deviations | Per-phase if any |
+| `refactor_cr/phases/PXX_contract.md` | Per-phase scope + gates | Per-phase |
+| `refactor_cr/phases/PXX_change_notes.md` | Per-phase deviations | Per-phase if any |
 
 ---
 

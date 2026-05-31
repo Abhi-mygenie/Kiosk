@@ -3,8 +3,8 @@
 Append-only audit trail of refactor execution.
 Newest entries at bottom. Never edit historical entries — append correction notes instead.
 
-Governed by: `/app/memory/CONTROL_LAYER.md`
-Plan:       `/app/memory/EXECUTION_PLAN.md`
+Governed by: `/app/memory/refactor_cr/CONTROL_LAYER.md`
+Plan:       `/app/memory/refactor_cr/EXECUTION_PLAN.md`
 
 ---
 
@@ -13,12 +13,12 @@ Plan:       `/app/memory/EXECUTION_PLAN.md`
 - Control layer activated.
 - User accepted OP-1 through OP-8 as binding.
 - Setup tasks completed:
-  - ✅ `/app/memory/phases/` directory created
-  - ✅ `/app/memory/PHASE_LOG.md` initialised (this file)
-  - ✅ `EXECUTION_PLAN.md` tracker columns confirmed (Status / Branch / PR # / Entry Gate / Exit Gate / Tested by / Report)
-  - ✅ `/app/scripts/verify_whitelist.sh` created (optional automation)
+  - ✅ `/app/memory/refactor_cr/phases/` directory created
+  - ✅ `/app/memory/refactor_cr/PHASE_LOG.md` initialised (this file)
+  - ✅ `refactor_cr/EXECUTION_PLAN.md` tracker columns confirmed (Status / Branch / PR # / Entry Gate / Exit Gate / Tested by / Report)
+  - ✅ `/app/scripts/refactor_cr_verify_whitelist.sh` created (optional automation)
 
-Next: Phase 1 contract drafted at `/app/memory/phases/P1_contract.md` → awaiting user "go".
+Next: Phase 1 contract drafted at `/app/memory/refactor_cr/phases/P1_contract.md` → awaiting user "go".
 
 ---
 

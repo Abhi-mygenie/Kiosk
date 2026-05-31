@@ -2,8 +2,8 @@
 
 **Repo:** `Abhi-mygenie/Kiosk@14march`
 **Audit date:** 2026-05-30
-**Lens:** Code reuse, duplication, module boundaries, abstraction quality, refactor opportunities — **not** crash/security (covered separately in `CRASH_AUDIT.md` and `FULL_CODEBASE_AUDIT.md`).
-**Companion to:** `FULL_CODEBASE_AUDIT.md` (67 stability findings)
+**Lens:** Code reuse, duplication, module boundaries, abstraction quality, refactor opportunities — **not** crash/security (covered separately in `refactor_cr/audits/CRASH_AUDIT.md` and `refactor_cr/audits/FULL_CODEBASE_AUDIT.md`).
+**Companion to:** `refactor_cr/audits/FULL_CODEBASE_AUDIT.md` (67 stability findings)
 
 > Severity legend  🔴 **R0** — high refactor ROI, blocking feature velocity  •  🟠 **R1** — meaningful duplication or coupling  •  🟡 **R2** — nice-to-have polish  •  🔵 **INFO** — observation
 
@@ -644,11 +644,11 @@ Estimated effort, ROI-first 5-day cut: Phase R2 + R1 + R5
 
 ---
 
-**End of architecture & refactor audit.** Combined with `FULL_CODEBASE_AUDIT.md` (67 stability findings) and `CRASH_AUDIT.md` (the original kiosk-bricking class), you now have:
+**End of architecture & refactor audit.** Combined with `refactor_cr/audits/FULL_CODEBASE_AUDIT.md` (67 stability findings) and `refactor_cr/audits/CRASH_AUDIT.md` (the original kiosk-bricking class), you now have:
 
 1. What breaks today and how to stop it.
 2. What slows the team down and how to fix it.
 
 Stability fixes and the kiosk-core extraction are **complementary**: every stability fix landed in `packages/kiosk-core` automatically benefits web + native, halving the work.
 
-Saved at `/app/memory/REFACTOR_AUDIT.md`.
+Saved at `/app/memory/refactor_cr/audits/REFACTOR_AUDIT.md`.

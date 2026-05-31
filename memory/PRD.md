@@ -1,13 +1,18 @@
 # Kiosk Self-Ordering App - PRD
 
-> ## 🚦 ACTIVE CR IN PROGRESS — READ FIRST
-> A 10-phase stability+refactor CR is currently mid-execution.
-> **Before doing anything else, read `/app/memory/CR_STATUS.md`** (the dashboard).
-> User has accepted control-layer rules OP-1 through OP-8 as binding (see `CONTROL_LAYER.md`).
+> ## ℹ️ Note: a long-running REFACTOR CR is paused mid-execution
 >
-> **Status:** P1 ✅ approved • P2 🔵 awaiting Entry Gate decisions • P3-P10 not started
-> **Branch:** `cr/phase-1-safety` @ `14f6e7e`
-> **Pending user input:** 4 decisions in `phases/P2_contract.md` §10
+> An optional, multi-phase stability + refactor effort is in progress on branch `cr/phase-1-safety` (P1 of 10 complete). It has its own governance, plan, and contracts under `/app/memory/refactor_cr/`.
+>
+> **Scope of that CR:** stability fixes (P1–P6) and architectural cleanup (P7–P10) for the existing kiosk app. The CR is **independent of any normal feature work**.
+>
+> **If the user asks you to continue the refactor:**
+>   1. Run `/app/scripts/refactor_cr_status.sh`
+>   2. Read `/app/memory/refactor_cr/STATUS.md`
+>   3. Follow the rules in `/app/memory/refactor_cr/CONTROL_LAYER.md` (OP-1 to OP-8 binding for refactor work only)
+>
+> **If the user asks for new features, bug fixes, or anything else:**
+>   Proceed normally per Emergent platform conventions. The refactor-CR control layer does NOT apply. Treat new requests like any other task — plan, implement, test, finish. You may still benefit from the audit references under `/app/memory/refactor_cr/audits/` for context.
 >
 > ---
 
@@ -138,7 +143,7 @@ Note: The Emergent preview container runs arm64 which cannot execute x86_64 NDK 
 **Test report:** `/app/test_reports/iteration_5.json`
 **Files governed by:** `/app/memory/phases/P1_contract.md`, change notes at `P1_change_notes.md`
 
-### Remaining phases (per `/app/memory/EXECUTION_PLAN.md`)
+### Remaining phases (per `/app/memory/refactor_cr/EXECUTION_PLAN.md`)
 P2 Backend hardening · P3 Native APK URL · P4 Security cleanup · P5 CI/CD · P6 UX polish · P7 Backend modularize · P8 Web dedup · P9 kiosk-core shared package · P10 Test pyramid + monitoring
 
 ---
@@ -147,5 +152,5 @@ P2 Backend hardening · P3 Native APK URL · P4 Security cleanup · P5 CI/CD · 
 
 P1 complete & approved. Session closing per playbook. CR paused mid-execution.
 
-**Resume point:** `/app/memory/SESSION_CLOSE.md` (single read for next session)
+**Resume point:** `/app/memory/refactor_cr/SESSION_CLOSE.md` (single read for next session)
 **Next action item:** User answers 4 Entry Gate decisions in `/app/memory/phases/P2_contract.md` §10, then types "All defaults, start Phase 2" to kick off P2.

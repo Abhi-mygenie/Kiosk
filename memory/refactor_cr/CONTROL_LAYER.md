@@ -1,6 +1,6 @@
 # Kiosk Refactor CR — Control Layer (Governance Framework)
 
-**Scope:** Governs execution of `EXECUTION_PLAN.md` (10 phases, ~13–14 dev-days)
+**Scope:** Governs execution of `refactor_cr/EXECUTION_PLAN.md` (10 phases, ~13–14 dev-days)
 **Owner:** User (final approver) + E1 (executor)
 **Created:** 2026-05-30
 **Status:** ✅ Active — applies to every phase from P1 onwards
@@ -28,7 +28,7 @@ The control layer prevents all four. It costs ~10 minutes per phase boundary; it
 | OP-1 | **One phase at a time.** No P2 work starts until P1 has passed Exit Gate. | Prevents lost work + ambiguous test results |
 | OP-2 | **Every change traces back to an audit finding.** If a fix doesn't map to FE-X / BE-X / RN-X / R-X, it doesn't land in this CR — file a separate issue. | Prevents scope creep |
 | OP-3 | **Testing agent runs before phase closure.** Always. No "I tested it manually". | Catches the bugs main-agent's blind spots miss |
-| OP-4 | **Every phase has a written Change Note** added to `PHASE_LOG.md`. | Audit trail for any future investigation |
+| OP-4 | **Every phase has a written Change Note** added to `refactor_cr/PHASE_LOG.md`. | Audit trail for any future investigation |
 | OP-5 | **Rollback path documented before merge.** | A 10-second decision when something breaks at 2am |
 | OP-6 | **User explicitly approves Exit Gate.** "Looks good" in chat is sufficient, but it must be there. | Phase closure is a deliberate act, not implicit |
 | OP-7 | **No business-logic changes inside refactor phases (P7–P9).** Behaviour must be byte-identical pre/post. Bug fixes go in stability phases (P1–P6). | Prevents refactors masking regressions |
@@ -38,7 +38,7 @@ The control layer prevents all four. It costs ~10 minutes per phase boundary; it
 
 ## 2. Phase Contract template
 
-Every phase, before the first line of code, fills out this contract. Stored in `/app/memory/phases/PXX_contract.md`.
+Every phase, before the first line of code, fills out this contract. Stored in `/app/memory/refactor_cr/phases/PXX_contract.md`.
 
 ```markdown
 # Phase PXX — <Name>
@@ -80,8 +80,8 @@ Any file outside this list → STOP, update contract first.
 - [ ] testing_agent_v3 phase test plan executed; report at `/app/test_reports/iteration_X.json`
 - [ ] All HIGH/CRITICAL test failures fixed (no carry-over)
 - [ ] LOW/MEDIUM test findings either fixed or explicitly deferred with rationale
-- [ ] `PHASE_LOG.md` entry written
-- [ ] `EXECUTION_PLAN.md` tracker table updated (status, PR #, dates)
+- [ ] `refactor_cr/PHASE_LOG.md` entry written
+- [ ] `refactor_cr/EXECUTION_PLAN.md` tracker table updated (status, PR #, dates)
 - [ ] `PRD.md` updated with "what was implemented"
 - [ ] Rollback procedure documented in §7 below
 - [ ] User typed approval (e.g. "Phase XX approved")
@@ -112,7 +112,7 @@ Before E1 writes any code for a phase, **every** box must be ticked:
 ```
 ┌─ ENTRY GATE — Phase PXX ────────────────────────────────────┐
 │                                                              │
-│  ☐ Phase Contract drafted at /app/memory/phases/PXX_contract.md │
+│  ☐ Phase Contract drafted at /app/memory/refactor_cr/phases/PXX_contract.md │
 │  ☐ Previous phase's Exit Gate passed (or N/A for P1)        │
 │  ☐ User said "start Phase XX" (or selected the cut)         │
 │  ☐ Decision points resolved (TS vs JS, monorepo tool, etc.) │
@@ -175,7 +175,7 @@ Before merging the phase PR:
 
 ## 5. Status board (single source of truth)
 
-Lives at top of `/app/memory/EXECUTION_PLAN.md` (already there — keep it updated).
+Lives at top of `/app/memory/refactor_cr/EXECUTION_PLAN.md` (already there — keep it updated).
 
 ```
 | Phase | Status        | Branch              | PR # | Entry Gate | Exit Gate | Tested by         | Report |
@@ -200,7 +200,7 @@ E1 updates this after every meaningful event. User reads this to know "where are
 
 ## 6. Phase Log (audit trail)
 
-Append-only log at `/app/memory/PHASE_LOG.md`. Entry per phase:
+Append-only log at `/app/memory/refactor_cr/PHASE_LOG.md`. Entry per phase:
 
 ```markdown
 ## Phase P1 — Stop the bleeding
@@ -255,7 +255,7 @@ P2 starts on user go-ahead.
 
 ## 7. Change Notes (mid-phase deviations)
 
-Sometimes mid-phase you discover something. Don't silently add it; file a **Change Note** at `/app/memory/phases/PXX_change_notes.md`:
+Sometimes mid-phase you discover something. Don't silently add it; file a **Change Note** at `/app/memory/refactor_cr/phases/PXX_change_notes.md`:
 
 ```markdown
 ## CN-P1-001 — 2026-05-30 16:45
@@ -331,12 +331,12 @@ If any of the 6 isn't satisfied → phase is **not done**, regardless of how goo
 
 The control layer is mostly process. A few small scripts make it cheaper to enforce:
 
-### 12.1 `verify_whitelist.sh` — confirms `git diff` ⊆ whitelist
+### 12.1 `refactor_cr_verify_whitelist.sh` — confirms `git diff` ⊆ whitelist
 ```bash
 #!/usr/bin/env bash
-# /app/scripts/verify_whitelist.sh PXX
+# /app/scripts/refactor_cr_verify_whitelist.sh PXX
 PHASE=$1
-WHITELIST=$(grep -E '^- `' /app/memory/phases/${PHASE}_contract.md | sed 's/.*`\(.*\)`.*/\1/')
+WHITELIST=$(grep -E '^- `' /app/memory/refactor_cr/phases/${PHASE}_contract.md | sed 's/.*`\(.*\)`.*/\1/')
 TOUCHED=$(git diff --name-only main...HEAD)
 for f in $TOUCHED; do
   if ! echo "$WHITELIST" | grep -qx "$f"; then
@@ -350,7 +350,7 @@ echo "✅ All touched files in whitelist"
 ### 12.2 `phase_status.sh` — pretty-prints the tracker
 ```bash
 #!/usr/bin/env bash
-grep -E '^\| P[0-9]+' /app/memory/EXECUTION_PLAN.md
+grep -E '^\| P[0-9]+' /app/memory/refactor_cr/EXECUTION_PLAN.md
 ```
 
 ### 12.3 Pre-commit hook (optional)
@@ -391,14 +391,14 @@ Block commits touching files outside the current phase's whitelist. Implement on
 
 To activate the control layer:
 
-- [ ] Create `/app/memory/phases/` directory
-- [ ] Create empty `/app/memory/PHASE_LOG.md` with this header:
+- [ ] Create `/app/memory/refactor_cr/phases/` directory
+- [ ] Create empty `/app/memory/refactor_cr/PHASE_LOG.md` with this header:
    ```
    # Kiosk CR — Phase Log
    Append-only audit trail. Newest entries at bottom.
    ```
-- [ ] Confirm `/app/memory/EXECUTION_PLAN.md` tracker table has the Status / Branch / Entry / Exit columns added
-- [ ] (Optional) Create `/app/scripts/verify_whitelist.sh`
+- [ ] Confirm `/app/memory/refactor_cr/EXECUTION_PLAN.md` tracker table has the Status / Branch / Entry / Exit columns added
+- [ ] (Optional) Create `/app/scripts/refactor_cr_verify_whitelist.sh`
 - [ ] Acknowledge OP-1 through OP-8 — user confirms acceptance of these rules
 
 After these 5 items, the next "start Phase 1" command triggers:
@@ -434,11 +434,11 @@ After these 5 items, the next "start Phase 1" command triggers:
 
 After 3 phases, you should be able to ask any of these questions and answer in <30 seconds by reading one of the docs:
 
-- "What's the current phase status?" → `EXECUTION_PLAN.md` tracker
-- "What did Phase X actually change?" → `PHASE_LOG.md` entry
+- "What's the current phase status?" → `refactor_cr/EXECUTION_PLAN.md` tracker
+- "What did Phase X actually change?" → `refactor_cr/PHASE_LOG.md` entry
 - "Why was finding FE-9 not closed in Phase 4?" → `P4_contract.md` §1 (out of scope) + reason
 - "How do we roll back Phase 5 if needed?" → `P5_contract.md` §7
-- "Did we test scenario Y in Phase 3?" → test report linked from `PHASE_LOG.md`
+- "Did we test scenario Y in Phase 3?" → test report linked from `refactor_cr/PHASE_LOG.md`
 
 If any of those takes >30 seconds, the control layer has a gap — fix the doc.
 
@@ -448,8 +448,8 @@ If any of those takes >30 seconds, the control layer has a gap — fix the doc.
 
 If you are reading this in a fresh session and didn't write the existing CR work yourself, do this **before any other action**:
 
-1. **Run** `/app/scripts/cr_status.sh` — one-shot dashboard of where we are.
-2. **Read in order:** `CR_STATUS.md` → `CONTROL_LAYER.md` (this file) → `EXECUTION_PLAN.md` → `PHASE_LOG.md` → latest `phases/PXX_contract.md`.
+1. **Run** `/app/scripts/refactor_cr_status.sh` — one-shot dashboard of where we are.
+2. **Read in order:** `refactor_cr/STATUS.md` → `refactor_cr/CONTROL_LAYER.md` (this file) → `refactor_cr/EXECUTION_PLAN.md` → `refactor_cr/PHASE_LOG.md` → latest `refactor_cr/phases/PXX_contract.md`.
 3. **Verify services healthy** (the script does this for you).
 4. **Confirm OP-1 through OP-8 still apply** — user accepted them at CR start and they remain binding for the duration. If user says anything that contradicts them, push back per OP-3/OP-6 before proceeding.
 5. **Identify what the user expects next** — usually answering the open questions in the latest pending Contract §10.
@@ -459,13 +459,13 @@ If you are reading this in a fresh session and didn't write the existing CR work
 
 | Question | Where to find the answer |
 |---|---|
-| What phase are we on? | `CR_STATUS.md` top section |
+| What phase are we on? | `refactor_cr/STATUS.md` top section |
 | What's the current branch? | `git branch --show-current` or the status script |
-| What was the last test result? | `CR_STATUS.md` "Latest test report" line, or `ls -t /app/test_reports/iteration_*.json | head -1` |
-| What is the user blocked on? | `CR_STATUS.md` "Blocked on" line |
-| What do I do next? | `CR_STATUS.md` "Next concrete actions" section |
-| Why did we do X in Phase Y? | `PHASE_LOG.md` (search for Phase Y) |
-| Where does finding FE-X / BE-X come from? | `FULL_CODEBASE_AUDIT.md` (or `CRASH_AUDIT.md` / `REFACTOR_AUDIT.md`) |
+| What was the last test result? | `refactor_cr/STATUS.md` "Latest test report" line, or `ls -t /app/test_reports/iteration_*.json | head -1` |
+| What is the user blocked on? | `refactor_cr/STATUS.md` "Blocked on" line |
+| What do I do next? | `refactor_cr/STATUS.md` "Next concrete actions" section |
+| Why did we do X in Phase Y? | `refactor_cr/PHASE_LOG.md` (search for Phase Y) |
+| Where does finding FE-X / BE-X come from? | `refactor_cr/audits/FULL_CODEBASE_AUDIT.md` (or `refactor_cr/audits/CRASH_AUDIT.md` / `refactor_cr/audits/REFACTOR_AUDIT.md`) |
 
 ### What you must NOT do
 
@@ -478,14 +478,14 @@ If you are reading this in a fresh session and didn't write the existing CR work
 
 ### What you SHOULD do
 
-- ✅ Update `CR_STATUS.md` and `EXECUTION_PLAN.md` tracker at every phase boundary.
-- ✅ Append, never edit, `PHASE_LOG.md` entries. (For corrections, append a correction note below the original.)
+- ✅ Update `refactor_cr/STATUS.md` and `refactor_cr/EXECUTION_PLAN.md` tracker at every phase boundary.
+- ✅ Append, never edit, `refactor_cr/PHASE_LOG.md` entries. (For corrections, append a correction note below the original.)
 - ✅ Write Change Notes for any deviation, however small.
-- ✅ Use `/app/scripts/verify_whitelist.sh PXX` before every commit during a phase.
+- ✅ Use `/app/scripts/refactor_cr_verify_whitelist.sh PXX` before every commit during a phase.
 - ✅ When asking the user for an Entry Gate decision, present defaults and recommend one — don't ask open-ended.
 
 ---
 
 **End of control layer spec.** Once user confirms OP-1 through OP-8, this becomes binding for the duration of the Kiosk CR.
 
-Saved at `/app/memory/CONTROL_LAYER.md`.
+Saved at `/app/memory/refactor_cr/CONTROL_LAYER.md`.

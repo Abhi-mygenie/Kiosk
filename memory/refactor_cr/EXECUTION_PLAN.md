@@ -3,9 +3,9 @@
 **Repo:** `Abhi-mygenie/Kiosk@14march`
 **Plan date:** 2026-05-30
 **Source audits this plan consolidates:**
-- `/app/memory/CRASH_AUDIT.md` — the kiosk-bricking class of bug (33 findings)
-- `/app/memory/FULL_CODEBASE_AUDIT.md` — every stability/security gap (67 findings)
-- `/app/memory/REFACTOR_AUDIT.md` — architecture & code-reuse (57 findings)
+- `/app/memory/refactor_cr/audits/CRASH_AUDIT.md` — the kiosk-bricking class of bug (33 findings)
+- `/app/memory/refactor_cr/audits/FULL_CODEBASE_AUDIT.md` — every stability/security gap (67 findings)
+- `/app/memory/refactor_cr/audits/REFACTOR_AUDIT.md` — architecture & code-reuse (57 findings)
 
 **Total scope:** 10 phases, ~14–17 dev-days, broken into shippable increments.
 
@@ -506,4 +506,4 @@ Each phase follows the same loop: **E1 implement → testing_agent_v3 verify →
 
 ---
 
-**End of plan.** Saved at `/app/memory/EXECUTION_PLAN.md`.
+**End of plan.** Saved at `/app/memory/refactor_cr/EXECUTION_PLAN.md`.

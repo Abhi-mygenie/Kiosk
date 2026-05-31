@@ -45,9 +45,9 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 - `frontend/src/contexts/TimingSettingsContext.js`
 - `frontend/src/pages/AdminSettingsPage.js`
 - `frontend/src/pages/KioskPage.js`
-- `/app/memory/phases/P1_contract.md` *(this file, for closure stamp)*
-- `/app/memory/PHASE_LOG.md` *(append entry on closure)*
-- `/app/memory/EXECUTION_PLAN.md` *(update tracker row only)*
+- `/app/memory/refactor_cr/phases/P1_contract.md` *(this file, for closure stamp)*
+- `/app/memory/refactor_cr/PHASE_LOG.md` *(append entry on closure)*
+- `/app/memory/refactor_cr/EXECUTION_PLAN.md` *(update tracker row only)*
 - `/app/memory/PRD.md` *(append "what was implemented")*
 
 **Total file count:** 9 source + 4 docs = 13 files max.
@@ -77,7 +77,7 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 - [✅] Decision points relevant to this phase resolved → None block Phase 1; all open decisions affect P7/P9 only
 - [⏳] User has typed "start Phase 1" (or "Accepted — proceed... and start Phase 1") → **YES, received 2026-05-30**
 - [⏳] Branch `cr/phase-1-safety` created from latest state → **to be created at implementation kickoff**
-- [✅] Contract drafted at `/app/memory/phases/P1_contract.md` → this file
+- [✅] Contract drafted at `/app/memory/refactor_cr/phases/P1_contract.md` → this file
 - [✅] Files whitelist agreed → §2 above
 - [✅] Audit findings listed → §3 above
 - [✅] Test plan drafted → §6 below
@@ -92,7 +92,7 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 
 ### Code quality
 - [x] All deliverables D1.1–D1.8 implemented
-- [x] `git diff --name-only main...HEAD` ⊆ §2 whitelist (verified via `/app/scripts/verify_whitelist.sh P1`; `test_reports/iteration_5.json` covered by CN-P1-001)
+- [x] `git diff --name-only main...HEAD` ⊆ §2 whitelist (verified via `/app/scripts/refactor_cr_verify_whitelist.sh P1`; `test_reports/iteration_5.json` covered by CN-P1-001)
 - [x] No commits unrelated to listed findings
 - [x] Lint passes (eslint clean on all 9 touched files)
 - [x] Build passes (webpack compiled successfully; frontend restarted clean)

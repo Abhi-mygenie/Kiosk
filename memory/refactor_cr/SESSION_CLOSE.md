@@ -13,11 +13,11 @@ Snapshot of where the Kiosk CR stands at end of this session. The very first thi
 ## 2. The CR in 30 seconds
 
 We are mid-execution of a 10-phase stability + refactor effort on `Abhi-mygenie/Kiosk@14march`. Driven by three audits totaling ~190 findings:
-- `CRASH_AUDIT.md` — the post-nginx-fix kiosk-bricking bug class (33 findings)
-- `FULL_CODEBASE_AUDIT.md` — every stability/security gap across 176 files (67 findings)
-- `REFACTOR_AUDIT.md` — architecture, modules, web↔native dedup (57 findings)
+- `refactor_cr/audits/CRASH_AUDIT.md` — the post-nginx-fix kiosk-bricking bug class (33 findings)
+- `refactor_cr/audits/FULL_CODEBASE_AUDIT.md` — every stability/security gap across 176 files (67 findings)
+- `refactor_cr/audits/REFACTOR_AUDIT.md` — architecture, modules, web↔native dedup (57 findings)
 
-Execution is governed by `CONTROL_LAYER.md` (OP-1 through OP-8 binding) with the master plan at `EXECUTION_PLAN.md`.
+Execution is governed by `refactor_cr/CONTROL_LAYER.md` (OP-1 through OP-8 binding) with the master plan at `refactor_cr/EXECUTION_PLAN.md`.
 
 ---
 
@@ -35,7 +35,7 @@ No upstream push yet (this environment has no GitHub remote configured for the C
 
 ---
 
-## 4. Tracker snapshot (single source of truth: `EXECUTION_PLAN.md`)
+## 4. Tracker snapshot (single source of truth: `refactor_cr/EXECUTION_PLAN.md`)
 
 | Phase | Status | Notes |
 |---|---|---|
@@ -63,15 +63,15 @@ Backend is unchanged from initial pull (POS preprod proxy). Services running via
 The next agent / future-me must do these reads in this exact order:
 
 ```
-1. /app/scripts/cr_status.sh               ← run this first (dashboard)
-2. /app/memory/CR_STATUS.md                ← the handoff dashboard (always current)
-3. /app/memory/CONTROL_LAYER.md            ← non-negotiable rules + §17 next-agent guide
-4. /app/memory/EXECUTION_PLAN.md           ← tracker + plan
-5. /app/memory/PHASE_LOG.md                ← what was done
-6. /app/memory/phases/P2_contract.md       ← what comes next
+1. /app/scripts/refactor_cr_status.sh               ← run this first (dashboard)
+2. /app/memory/refactor_cr/STATUS.md                ← the handoff dashboard (always current)
+3. /app/memory/refactor_cr/CONTROL_LAYER.md            ← non-negotiable rules + §17 next-agent guide
+4. /app/memory/refactor_cr/EXECUTION_PLAN.md           ← tracker + plan
+5. /app/memory/refactor_cr/PHASE_LOG.md                ← what was done
+6. /app/memory/refactor_cr/phases/P2_contract.md       ← what comes next
 ```
 
-`CR_STATUS.md` is the **single source of truth for "where are we right now"** — kept up-to-date at every phase boundary. PRD.md has a banner pointing here as well.
+`refactor_cr/STATUS.md` is the **single source of truth for "where are we right now"** — kept up-to-date at every phase boundary. PRD.md has a banner pointing here as well.
 
 After that, the natural next step is:
 1. Ask user the 4 Entry Gate decisions in P2 contract §10
@@ -104,19 +104,19 @@ All `/app/memory/` files at session close:
 
 | File | Purpose | Update cadence |
 |---|---|---|
-| `CONTROL_LAYER.md` | Process rules (OP-1 to OP-8) | Stable — change only by user decision |
-| `EXECUTION_PLAN.md` | 10-phase plan + tracker table | Updated per phase |
-| `CRASH_AUDIT.md` | Original kiosk-bricking bug class | Stable (audit doc) |
-| `FULL_CODEBASE_AUDIT.md` | 67 stability/security findings | Stable (audit doc) |
-| `REFACTOR_AUDIT.md` | 57 architecture/dedup findings | Stable (audit doc) |
+| `refactor_cr/CONTROL_LAYER.md` | Process rules (OP-1 to OP-8) | Stable — change only by user decision |
+| `refactor_cr/EXECUTION_PLAN.md` | 10-phase plan + tracker table | Updated per phase |
+| `refactor_cr/audits/CRASH_AUDIT.md` | Original kiosk-bricking bug class | Stable (audit doc) |
+| `refactor_cr/audits/FULL_CODEBASE_AUDIT.md` | 67 stability/security findings | Stable (audit doc) |
+| `refactor_cr/audits/REFACTOR_AUDIT.md` | 57 architecture/dedup findings | Stable (audit doc) |
 | `PRD.md` | Product requirements + per-phase implementation log | Updated per phase |
-| `PHASE_LOG.md` | Append-only audit trail | Updated per phase |
+| `refactor_cr/PHASE_LOG.md` | Append-only audit trail | Updated per phase |
 | `HANDOVER_NOTES.md` | Original pod handover (pre-CR) | Stable (historical) |
 | `SECURITY_AUDIT.md` | Pre-existing internal doc | Stable |
-| `SESSION_CLOSE.md` | This file — session boundary marker | Rewritten each close |
-| `phases/P1_contract.md` | P1 scope + Exit Gate (closed ✅) | Closed |
-| `phases/P1_change_notes.md` | P1 deviations log | Closed |
-| `phases/P2_contract.md` | P2 scope + Entry Gate (pending) | Active |
+| `refactor_cr/SESSION_CLOSE.md` | This file — session boundary marker | Rewritten each close |
+| `refactor_cr/phases/P1_contract.md` | P1 scope + Exit Gate (closed ✅) | Closed |
+| `refactor_cr/phases/P1_change_notes.md` | P1 deviations log | Closed |
+| `refactor_cr/phases/P2_contract.md` | P2 scope + Entry Gate (pending) | Active |
 
 ---
 
@@ -170,11 +170,11 @@ If user types **"Resume CR"**:
 
 | Need to... | File |
 |---|---|
-| Know the rules | `/app/memory/CONTROL_LAYER.md` |
-| Know what's next | `/app/memory/phases/P2_contract.md` §10 |
-| Check status of all phases | `/app/memory/EXECUTION_PLAN.md` (tracker table) |
-| See what was changed in P1 | `/app/memory/PHASE_LOG.md` (P1 entry) |
-| See what user can verify in UI | `/app/memory/PHASE_LOG.md` (P1 entry — "What's live") |
+| Know the rules | `/app/memory/refactor_cr/CONTROL_LAYER.md` |
+| Know what's next | `/app/memory/refactor_cr/phases/P2_contract.md` §10 |
+| Check status of all phases | `/app/memory/refactor_cr/EXECUTION_PLAN.md` (tracker table) |
+| See what was changed in P1 | `/app/memory/refactor_cr/PHASE_LOG.md` (P1 entry) |
+| See what user can verify in UI | `/app/memory/refactor_cr/PHASE_LOG.md` (P1 entry — "What's live") |
 | See P1 test results | `/app/test_reports/iteration_5.json` |
 | Verify P1 code still works | `https://kiosk-branch.preview.emergentagent.com/?force-crash=1` |
 

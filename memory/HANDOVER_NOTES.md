@@ -7,7 +7,7 @@
 **Last updated:** 2026-05-30 (CR Phase 1 closed)
 **Environment:** Emergent preview pod (Kubernetes container, FastAPI + React + MongoDB base image)
 
-> ⚠️ **An active multi-phase refactor CR is in progress.** Before doing anything else, read `/app/memory/SESSION_CLOSE.md` for current state, then `/app/memory/EXECUTION_PLAN.md` for the master plan.
+> ⚠️ **An active multi-phase REFACTOR CR is paused mid-execution.** It has its own governance under `/app/memory/refactor_cr/`. If you are continuing that work, run `/app/scripts/refactor_cr_status.sh` and read `/app/memory/refactor_cr/STATUS.md`. For any other work (new features, bug fixes, etc.), proceed normally — the refactor control layer does NOT apply.
 
 ---
 

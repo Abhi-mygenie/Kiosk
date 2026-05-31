@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
-# cr_status.sh — one-shot CR status dashboard for next agent / user.
+# refactor_cr_status.sh — one-shot status dashboard for the Kiosk REFACTOR CR.
+# Scope: This script is specific to the multi-phase refactor effort
+#        documented in /app/memory/refactor_cr/. It has no relevance to
+#        general feature work or future CRs.
 #
-# Run any time:   /app/scripts/cr_status.sh
-# Reads from /app/memory/ files; never modifies anything.
+# Run any time:   /app/scripts/refactor_cr_status.sh
+# Reads from /app/memory/refactor_cr/ files; never modifies anything.
 
 set -e
 
 CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
 
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════${NC}"
-echo -e "${CYAN}  KIOSK CR STATUS — $(date '+%Y-%m-%d %H:%M %Z')${NC}"
+echo -e "${CYAN}  KIOSK REFACTOR CR — STATUS — $(date '+%Y-%m-%d %H:%M %Z')${NC}"
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════${NC}"
 echo ""
 
@@ -24,7 +27,7 @@ echo ""
 
 # 2. Phase tracker — parse from CR_STATUS.md
 echo -e "${YELLOW}► Phase tracker${NC}"
-if [[ -f /app/memory/CR_STATUS.md ]]; then
+if [[ -f /app/memory/refactor_cr/STATUS.md ]]; then
   awk '
     /^## 📋 Phase tracker/ { in_section=1; next }
     in_section && /^## / { in_section=0 }
@@ -33,15 +36,26 @@ if [[ -f /app/memory/CR_STATUS.md ]]; then
       gsub(/\*\*/, "")
       print "  " $0
     }
-  ' /app/memory/CR_STATUS.md | head -12
+  ' /app/memory/refactor_cr/STATUS.md | head -12
 else
   echo -e "  ${RED}CR_STATUS.md missing — control layer not set up?${NC}"
 fi
 echo ""
 
-# 3. Active contract
+# 3. Active contract — pick the highest-numbered contract whose Exit Gate is NOT yet PASSED
 echo -e "${YELLOW}► Active phase contract${NC}"
-ACTIVE_CONTRACT=$(ls -t /app/memory/phases/P*_contract.md 2>/dev/null | head -1)
+ACTIVE_CONTRACT=""
+for f in $(ls /app/memory/refactor_cr/phases/P*_contract.md 2>/dev/null | sort -V -r); do
+  # If the contract does NOT contain "GATE STATUS:** ✅ PASSED", treat it as active
+  if ! grep -q '\*\*GATE STATUS:\*\* ✅ PASSED' "$f"; then
+    ACTIVE_CONTRACT="$f"
+    break
+  fi
+done
+# If every contract is closed (unlikely until P10), fall back to highest-numbered
+if [[ -z "$ACTIVE_CONTRACT" ]]; then
+  ACTIVE_CONTRACT=$(ls /app/memory/refactor_cr/phases/P*_contract.md 2>/dev/null | sort -V | tail -1)
+fi
 if [[ -n "$ACTIVE_CONTRACT" ]]; then
   echo "  $ACTIVE_CONTRACT"
   grep -E '^\*\*GATE STATUS:\*\*' "$ACTIVE_CONTRACT" | sed 's/^/    /'
@@ -108,21 +122,21 @@ echo ""
 
 # 7. Next-action pointer
 echo -e "${YELLOW}► Next action${NC}"
-if [[ -f /app/memory/CR_STATUS.md ]]; then
+if [[ -f /app/memory/refactor_cr/STATUS.md ]]; then
   awk '
     /^## 🎯 Next concrete actions/ { in_section=1; next }
     in_section && /^## / && !/^## 🎯/ { in_section=0 }
     in_section && /^[0-9]+\./ { print "  " $0; count++; if (count >= 3) exit }
-  ' /app/memory/CR_STATUS.md
+  ' /app/memory/refactor_cr/STATUS.md
 fi
 echo ""
 
 # 8. Reading list pointer
 echo -e "${YELLOW}► If you are the next agent — read in this order:${NC}"
-echo "  1. /app/memory/CR_STATUS.md      (you are getting a hint of this)"
-echo "  2. /app/memory/CONTROL_LAYER.md  (binding rules OP-1..OP-8)"
-echo "  3. /app/memory/EXECUTION_PLAN.md (10-phase plan)"
-echo "  4. /app/memory/PHASE_LOG.md      (what was done)"
-echo "  5. /app/memory/phases/$( basename "$ACTIVE_CONTRACT" 2>/dev/null || echo P2_contract.md )"
+echo "  1. /app/memory/refactor_cr/STATUS.md      (you are getting a hint of this)"
+echo "  2. /app/memory/refactor_cr/CONTROL_LAYER.md  (binding rules OP-1..OP-8)"
+echo "  3. /app/memory/refactor_cr/EXECUTION_PLAN.md (10-phase plan)"
+echo "  4. /app/memory/refactor_cr/PHASE_LOG.md      (what was done)"
+echo "  5. /app/memory/refactor_cr/phases/$( basename "$ACTIVE_CONTRACT" 2>/dev/null || echo P2_contract.md )"
 echo ""
 echo -e "${CYAN}═══════════════════════════════════════════════════════════════════════${NC}"

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 #
-# verify_whitelist.sh — confirms git diff ⊆ phase whitelist
+# refactor_cr_verify_whitelist.sh — confirms git diff ⊆ phase whitelist
+# Scope: REFACTOR CR only. Not for general feature work.
 #
-# Usage:  ./verify_whitelist.sh <phase_id>   (e.g. P1, P2, P9a)
+# Usage:  ./refactor_cr_verify_whitelist.sh <phase_id>   (e.g. P1, P2, P9a)
 #
-# Reads the file whitelist from /app/memory/phases/<phase_id>_contract.md,
+# Reads the file whitelist from /app/memory/refactor_cr/phases/<phase_id>_contract.md,
 # section "## 2. Files touched (whitelist)", then compares against the
 # files actually modified vs main.
 #
@@ -22,7 +23,7 @@ if [[ $# -ne 1 ]]; then
 fi
 
 PHASE="$1"
-CONTRACT="/app/memory/phases/${PHASE}_contract.md"
+CONTRACT="/app/memory/refactor_cr/phases/${PHASE}_contract.md"
 
 if [[ ! -f "$CONTRACT" ]]; then
   echo "❌ Contract not found: $CONTRACT"

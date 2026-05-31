@@ -38,10 +38,10 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 - `backend/server.py`
 - `backend/tests/unit/__init__.py` *(new — empty marker)*
 - `backend/tests/unit/test_transforms.py` *(new)*
-- `/app/memory/phases/P2_contract.md` *(this file, for closure stamp)*
-- `/app/memory/phases/P2_change_notes.md` *(if deviations occur)*
-- `/app/memory/PHASE_LOG.md` *(append entry on closure)*
-- `/app/memory/EXECUTION_PLAN.md` *(update tracker row only)*
+- `/app/memory/refactor_cr/phases/P2_contract.md` *(this file, for closure stamp)*
+- `/app/memory/refactor_cr/phases/P2_change_notes.md` *(if deviations occur)*
+- `/app/memory/refactor_cr/PHASE_LOG.md` *(append entry on closure)*
+- `/app/memory/refactor_cr/EXECUTION_PLAN.md` *(update tracker row only)*
 - `/app/memory/PRD.md` *(append "what was implemented")*
 - `/app/test_reports/iteration_*.json` *(implicit per CN-P1-001 convention)*
 
@@ -74,7 +74,7 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 - [x] Decision points relevant to this phase resolved → None block P2 (Mongo decision deferred to P7)
 - [ ] User has typed "start Phase 2" (or equivalent) → **awaiting**
 - [ ] Branch `cr/phase-2-backend-hardening` created from `cr/phase-1-safety` HEAD → **to be created at kickoff**
-- [x] Contract drafted at `/app/memory/phases/P2_contract.md` → this file
+- [x] Contract drafted at `/app/memory/refactor_cr/phases/P2_contract.md` → this file
 - [x] Files whitelist agreed → §2 above
 - [x] Audit findings listed → §3 above
 - [x] Test plan drafted → §6 below
@@ -88,7 +88,7 @@ Phase may modify ONLY these files. Any change outside this list → STOP, file C
 
 ### Code quality
 - [ ] All deliverables D2.1–D2.8 implemented
-- [ ] `git diff` ⊆ §2 whitelist (verify via `/app/scripts/verify_whitelist.sh P2`)
+- [ ] `git diff` ⊆ §2 whitelist (verify via `/app/scripts/refactor_cr_verify_whitelist.sh P2`)
 - [ ] No commits unrelated to listed findings
 - [ ] Lint passes: `ruff check backend/` exits 0
 - [ ] Backend supervisor restarts cleanly post-changes
