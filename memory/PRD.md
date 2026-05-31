@@ -1,5 +1,16 @@
 # Kiosk Self-Ordering App - PRD
 
+> ## 🚦 ACTIVE CR IN PROGRESS — READ FIRST
+> A 10-phase stability+refactor CR is currently mid-execution.
+> **Before doing anything else, read `/app/memory/CR_STATUS.md`** (the dashboard).
+> User has accepted control-layer rules OP-1 through OP-8 as binding (see `CONTROL_LAYER.md`).
+>
+> **Status:** P1 ✅ approved • P2 🔵 awaiting Entry Gate decisions • P3-P10 not started
+> **Branch:** `cr/phase-1-safety` @ `14f6e7e`
+> **Pending user input:** 4 decisions in `phases/P2_contract.md` §10
+>
+> ---
+
 ## Original Problem Statement
 Convert an existing React web kiosk self-ordering application into a native Android app using React Native, while adding admin features for menu management and operating hours configuration.
 

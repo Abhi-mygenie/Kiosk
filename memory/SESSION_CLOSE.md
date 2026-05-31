@@ -60,14 +60,18 @@ Backend is unchanged from initial pull (POS preprod proxy). Services running via
 
 ## 6. To resume this CR in a future session
 
-The next agent / future-me must do these 4 reads in this exact order:
+The next agent / future-me must do these reads in this exact order:
 
 ```
-1. /app/memory/SESSION_CLOSE.md           ← you are here (this file)
-2. /app/memory/EXECUTION_PLAN.md           ← tracker + plan
-3. /app/memory/CONTROL_LAYER.md            ← non-negotiable rules
-4. /app/memory/phases/P2_contract.md       ← what comes next
+1. /app/scripts/cr_status.sh               ← run this first (dashboard)
+2. /app/memory/CR_STATUS.md                ← the handoff dashboard (always current)
+3. /app/memory/CONTROL_LAYER.md            ← non-negotiable rules + §17 next-agent guide
+4. /app/memory/EXECUTION_PLAN.md           ← tracker + plan
+5. /app/memory/PHASE_LOG.md                ← what was done
+6. /app/memory/phases/P2_contract.md       ← what comes next
 ```
+
+`CR_STATUS.md` is the **single source of truth for "where are we right now"** — kept up-to-date at every phase boundary. PRD.md has a banner pointing here as well.
 
 After that, the natural next step is:
 1. Ask user the 4 Entry Gate decisions in P2 contract §10

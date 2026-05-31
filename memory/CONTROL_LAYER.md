@@ -444,6 +444,48 @@ If any of those takes >30 seconds, the control layer has a gap — fix the doc.
 
 ---
 
+## 17. Cross-session handoff — "For the next agent picking this up"
+
+If you are reading this in a fresh session and didn't write the existing CR work yourself, do this **before any other action**:
+
+1. **Run** `/app/scripts/cr_status.sh` — one-shot dashboard of where we are.
+2. **Read in order:** `CR_STATUS.md` → `CONTROL_LAYER.md` (this file) → `EXECUTION_PLAN.md` → `PHASE_LOG.md` → latest `phases/PXX_contract.md`.
+3. **Verify services healthy** (the script does this for you).
+4. **Confirm OP-1 through OP-8 still apply** — user accepted them at CR start and they remain binding for the duration. If user says anything that contradicts them, push back per OP-3/OP-6 before proceeding.
+5. **Identify what the user expects next** — usually answering the open questions in the latest pending Contract §10.
+6. **Do NOT** start implementing the next phase until the user explicitly says "start Phase X" with full Entry Gate criteria met.
+
+### Quick orientation questions to answer in <60 seconds
+
+| Question | Where to find the answer |
+|---|---|
+| What phase are we on? | `CR_STATUS.md` top section |
+| What's the current branch? | `git branch --show-current` or the status script |
+| What was the last test result? | `CR_STATUS.md` "Latest test report" line, or `ls -t /app/test_reports/iteration_*.json | head -1` |
+| What is the user blocked on? | `CR_STATUS.md` "Blocked on" line |
+| What do I do next? | `CR_STATUS.md` "Next concrete actions" section |
+| Why did we do X in Phase Y? | `PHASE_LOG.md` (search for Phase Y) |
+| Where does finding FE-X / BE-X come from? | `FULL_CODEBASE_AUDIT.md` (or `CRASH_AUDIT.md` / `REFACTOR_AUDIT.md`) |
+
+### What you must NOT do
+
+- ❌ Skip the boot-sequence reading. Diving in without context will violate at least one of OP-1, OP-2, or OP-3.
+- ❌ Touch files outside the active Contract's whitelist without filing a Change Note.
+- ❌ Close a phase without `testing_agent_v3` running. ("I tested manually" is not allowed under OP-3.)
+- ❌ Infer user approval. If they didn't explicitly say "Phase X approved," it isn't approved (OP-6).
+- ❌ Re-do work from a previous phase unless the user explicitly asks.
+- ❌ Merge multiple phases into one PR. Phase boundaries = PR boundaries (OP-8).
+
+### What you SHOULD do
+
+- ✅ Update `CR_STATUS.md` and `EXECUTION_PLAN.md` tracker at every phase boundary.
+- ✅ Append, never edit, `PHASE_LOG.md` entries. (For corrections, append a correction note below the original.)
+- ✅ Write Change Notes for any deviation, however small.
+- ✅ Use `/app/scripts/verify_whitelist.sh PXX` before every commit during a phase.
+- ✅ When asking the user for an Entry Gate decision, present defaults and recommend one — don't ask open-ended.
+
+---
+
 **End of control layer spec.** Once user confirms OP-1 through OP-8, this becomes binding for the duration of the Kiosk CR.
 
 Saved at `/app/memory/CONTROL_LAYER.md`.
